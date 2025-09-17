@@ -1,0 +1,595 @@
+import { useState, useEffect } from 'react';
+import { FileText, Plus, Edit, Trash2, Save, X, Lightbulb, Bug, Search, Filter, ArrowUpDown, Sparkles } from 'lucide-react';
+import ViewerAlert from './ViewerAlert';
+
+interface Note {
+  id: string;
+  title: string;
+  content: string;
+  type: 'problem' | 'improvement' | 'general';
+  priority: 'low' | 'medium' | 'high';
+  status: 'open' | 'in_progress' | 'resolved';
+  relatedTab: 'clothing' | 'inventory' | 'sales' | 'history' | 'reports' | 'investments' | 'cashflow' | 'notes' | 'account';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export default function Notes() {
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editingNote, setEditingNote] = useState<Note | null>(null);
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState<'recent' | 'priority' | 'status'>('recent');
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [formData, setFormData] = useState({
+    title: '',
+    content: '',
+    type: 'general' as Note['type'],
+    priority: 'medium' as Note['priority'],
+    status: 'open' as Note['status'],
+    relatedTab: 'sales' as Note['relatedTab']
+  });
+  const [filterType, setFilterType] = useState<'all' | Note['type']>('all');
+  const [filterStatus, setFilterStatus] = useState<'all' | Note['status']>('all');
+  
+  // Estados para alerta do visualizador
+  const [showViewerAlert, setShowViewerAlert] = useState(false);
+  const [viewerAlertAction, setViewerAlertAction] = useState('');
+
+  // Função para detectar se é visualizador
+  const isViewer = () => {
+    try {
+      const user = localStorage.getItem('usekaylla_user');
+      if (user) {
+        const parsed = JSON.parse(user);
+        return parsed.role === 'viewer';
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
+  // Função para mapear nomes das abas para português
+  const getTabName = (tabId: string) => {
+    const tabNames: { [key: string]: string } = {
+      'clothing': 'Cadastrar Peças',
+      'inventory': 'Gerenciar Estoque',
+      'sales': 'Registrar Vendas',
+      'history': 'Histórico',
+      'reports': 'Relatórios',
+      'investments': 'Investimentos',
+      'cashflow': 'Fluxo de Caixa',
+      'notes': 'Anotações',
+      'account': 'Conta'
+    };
+    return tabNames[tabId] || tabId;
+  };
+
+  // Função para mostrar alerta do visualizador
+  const showViewerAlertForAction = (action: string) => {
+    setViewerAlertAction(action);
+    setShowViewerAlert(true);
+  };
+
+  // Carregar anotações do localStorage
+  useEffect(() => {
+    // Detectar role atual
+    try {
+      const rawUser = localStorage.getItem('usekaylla_user');
+      if (rawUser) {
+        const user = JSON.parse(rawUser);
+        setIsAdmin(user?.role === 'admin');
+      }
+    } catch {}
+
+    const savedNotes = localStorage.getItem('usekaylla_notes');
+    if (savedNotes) {
+      try {
+        const parsedNotes = JSON.parse(savedNotes).map((note: any) => ({
+          ...note,
+          createdAt: new Date(note.createdAt),
+          updatedAt: new Date(note.updatedAt)
+        }));
+        setNotes(parsedNotes);
+      } catch (error) {
+        console.error('Erro ao carregar anotações:', error);
+      }
+    }
+  }, []);
+
+  // Salvar anotações no localStorage
+  const saveNotes = (newNotes: Note[]) => {
+    setNotes(newNotes);
+    localStorage.setItem('usekaylla_notes', JSON.stringify(newNotes));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (isViewer()) {
+      showViewerAlertForAction('criar ou editar anotações');
+      return;
+    }
+    
+    if (!formData.title.trim() || !formData.content.trim()) {
+      alert('Título e conteúdo são obrigatórios!');
+      return;
+    }
+    if (!formData.relatedTab) {
+      alert('Informe a aba relacionada à anotação.');
+      return;
+    }
+
+    const now = new Date();
+    
+    if (editingNote) {
+      // Editar anotação existente
+      const updatedNotes = notes.map(note => {
+        if (note.id !== editingNote.id) return note;
+        const nextStatus = isAdmin ? formData.status : note.status;
+        return { ...note, ...formData, status: nextStatus, updatedAt: now };
+      });
+      saveNotes(updatedNotes);
+    } else {
+      // Criar nova anotação
+      const newNote: Note = {
+        id: Date.now().toString(),
+        ...formData,
+        status: 'open',
+        createdAt: now,
+        updatedAt: now
+      };
+      saveNotes([...notes, newNote]);
+    }
+
+    // Limpar formulário
+    setFormData({
+      title: '',
+      content: '',
+      type: 'general',
+      priority: 'medium',
+      status: 'open',
+      relatedTab: 'sales'
+    });
+    setShowForm(false);
+    setEditingNote(null);
+  };
+
+  const handleEdit = (note: Note) => {
+    if (isViewer()) {
+      showViewerAlertForAction('editar anotações');
+      return;
+    }
+    setFormData({
+      title: note.title,
+      content: note.content,
+      type: note.type,
+      priority: note.priority,
+      status: note.status,
+      relatedTab: note.relatedTab
+    });
+    setEditingNote(note);
+    setShowForm(true);
+  };
+
+  const handleDelete = (noteId: string) => {
+    if (isViewer()) {
+      showViewerAlertForAction('excluir anotações');
+      return;
+    }
+    if (confirm('Tem certeza que deseja excluir esta anotação?')) {
+      const updatedNotes = notes.filter(note => note.id !== noteId);
+      saveNotes(updatedNotes);
+    }
+  };
+
+  const handleCancel = () => {
+    setFormData({
+      title: '',
+      content: '',
+      type: 'general',
+      priority: 'medium',
+      status: 'open',
+      relatedTab: 'sales' as Note['relatedTab']
+    });
+    setShowForm(false);
+    setEditingNote(null);
+  };
+
+  const getTypeIcon = (type: Note['type']) => {
+    switch (type) {
+      case 'problem': return <Bug className="h-4 w-4" />;
+      case 'improvement': return <Lightbulb className="h-4 w-4" />;
+      default: return <FileText className="h-4 w-4" />;
+    }
+  };
+
+  const getTypeColor = (type: Note['type']) => {
+    switch (type) {
+      case 'problem': return 'text-red-600 bg-red-100';
+      case 'improvement': return 'text-yellow-600 bg-yellow-100';
+      default: return 'text-blue-600 bg-blue-100';
+    }
+  };
+
+  const getPriorityColor = (priority: Note['priority']) => {
+    switch (priority) {
+      case 'high': return 'text-red-600 bg-red-100';
+      case 'medium': return 'text-yellow-600 bg-yellow-100';
+      default: return 'text-green-600 bg-green-100';
+    }
+  };
+
+  const getStatusColor = (status: Note['status']) => {
+    switch (status) {
+      case 'resolved': return 'text-green-600 bg-green-100';
+      case 'in_progress': return 'text-blue-600 bg-blue-100';
+      default: return 'text-gray-600 bg-gray-100';
+    }
+  };
+
+  const filteredNotes = notes.filter(note => {
+    const typeMatch = filterType === 'all' || note.type === filterType;
+    const statusMatch = filterStatus === 'all' || note.status === filterStatus;
+    const searchMatch = [note.title, note.content].join(' ').toLowerCase().includes(search.toLowerCase());
+    return typeMatch && statusMatch && searchMatch;
+  });
+
+  const sortedBase = [...filteredNotes].sort((a, b) => {
+    if (sortBy === 'recent') return b.updatedAt.getTime() - a.updatedAt.getTime();
+    if (sortBy === 'priority') {
+      const order = { high: 3, medium: 2, low: 1 } as const;
+      return order[b.priority] - order[a.priority];
+    }
+    // status
+    const orderS = { open: 3, in_progress: 2, resolved: 1 } as const;
+    return orderS[b.status] - orderS[a.status];
+  });
+  const sortedNotes = [
+    ...sortedBase.filter(n => n.status !== 'resolved'),
+    ...sortedBase.filter(n => n.status === 'resolved'),
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-2 rounded-lg mr-3 shadow">
+                  <FileText className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                    Anotações <Sparkles className="h-5 w-5 text-purple-500" />
+                  </h2>
+                  <p className="text-sm text-gray-600">Registre problemas, ideias e decisões por aba</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setShowForm(true)}
+                className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Nova Anotação
+              </button>
+            </div>
+
+            {/* Barra de busca e ordenação */}
+            <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+              <div className="relative flex-1">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
+                <input
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Buscar por título ou conteúdo..."
+                  className="w-full pl-11 pr-4 py-2.5 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                />
+              </div>
+              <div className="flex items-center gap-2">
+                <Filter className="h-5 w-5 text-gray-400" />
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="border-2 border-gray-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 flex items-center"
+                >
+                  <option value="recent">Mais recentes</option>
+                  <option value="priority">Por prioridade</option>
+                  <option value="status">Por status</option>
+                </select>
+                <ArrowUpDown className="h-5 w-5 text-gray-400" />
+              </div>
+            </div>
+
+            {/* Resumo */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              <div className="p-3 rounded-xl border bg-gradient-to-br from-purple-50 to-white">
+                <div className="text-xs text-gray-600">Total</div>
+                <div className="text-xl font-bold text-gray-900">{notes.length}</div>
+              </div>
+              <div className="p-3 rounded-xl border bg-gradient-to-br from-yellow-50 to-white">
+                <div className="text-xs text-gray-600">Abertas</div>
+                <div className="text-xl font-bold text-yellow-700">{notes.filter(n => n.status === 'open').length}</div>
+              </div>
+              <div className="p-3 rounded-xl border bg-gradient-to-br from-blue-50 to-white">
+                <div className="text-xs text-gray-600">Em Andamento</div>
+                <div className="text-xl font-bold text-blue-700">{notes.filter(n => n.status === 'in_progress').length}</div>
+              </div>
+              <div className="p-3 rounded-xl border bg-gradient-to-br from-green-50 to-white">
+                <div className="text-xs text-gray-600">Resolvidas</div>
+                <div className="text-xl font-bold text-green-700">{notes.filter(n => n.status === 'resolved').length}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Filtros */}
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+          <div className="flex flex-wrap gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as any)}
+                className="border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              >
+                <option value="all">Todos</option>
+                <option value="problem">Problemas</option>
+                <option value="improvement">Melhorias</option>
+                <option value="general">Geral</option>
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as any)}
+                className="border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+              >
+                <option value="all">Todos</option>
+                <option value="open">Aberto</option>
+                <option value="in_progress">Em Andamento</option>
+                <option value="resolved">Resolvido</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        {/* Lista de Anotações */}
+        <div className="space-y-4">
+          {sortedNotes.length === 0 ? (
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-12 text-center">
+              <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma anotação encontrada</h3>
+              <p className="text-gray-600">Crie sua primeira anotação para começar!</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {sortedNotes.map(note => (
+              <div key={note.id} className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 hover:shadow-2xl transition-all group">
+                <div className="flex items-start justify-between mb-4">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getTypeColor(note.type)}`}>
+                        {getTypeIcon(note.type)}
+                        {note.type === 'problem' ? 'Problema' : note.type === 'improvement' ? 'Melhoria' : 'Geral'}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(note.priority)}`}>
+                        {note.priority === 'high' ? 'Alta' : note.priority === 'medium' ? 'Média' : 'Baixa'}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(note.status)}`}>
+                        {note.status === 'open' ? 'Aberto' : note.status === 'in_progress' ? 'Em Andamento' : 'Resolvido'}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-700">{note.title}</h3>
+                    <p className="text-gray-700 whitespace-pre-wrap">{note.content}</p>
+                    <div className="mt-2 text-xs text-gray-500">
+                      Aba relacionada: <span className="font-medium text-red-600 underline">{getTabName(note.relatedTab)}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 ml-4">
+                    <button
+                      onClick={() => handleEdit(note)}
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      title="Editar"
+                    >
+                      <Edit className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(note.id)}
+                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                      title="Excluir"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  </div>
+                </div>
+                <div className="text-sm text-gray-500 border-t pt-3">
+                  Criado em {note.createdAt.toLocaleDateString('pt-BR')} às {note.createdAt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                  {note.updatedAt.getTime() !== note.createdAt.getTime() && (
+                    <span> • Atualizado em {note.updatedAt.toLocaleDateString('pt-BR')} às {note.updatedAt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+                  )}
+                </div>
+              </div>
+            ))}
+            </div>
+          )}
+        </div>
+
+        {/* Modal de Formulário */}
+        {showForm && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
+              <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-lg font-bold">
+                    {editingNote ? 'Editar Anotação' : 'Nova Anotação'}
+                  </h3>
+                  <button
+                    onClick={handleCancel}
+                    className="p-2 text-white/80 hover:text-white rounded-lg transition-colors"
+                  >
+                    <X className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              
+              <div className="grid grid-cols-1 lg:grid-cols-2">
+                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Título *</label>
+                    <input
+                      type="text"
+                      value={formData.title}
+                      onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
+                      className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      placeholder="Digite o título da anotação"
+                      required
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Conteúdo *</label>
+                    <textarea
+                      value={formData.content}
+                      onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
+                      className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 h-32 resize-none"
+                      placeholder="Descreva o problema ou melhoria..."
+                      required
+                    />
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
+                      <select
+                        value={formData.type}
+                        onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as Note['type'] }))}
+                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      >
+                        <option value="general">Geral</option>
+                        <option value="problem">Problema</option>
+                        <option value="improvement">Melhoria</option>
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Prioridade</label>
+                      <select
+                        value={formData.priority}
+                        onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as Note['priority'] }))}
+                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      >
+                        <option value="low">Baixa</option>
+                        <option value="medium">Média</option>
+                        <option value="high">Alta</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {isAdmin ? (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <select
+                          value={formData.status}
+                          onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Note['status'] }))}
+                          className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        >
+                          <option value="open">Aberto</option>
+                          <option value="in_progress">Em Andamento</option>
+                          <option value="resolved">Resolvido</option>
+                        </select>
+                      </div>
+                    ) : (
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+                        <input
+                          value="Aberto"
+                          readOnly
+                          className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 bg-gray-50 text-gray-600"
+                        />
+                      </div>
+                    )}
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Aba Relacionada</label>
+                      <select
+                        value={formData.relatedTab}
+                        onChange={(e) => setFormData(prev => ({ ...prev, relatedTab: e.target.value as Note['relatedTab'] }))}
+                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      >
+                        <option value="clothing">Cadastrar Peças</option>
+                        <option value="inventory">Gerenciar Estoque</option>
+                        <option value="sales">Registrar Vendas</option>
+                        <option value="history">Histórico</option>
+                        <option value="reports">Relatórios</option>
+                        <option value="investments">Investimentos</option>
+                        <option value="cashflow">Fluxo de Caixa</option>
+                        <option value="notes">Anotações</option>
+                        <option value="account">Conta</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div className="flex justify-end gap-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={handleCancel}
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                    >
+                      Cancelar
+                    </button>
+                    <button
+                      type="submit"
+                      className="flex items-center px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-colors shadow"
+                    >
+                      <Save className="h-4 w-4 mr-2" />
+                      {editingNote ? 'Atualizar' : 'Salvar'}
+                    </button>
+                  </div>
+                </form>
+
+                {/* Preview */}
+                <div className="hidden lg:block bg-gray-50 border-l p-6">
+                  <div className="text-sm text-gray-500 mb-3">Pré-visualização</div>
+                  <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getTypeColor(formData.type)}`}>
+                        {getTypeIcon(formData.type)}
+                        {formData.type === 'problem' ? 'Problema' : formData.type === 'improvement' ? 'Melhoria' : 'Geral'}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(formData.priority)}`}>
+                        {formData.priority === 'high' ? 'Alta' : formData.priority === 'medium' ? 'Média' : 'Baixa'}
+                      </span>
+                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(formData.status)}`}>
+                        {formData.status === 'open' ? 'Aberto' : formData.status === 'in_progress' ? 'Em Andamento' : 'Resolvido'}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{formData.title || 'Título da anotação'}</h3>
+                    <p className="text-gray-700 whitespace-pre-wrap min-h-[4rem]">
+                      {formData.content || 'Conteúdo da anotação...'}
+                    </p>
+                    <div className="mt-2 text-xs text-gray-500">
+                      Aba relacionada: <span className="font-medium">{formData.relatedTab}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        {/* Alerta para Visualizador */}
+        <ViewerAlert
+          isVisible={showViewerAlert}
+          onClose={() => setShowViewerAlert(false)}
+          action={viewerAlertAction}
+        />
+      </div>
+    </div>
+  );
+}
