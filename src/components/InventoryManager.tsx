@@ -232,10 +232,10 @@ export default function InventoryManager() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3 rounded-xl mr-4">
@@ -256,7 +256,7 @@ export default function InventoryManager() {
         </div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
           <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 rounded-xl shadow-lg text-white">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
@@ -323,7 +323,7 @@ export default function InventoryManager() {
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center mb-6">
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-lg mr-3">
               <Filter className="h-5 w-5 text-white" />
@@ -407,7 +407,7 @@ export default function InventoryManager() {
 
         {/* Lista de Itens */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
-          <div className="px-6 py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
+          <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="bg-gradient-to-r from-gray-500 to-gray-600 p-2 rounded-lg mr-3">
@@ -430,7 +430,7 @@ export default function InventoryManager() {
         )}
 
           {filteredItems.length === 0 ? (
-            <div className="p-12 text-center">
+          <div className="p-8 sm:p-12 text-center">
               <div className="bg-gradient-to-r from-gray-100 to-gray-200 rounded-full p-6 w-24 h-24 mx-auto mb-4 flex items-center justify-center">
                 <Package className="h-12 w-12 text-gray-400" />
               </div>
@@ -449,25 +449,25 @@ export default function InventoryManager() {
             </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200">
+            <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Peça
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Categoria
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Disponíveis / Vendidas
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Preço
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Status
                   </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                     Ações
                   </th>
                 </tr>
@@ -475,24 +475,24 @@ export default function InventoryManager() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredItems.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div>
-                        <div className="text-sm font-medium text-gray-900">{item.name}</div>
-                        <div className="text-sm text-gray-500">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap">
+                      <div className="min-w-0">
+                        <div className="text-sm font-medium text-gray-900 break-words">{item.name}</div>
+                        <div className="text-sm text-gray-500 break-all">
                           <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{item.code}</span>
                         </div>
-                        <div className="text-sm text-gray-500">
+                        <div className="text-sm text-gray-500 break-words">
                           {item.brand && `${item.brand} • `}
                           {item.supplier}
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap">
                       <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-primary-100 text-primary-800">
                         {item.category}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap text-sm text-gray-500">
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
                           <span className="text-xs text-green-600 font-medium">
@@ -532,10 +532,10 @@ export default function InventoryManager() {
                         </div>
                       </div>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium text-gray-900 break-words">
                       R$ {item.sellingPrice.toFixed(2)}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         item.status === 'available' 
                           ? 'bg-green-100 text-green-800'
@@ -544,8 +544,8 @@ export default function InventoryManager() {
                         {item.status === 'available' ? 'Disponível' : 'Vendido'}
                       </span>
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium">
+                      <div className="flex space-x-2 flex-wrap">
                         <button
                           onClick={() => handleViewItem(item)}
                           className="text-blue-600 hover:text-blue-900"
