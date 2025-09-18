@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Firebase - USEKAYLLA</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            background-color: #f8f9fa;
+        }
+        .success {
+            border-left-color: #28a745;
+            background-color: #d4edda;
+        }
+        .warning {
+            border-left-color: #ffc107;
+            background-color: #fff3cd;
+        }
+        .error {
+            border-left-color: #dc3545;
+            background-color: #f8d7da;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .test-result {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            background-color: #f8f9fa;
+            border: 1px solid #dee2e6;
+        }
+        .log {
+            background-color: #000;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Debug Firebase - USEKAYLLA</h1>
+        
+        <div class="step">
+            <h3>🔍 Diagnóstico do Problema</h3>
+            <p>Este script ajuda a diagnosticar problemas de conexão com o Firebase.</p>
+        </div>
+
+        <div class="step error">
+            <h3>❌ Erro Atual</h3>
+            <p><strong>Problema:</strong> "Erro ao criar usuário no Firebase. Tente novamente."</p>
+            <p><strong>Possíveis causas:</strong></p>
+            <ul>
+                <li>Problema de conexão com o Firebase</li>
+                <li>Regras de segurança do Firestore</li>
+                <li>Configuração incorreta do Firebase</li>
+                <li>Usuário já existe no Firebase</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>🧪 Testes de Diagnóstico</h3>
+            <button onclick="testFirebaseConnection()">Testar Conexão Firebase</button>
+            <button onclick="testCreateUser()">Testar Criação de Usuário</button>
+            <button onclick="testGetUser()">Testar Busca de Usuário</button>
+            <button onclick="clearLogs()">Limpar Logs</button>
+        </div>
+
+        <div class="step">
+            <h3>📊 Resultados dos Testes</h3>
+            <div id="testResults" class="test-result">Clique nos botões acima para executar os testes...</div>
+        </div>
+
+        <div class="step">
+            <h3>📝 Logs de Debug</h3>
+            <div id="debugLogs" class="log">Aguardando logs...</div>
+        </div>
+
+        <div class="step warning">
+            <h3>⚠️ Instruções</h3>
+            <p>1. Abra o console do navegador (F12)</p>
+            <p>2. Execute os testes acima</p>
+            <p>3. Verifique os logs para identificar o problema</p>
+            <p>4. Se necessário, verifique as regras do Firestore no Firebase Console</p>
+        </div>
+
+        <div class="step success">
+            <h3>✅ Soluções Possíveis</h3>
+            <ul>
+                <li><strong>Regras do Firestore:</strong> Verifique se as regras permitem criação de usuários</li>
+                <li><strong>Conexão:</strong> Verifique se a conexão com o Firebase está funcionando</li>
+                <li><strong>Configuração:</strong> Verifique se as credenciais do Firebase estão corretas</li>
+                <li><strong>Usuário existente:</strong> O usuário pode já existir no Firebase</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Configuração do Firebase (mesma do projeto)
+        const firebaseConfig = {
+            apiKey: "AIzaSyDkY4FPYiUhpgGYkcYzJJ1uUyQv0yEe9Vo",
+            authDomain: "usekaylla.firebaseapp.com",
+            projectId: "usekaylla",
+            storageBucket: "usekaylla.firebasestorage.app",
+            messagingSenderId: "948098617374",
+            appId: "1:948098617374:web:261afe17a0f19cc660de0f"
+        };
+
+        // Inicializar Firebase
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, getDocs, query, where } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        let logs = [];
+
+        function addLog(message) {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push(`[${timestamp}] ${message}`);
+            updateLogDisplay();
+            console.log(message);
+        }
+
+        function updateLogDisplay() {
+            document.getElementById('debugLogs').textContent = logs.join('\n');
+        }
+
+        function updateResults(message, isError = false) {
+            const resultsDiv = document.getElementById('testResults');
+            const className = isError ? 'error' : 'success';
+            resultsDiv.innerHTML = `<div class="${className}">${message}</div>`;
+        }
+
+        function clearLogs() {
+            logs = [];
+            updateLogDisplay();
+            updateResults('Logs limpos');
+        }
+
+        async function testFirebaseConnection() {
+            addLog('🔍 Testando conexão com Firebase...');
+            try {
+                const testCollection = collection(db, 'test');
+                addLog('✅ Conexão com Firebase estabelecida');
+                updateResults('✅ Conexão com Firebase funcionando!');
+            } catch (error) {
+                addLog('❌ Erro na conexão com Firebase: ' + error.message);
+                updateResults('❌ Erro na conexão com Firebase: ' + error.message, true);
+            }
+        }
+
+        async function testCreateUser() {
+            addLog('🆕 Testando criação de usuário...');
+            try {
+                const userData = {
+                    name: 'Teste Debug',
+                    email: 'teste@debug.com',
+                    role: 'user',
+                    password: 'teste123'
+                };
+                
+                addLog('📝 Dados do usuário: ' + JSON.stringify(userData));
+                
+                const docRef = await addDoc(collection(db, 'users'), {
+                    ...userData,
+                    createdAt: new Date(),
+                    updatedAt: new Date()
+                });
+                
+                addLog('✅ Usuário criado com sucesso! ID: ' + docRef.id);
+                updateResults('✅ Usuário criado com sucesso! ID: ' + docRef.id);
+            } catch (error) {
+                addLog('❌ Erro ao criar usuário: ' + error.message);
+                addLog('❌ Detalhes do erro: ' + JSON.stringify(error));
+                updateResults('❌ Erro ao criar usuário: ' + error.message, true);
+            }
+        }
+
+        async function testGetUser() {
+            addLog('🔍 Testando busca de usuário...');
+            try {
+                const q = query(collection(db, 'users'), where('email', '==', 'admin@usekaylla.com'));
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    const doc = querySnapshot.docs[0];
+                    const userData = doc.data();
+                    addLog('✅ Usuário encontrado: ' + JSON.stringify(userData));
+                    updateResults('✅ Usuário encontrado: ' + userData.name);
+                } else {
+                    addLog('⚠️ Nenhum usuário encontrado');
+                    updateResults('⚠️ Nenhum usuário encontrado');
+                }
+            } catch (error) {
+                addLog('❌ Erro ao buscar usuário: ' + error.message);
+                updateResults('❌ Erro ao buscar usuário: ' + error.message, true);
+            }
+        }
+
+        // Inicializar
+        addLog('🚀 Script de debug inicializado');
+        addLog('📋 Configuração do Firebase carregada');
+    </script>
+</body>
+</html>

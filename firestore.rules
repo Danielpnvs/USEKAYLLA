@@ -25,6 +25,24 @@ service cloud.firestore {
       allow read, write: if true;
     }
     
+    // Regras para usuários
+    match /users/{document} {
+      // Permitir leitura e escrita para desenvolvimento
+      allow read, write: if true;
+    }
+    
+    // Regras para investimentos
+    match /investments/{document} {
+      // Permitir leitura e escrita para desenvolvimento
+      allow read, write: if true;
+    }
+    
+    // Regras para anotações
+    match /notes/{document} {
+      // Permitir leitura e escrita para desenvolvimento
+      allow read, write: if true;
+    }
+    
     // Bloquear acesso a outras coleções não autorizadas
     match /{document=**} {
       allow read, write: if false;

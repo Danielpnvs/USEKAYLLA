@@ -35,9 +35,9 @@ const USERS: UserCredentials[] = [
     role: 'user'
   },
   {
-    email: 'visualizador@usekaylla.com',
-    password: 'view123',
-    name: 'Visualizador',
+    email: 'test@usekaylla.com',
+    password: 'test123',
+    name: 'Teste',
     role: 'viewer'
   }
 ];
@@ -90,6 +90,21 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
 
   // Hook para gerenciar usuários no Firebase
   const { updateUser, createUser, getUserByEmail } = useUsers();
+  
+  // Função para testar conexão com Firebase
+  const testFirebaseConnection = async () => {
+    try {
+      console.log('🧪 Testando conexão com Firebase...');
+      const testUser = await getUserByEmail('admin@usekaylla.com');
+      console.log('✅ Conexão com Firebase OK:', testUser);
+      alert(`Firebase OK! Usuário encontrado: ${testUser ? testUser.name : 'Nenhum'}`);
+      return true;
+    } catch (error) {
+      console.error('❌ Erro na conexão com Firebase:', error);
+      alert(`Erro no Firebase: ${error}`);
+      return false;
+    }
+  };
 
   // Utilidades de credenciais persistidas (por email)
   const readCredentials = (): Record<string, string> => {
@@ -115,16 +130,20 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
       const rawLogin = (loginForm.email || '').trim().toLowerCase();
       const loginEmail = rawLogin.includes('@') ? rawLogin : `${rawLogin}@usekaylla.com`;
       
+      console.log('🔍 Tentando login:', { rawLogin, loginEmail, password: loginForm.password });
+      
       // Primeiro, tentar buscar no Firebase
       let firebaseUser = await getUserByEmail(loginEmail);
+      console.log('🔥 Firebase user encontrado:', firebaseUser);
       
       // Se não encontrar no Firebase, buscar no array USERS local
       let baseUser = USERS.find(u => 
         u.email.toLowerCase() === loginEmail || 
         (u.role === 'user' && u.name.toLowerCase().replace(/\s+/g, '') === rawLogin)
       );
+      console.log('📋 Array local user encontrado:', baseUser);
       
-      // Se encontrou no Firebase, usar dados do Firebase
+      // Se encontrou no Firebase, usar dados do Firebase (prioridade máxima)
       if (firebaseUser) {
         baseUser = {
           email: firebaseUser.email,
@@ -132,11 +151,56 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
           role: firebaseUser.role,
           password: firebaseUser.password
         };
+        console.log('✅ Usando dados do Firebase:', baseUser);
       }
       
-      const creds = readCredentials();
-      const effectivePassword = creds[loginEmail] ?? baseUser?.password;
+      // Se não encontrou no Firebase nem no array local, tentar com email completo
+      if (!baseUser && !rawLogin.includes('@')) {
+        const fullEmail = `${rawLogin}@usekaylla.com`;
+        firebaseUser = await getUserByEmail(fullEmail);
+        console.log('🔄 Tentando com email completo:', fullEmail, firebaseUser);
+        if (firebaseUser) {
+          baseUser = {
+            email: firebaseUser.email,
+            name: firebaseUser.name,
+            role: firebaseUser.role,
+            password: firebaseUser.password
+          };
+          console.log('✅ Usando dados do Firebase (email completo):', baseUser);
+        }
+      }
+      
+      // Suporte para login antigo "visualizador" (compatibilidade)
+      if (!baseUser && rawLogin === 'visualizador') {
+        const oldViewerUser = USERS.find(u => u.role === 'viewer');
+        if (oldViewerUser) {
+          baseUser = oldViewerUser;
+          console.log('🔄 Usando login antigo "visualizador" para compatibilidade');
+        }
+      }
+      
+      // CORREÇÃO: Sempre priorizar senha do Firebase se o usuário existir no Firebase
+      // Isso garante que mudanças de senha sejam respeitadas em todos os navegadores
+      let effectivePassword = '';
+      if (firebaseUser) {
+        // Se existe no Firebase, usar SEMPRE a senha do Firebase
+        effectivePassword = firebaseUser.password;
+        console.log('🔐 Usando senha do Firebase (prioridade máxima):', effectivePassword);
+      } else if (baseUser) {
+        // Se não existe no Firebase, usar senha do array local
+        effectivePassword = baseUser.password;
+        console.log('🔐 Usando senha do array local:', effectivePassword);
+      }
+      
       const isValid = !!baseUser && effectivePassword === loginForm.password;
+      
+      console.log('🔐 Verificação de senha:', {
+        effectivePassword,
+        inputPassword: loginForm.password,
+        isValid,
+        firebasePassword: firebaseUser?.password,
+        localPassword: baseUser?.password
+      });
       
       if (isValid && baseUser) {
         const userProfile: UserProfile = {
@@ -285,7 +349,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
 
   // Funções para Admin editar usuário
   const handleEditUser = () => {
-    // Buscar dados atualizados do usuário
+    // Buscar dados atualizados do usuário (user ou viewer)
     const userData = localStorage.getItem('usekaylla_user_data');
     if (userData) {
       const parsed = JSON.parse(userData);
@@ -295,7 +359,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         password: parsed.password
       });
     } else {
-      // Fallback para dados originais
+      // Fallback para dados originais - buscar user primeiro
       const userUser = USERS.find(u => u.role === 'user');
       if (userUser) {
         setUserEditForm({
@@ -308,30 +372,73 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
     setShowEditUser(true);
   };
 
-  const handleSaveUserEdit = () => {
+  // Função para editar usuário test/viewer
+  const handleEditTest = () => {
+    const testUser = USERS.find(u => u.role === 'viewer');
+    if (testUser) {
+      setUserEditForm({
+        name: testUser.name,
+        email: testUser.email,
+        password: testUser.password
+      });
+      setShowEditUser(true);
+    }
+  };
+
+  const handleSaveUserEdit = async () => {
     if (userEditForm.name && userEditForm.email && userEditForm.password) {
-      // Atualizar usuário no array USERS (simulação)
-      const userIndex = USERS.findIndex(u => u.role === 'user');
-      if (userIndex !== -1) {
-        USERS[userIndex] = {
-          ...USERS[userIndex],
+      try {
+        // Buscar usuário no Firebase
+        const firebaseUser = await getUserByEmail(userEditForm.email);
+        
+        if (firebaseUser) {
+          // Atualizar no Firebase
+          await updateUser(firebaseUser.id, {
+            name: userEditForm.name,
+            email: userEditForm.email,
+            password: userEditForm.password
+          });
+        } else {
+          // Criar usuário no Firebase se não existir
+          await createUser({
+            name: userEditForm.name,
+            email: userEditForm.email,
+            password: userEditForm.password,
+            role: 'user'
+          });
+        }
+        
+        // Atualizar usuário no array USERS (para compatibilidade)
+        const userIndex = USERS.findIndex(u => u.role === 'user');
+        if (userIndex !== -1) {
+          USERS[userIndex] = {
+            ...USERS[userIndex],
+            name: userEditForm.name,
+            email: userEditForm.email,
+            password: userEditForm.password
+          };
+        }
+        
+        // Atualizar dados no localStorage para sincronização
+        localStorage.setItem('usekaylla_user_data', JSON.stringify({
           name: userEditForm.name,
           email: userEditForm.email,
-          password: userEditForm.password
-        };
+          password: userEditForm.password,
+          role: 'user'
+        }));
+        
+        // Limpar credenciais do localStorage para forçar uso do Firebase
+        const creds = readCredentials();
+        delete creds[userEditForm.email];
+        writeCredentials(creds);
+        
+        alert('Usuário atualizado com sucesso!');
+        setShowEditUser(false);
+        setUserEditForm({ name: '', email: '', password: '' });
+      } catch (error) {
+        console.error('Erro ao salvar usuário:', error);
+        alert('Erro ao salvar usuário. Tente novamente.');
       }
-      
-      // Atualizar dados no localStorage para sincronização
-      localStorage.setItem('usekaylla_user_data', JSON.stringify({
-        name: userEditForm.name,
-        email: userEditForm.email,
-        password: userEditForm.password,
-        role: 'user'
-      }));
-      
-      alert('Usuário atualizado com sucesso!');
-      setShowEditUser(false);
-      setUserEditForm({ name: '', email: '', password: '' });
     } else {
       alert('Preencha todos os campos!');
     }
@@ -356,36 +463,83 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
     }
 
     try {
-      const baseUser = USERS.find(u => u.email === currentUser.email);
-      const creds = readCredentials();
-      const effectivePassword = creds[currentUser.email] ?? baseUser?.password ?? '';
-      if (currentPassword !== effectivePassword) {
+      // Buscar usuário no Firebase primeiro
+      const firebaseUser = await getUserByEmail(currentUser.email);
+      
+      // Verificar senha atual - usar a MESMA lógica do login
+      let currentPasswordValid = false;
+      let effectivePassword = '';
+      
+      if (firebaseUser) {
+        // Se existe no Firebase, usar SEMPRE a senha do Firebase (prioridade máxima)
+        effectivePassword = firebaseUser.password;
+        console.log('🔐 Verificação: Usando senha do Firebase:', effectivePassword);
+      } else {
+        // Se não existe no Firebase, usar senha do array local
+        const baseUser = USERS.find(u => u.email === currentUser.email);
+        effectivePassword = baseUser?.password ?? '';
+        console.log('🔐 Verificação: Usando senha do array local:', effectivePassword);
+      }
+      
+      currentPasswordValid = currentPassword === effectivePassword;
+      
+      console.log('🔐 Verificação de senha atual:', {
+        currentPassword,
+        effectivePassword,
+        currentPasswordValid,
+        firebaseUser: !!firebaseUser,
+        firebasePassword: firebaseUser?.password
+      });
+      
+      if (!currentPasswordValid) {
         setErrorType('password_incorrect');
         setShowError(true);
         return;
       }
 
-      // Buscar usuário no Firebase
-      const firebaseUser = await getUserByEmail(currentUser.email);
-      
+      // Atualizar ou criar usuário no Firebase
       if (firebaseUser) {
         // Atualizar senha no Firebase
-        await updateUser(firebaseUser.id, {
+        console.log('🔄 Atualizando senha no Firebase para:', currentUser.email);
+        const updateSuccess = await updateUser(firebaseUser.id, {
           password: newPassword
         });
+        if (updateSuccess) {
+          console.log('✅ Senha atualizada no Firebase com sucesso');
+        } else {
+          console.error('❌ Falha ao atualizar senha no Firebase');
+          alert('Erro ao atualizar senha no Firebase. Tente novamente.');
+          return;
+        }
       } else {
         // Criar usuário no Firebase se não existir
-        await createUser({
-          name: currentUser.name,
-          email: currentUser.email,
-          role: currentUser.role,
-          password: newPassword
-        });
+        console.log('🆕 Criando usuário no Firebase:', currentUser.email);
+        try {
+          const userId = await createUser({
+            name: currentUser.name,
+            email: currentUser.email,
+            role: currentUser.role,
+            password: newPassword
+          });
+          if (userId) {
+            console.log('✅ Usuário criado/encontrado no Firebase com ID:', userId);
+          } else {
+            console.error('❌ Falha ao criar/encontrar usuário no Firebase');
+            alert('Erro ao criar usuário no Firebase. Tente novamente.');
+            return;
+          }
+        } catch (error) {
+          console.error('❌ Erro ao criar usuário:', error);
+          alert('Erro ao criar usuário no Firebase. Tente novamente.');
+          return;
+        }
       }
 
-      // Persistir nova senha para este email
-      const updated = { ...creds, [currentUser.email]: newPassword };
-      writeCredentials(updated);
+      // Limpar credenciais do localStorage para forçar uso do Firebase
+      const creds = readCredentials();
+      delete creds[currentUser.email];
+      writeCredentials(creds);
+      console.log('🧹 Credenciais do localStorage limpas');
 
       // Se for o usuário padrão do sistema, manter sincronizado para o admin visualizar
       if (currentUser.role === 'user') {
@@ -873,7 +1027,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                     <Edit3 className="h-4 w-4 mr-2 text-gray-500" />
                     Editar Nome de Usuário
                   </button>
-                ) : (
+                ) : currentUser?.role === 'admin' ? (
                   <button 
                     onClick={handleEditSelf}
                     className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
@@ -881,22 +1035,33 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                     <Edit3 className="h-4 w-4 mr-2 text-gray-500" />
                     Editar Minhas Informações
                   </button>
+                ) : null}
+                {currentUser?.role !== 'viewer' && (
+                  <button 
+                    onClick={() => setShowChangePassword(true)}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
+                  >
+                    <KeyRound className="h-4 w-4 mr-2 text-gray-500" />
+                    Alterar Senha
+                  </button>
                 )}
-                <button 
-                  onClick={() => setShowChangePassword(true)}
-                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
-                >
-                  <KeyRound className="h-4 w-4 mr-2 text-gray-500" />
-                  Alterar Senha
-                </button>
                 {currentUser?.role === 'admin' && (
+                <>
                 <button 
                     onClick={handleEditUser}
                     className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
                 >
                     <Edit3 className="h-4 w-4 mr-2 text-gray-500" />
-                    Editar Usuário do Sistema
+                    Editar Usuário
                 </button>
+                <button 
+                    onClick={handleEditTest}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
+                >
+                    <Edit3 className="h-4 w-4 mr-2 text-gray-500" />
+                    Editar Test
+                </button>
+                </>
                 )}
                 <button 
                   onClick={() => setShowPrivacy(true)}
@@ -904,6 +1069,13 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                 >
                   <Shield className="h-4 w-4 mr-2 text-gray-500" />
                   Privacidade e Segurança
+                </button>
+                <button 
+                  onClick={testFirebaseConnection}
+                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
+                >
+                  <Settings className="h-4 w-4 mr-2 text-gray-500" />
+                  Testar Conexão Firebase
                 </button>
                 <button 
                   onClick={handleExportData}

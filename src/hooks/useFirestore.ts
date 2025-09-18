@@ -1586,15 +1586,32 @@ export const useUsers = () => {
   // Criar usuário no Firebase
   const createUser = async (userData: any) => {
     try {
+      console.log('🆕 createUser: Iniciando criação de usuário no Firebase');
+      console.log('🆕 createUser: Dados do usuário:', userData);
       setError(null);
+      
+      // Verificar se o usuário já existe antes de criar
+      const existingUser = await getUserByEmail(userData.email);
+      if (existingUser) {
+        console.log('⚠️ createUser: Usuário já existe, retornando ID existente:', existingUser.id);
+        return existingUser.id;
+      }
+      
       const docRef = await addDoc(collection(db, 'users'), {
         ...userData,
         createdAt: new Date(),
         updatedAt: new Date()
       });
+      
+      console.log('✅ createUser: Usuário criado com sucesso, ID:', docRef.id);
       return docRef.id;
     } catch (err) {
-      console.error('Erro ao criar usuário:', err);
+      console.error('❌ createUser: Erro ao criar usuário:', err);
+      console.error('❌ createUser: Detalhes do erro:', {
+        message: err instanceof Error ? err.message : 'Erro desconhecido',
+        stack: err instanceof Error ? err.stack : 'N/A',
+        userData: userData
+      });
       setError(err instanceof Error ? err.message : 'Erro ao criar usuário');
       return null;
     }

@@ -30,24 +30,29 @@ export const initializeUsers = async () => {
     
     // Verificar se já existem usuários
     const usersSnapshot = await getDocs(collection(db, 'users'));
+    const existingUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    if (usersSnapshot.empty) {
-      console.log('Nenhum usuário encontrado. Criando usuários padrão...');
+    console.log('Usuários existentes no Firebase:', existingUsers);
+    
+    // Sempre garantir que os usuários padrão existam (criar ou atualizar)
+    for (const user of DEFAULT_USERS) {
+      const existingUser = existingUsers.find(u => u.email === user.email);
       
-      // Criar usuários padrão
-      for (const user of DEFAULT_USERS) {
+      if (existingUser) {
+        console.log(`Usuário já existe: ${user.name} (${user.email})`);
+        // Opcional: atualizar senha se necessário
+        // await updateDoc(doc(db, 'users', existingUser.id), { password: user.password });
+      } else {
+        console.log(`Criando usuário: ${user.name} (${user.email})`);
         await addDoc(collection(db, 'users'), {
           ...user,
           createdAt: new Date(),
           updatedAt: new Date()
         });
-        console.log(`Usuário criado: ${user.name} (${user.email})`);
       }
-      
-      console.log('Usuários padrão criados com sucesso!');
-    } else {
-      console.log('Usuários já existem no Firebase.');
     }
+    
+    console.log('Usuários inicializados com sucesso!');
   } catch (error) {
     console.error('Erro ao inicializar usuários:', error);
   }

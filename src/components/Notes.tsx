@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { FileText, Plus, Edit, Trash2, Save, X, Lightbulb, Bug, Search, Filter, ArrowUpDown, Sparkles } from 'lucide-react';
 import ViewerAlert from './ViewerAlert';
+import { useFirestore } from '../hooks/useFirestore';
 
 interface Note {
   id: string;
@@ -15,7 +16,6 @@ interface Note {
 }
 
 export default function Notes() {
-  const [notes, setNotes] = useState<Note[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [editingNote, setEditingNote] = useState<Note | null>(null);
   const [search, setSearch] = useState('');
@@ -35,6 +35,9 @@ export default function Notes() {
   // Estados para alerta do visualizador
   const [showViewerAlert, setShowViewerAlert] = useState(false);
   const [viewerAlertAction, setViewerAlertAction] = useState('');
+
+  // Hook do Firebase para anotações
+  const { data: notes, loading, add, update, remove } = useFirestore<Note>('notes');
 
   // Função para detectar se é visualizador
   const isViewer = () => {
@@ -72,9 +75,8 @@ export default function Notes() {
     setShowViewerAlert(true);
   };
 
-  // Carregar anotações do localStorage
+  // Detectar role atual
   useEffect(() => {
-    // Detectar role atual
     try {
       const rawUser = localStorage.getItem('usekaylla_user');
       if (rawUser) {
@@ -82,26 +84,43 @@ export default function Notes() {
         setIsAdmin(user?.role === 'admin');
       }
     } catch {}
-
-    const savedNotes = localStorage.getItem('usekaylla_notes');
-    if (savedNotes) {
-      try {
-        const parsedNotes = JSON.parse(savedNotes).map((note: any) => ({
-          ...note,
-          createdAt: new Date(note.createdAt),
-          updatedAt: new Date(note.updatedAt)
-        }));
-        setNotes(parsedNotes);
-      } catch (error) {
-        console.error('Erro ao carregar anotações:', error);
-      }
-    }
   }, []);
 
-  // Salvar anotações no localStorage
-  const saveNotes = (newNotes: Note[]) => {
-    setNotes(newNotes);
-    localStorage.setItem('usekaylla_notes', JSON.stringify(newNotes));
+  // Função para adicionar anotação
+  const handleAddNote = async () => {
+    if (isViewer()) {
+      showViewerAlertForAction('criar anotação');
+      return;
+    }
+
+    if (!formData.title.trim() || !formData.content.trim()) {
+      alert('Preencha todos os campos!');
+      return;
+    }
+
+    try {
+      await add({
+        title: formData.title.trim(),
+        content: formData.content.trim(),
+        type: formData.type,
+        priority: formData.priority,
+        status: formData.status,
+        relatedTab: formData.relatedTab
+      });
+      
+      setFormData({
+        title: '',
+        content: '',
+        type: 'general',
+        priority: 'medium',
+        status: 'open',
+        relatedTab: 'sales'
+      });
+      setShowForm(false);
+    } catch (error) {
+      console.error('Erro ao adicionar anotação:', error);
+      alert('Erro ao adicionar anotação. Tente novamente.');
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -121,29 +140,79 @@ export default function Notes() {
       return;
     }
 
-    const now = new Date();
-    
     if (editingNote) {
-      // Editar anotação existente
-      const updatedNotes = notes.map(note => {
-        if (note.id !== editingNote.id) return note;
-        const nextStatus = isAdmin ? formData.status : note.status;
-        return { ...note, ...formData, status: nextStatus, updatedAt: now };
-      });
-      saveNotes(updatedNotes);
+      handleUpdateNote();
     } else {
-      // Criar nova anotação
-      const newNote: Note = {
-        id: Date.now().toString(),
+      handleAddNote();
+    }
+  };
+
+  // Função para atualizar anotação
+  const handleUpdateNote = async () => {
+    if (!editingNote) return;
+
+    try {
+      const nextStatus = isAdmin ? formData.status : editingNote.status;
+      await update(editingNote.id, {
         ...formData,
+        status: nextStatus
+      });
+      
+      setEditingNote(null);
+      setFormData({
+        title: '',
+        content: '',
+        type: 'general',
+        priority: 'medium',
         status: 'open',
-        createdAt: now,
-        updatedAt: now
-      };
-      saveNotes([...notes, newNote]);
+        relatedTab: 'sales'
+      });
+      setShowForm(false);
+    } catch (error) {
+      console.error('Erro ao atualizar anotação:', error);
+      alert('Erro ao atualizar anotação. Tente novamente.');
+    }
+  };
+
+  // Função para deletar anotação
+  const handleDeleteNote = async (id: string) => {
+    if (isViewer()) {
+      showViewerAlertForAction('deletar anotação');
+      return;
     }
 
-    // Limpar formulário
+    if (window.confirm('Tem certeza que deseja deletar esta anotação?')) {
+      try {
+        await remove(id);
+      } catch (error) {
+        console.error('Erro ao deletar anotação:', error);
+        alert('Erro ao deletar anotação. Tente novamente.');
+      }
+    }
+  };
+
+  // Função para editar anotação
+  const handleEditNote = (note: Note) => {
+    if (isViewer()) {
+      showViewerAlertForAction('editar anotação');
+      return;
+    }
+
+    setEditingNote(note);
+    setFormData({
+      title: note.title,
+      content: note.content,
+      type: note.type,
+      priority: note.priority,
+      status: note.status,
+      relatedTab: note.relatedTab
+    });
+    setShowForm(true);
+  };
+
+  // Função para cancelar edição
+  const handleCancelEdit = () => {
+    setEditingNote(null);
     setFormData({
       title: '',
       content: '',
@@ -153,48 +222,44 @@ export default function Notes() {
       relatedTab: 'sales'
     });
     setShowForm(false);
+  };
+
+  // Função para criar nova anotação
+  const handleCreateNote = () => {
+    if (isViewer()) {
+      showViewerAlertForAction('criar anotação');
+      return;
+    }
+
     setEditingNote(null);
-  };
-
-  const handleEdit = (note: Note) => {
-    if (isViewer()) {
-      showViewerAlertForAction('editar anotações');
-      return;
-    }
-    setFormData({
-      title: note.title,
-      content: note.content,
-      type: note.type,
-      priority: note.priority,
-      status: note.status,
-      relatedTab: note.relatedTab
-    });
-    setEditingNote(note);
-    setShowForm(true);
-  };
-
-  const handleDelete = (noteId: string) => {
-    if (isViewer()) {
-      showViewerAlertForAction('excluir anotações');
-      return;
-    }
-    if (confirm('Tem certeza que deseja excluir esta anotação?')) {
-      const updatedNotes = notes.filter(note => note.id !== noteId);
-      saveNotes(updatedNotes);
-    }
-  };
-
-  const handleCancel = () => {
     setFormData({
       title: '',
       content: '',
       type: 'general',
       priority: 'medium',
       status: 'open',
-      relatedTab: 'sales' as Note['relatedTab']
+      relatedTab: 'sales'
+    });
+    setShowForm(true);
+  };
+
+  // Função para fechar formulário
+  const handleCloseForm = () => {
+    setEditingNote(null);
+    setFormData({
+      title: '',
+      content: '',
+      type: 'general',
+      priority: 'medium',
+      status: 'open',
+      relatedTab: 'sales'
     });
     setShowForm(false);
-    setEditingNote(null);
+  };
+
+  // Função para salvar anotações (removida - agora usa Firebase)
+  const saveNotes = (newNotes: Note[]) => {
+    // Função removida - agora usa Firebase
   };
 
   const getTypeIcon = (type: Note['type']) => {
