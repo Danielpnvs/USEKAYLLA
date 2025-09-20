@@ -682,7 +682,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         const existing = localStorage.getItem('usekaylla_user_data');
         let payload: any = existing ? (() => { try { return JSON.parse(existing); } catch { return {}; } })() : {};
         payload = {
-          name: payload.name ?? baseUser?.name ?? currentUser.name,
+          name: payload.name ?? currentUser.name,
           email: payload.email ?? currentUser.email,
           password: newPassword,
           role: 'user'
