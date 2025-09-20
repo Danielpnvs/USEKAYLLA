@@ -84,15 +84,14 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
   
   // Estados para feedback de sucesso
   const [showSuccess, setShowSuccess] = useState(false);
-  const [successType, setSuccessType] = useState<'name' | 'password'>('name');
+  const [successType, setSuccessType] = useState<'name' | 'password' | 'user_updated'>('name');
   
   // Estados para feedback de erro
   const [showError, setShowError] = useState(false);
-  const [errorType, setErrorType] = useState<'password_incorrect' | 'passwords_dont_match'>('password_incorrect');
+  const [errorType, setErrorType] = useState<'password_incorrect' | 'passwords_dont_match' | 'password_mismatch' | 'user_save_error' | 'user_fields_required'>('password_incorrect');
 
   // Hook para gerenciar usuários no Firebase
   const { updateUser, createUser, getUserByEmail } = useUsers();
-  
 
   // Utilidades de credenciais persistidas (por email)
   const readCredentials = (): Record<string, string> => {
