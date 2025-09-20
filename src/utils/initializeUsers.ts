@@ -36,7 +36,7 @@ export const initializeUsers = async () => {
     
     // Sempre garantir que os usuários padrão existam (criar ou atualizar)
     for (const user of DEFAULT_USERS) {
-      const existingUser = existingUsers.find(u => u.email === user.email);
+      const existingUser = existingUsers.find((u: any) => u.email === user.email);
       
       if (existingUser) {
         console.log(`Usuário já existe: ${user.name}`);

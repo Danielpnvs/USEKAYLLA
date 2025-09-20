@@ -93,20 +93,6 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
   // Hook para gerenciar usuários no Firebase
   const { updateUser, createUser, getUserByEmail } = useUsers();
   
-  // Função para testar conexão com Firebase
-  const testFirebaseConnection = async () => {
-    try {
-      console.log('🧪 Testando conexão com Firebase...');
-      const testUser = await getUserByEmail('admin@usekaylla.com');
-      console.log('✅ Conexão com Firebase OK:', testUser);
-      alert(`Firebase OK! Usuário encontrado: ${testUser ? testUser.name : 'Nenhum'}`);
-      return true;
-    } catch (error) {
-      console.error('❌ Erro na conexão com Firebase:', error);
-      alert(`Erro no Firebase: ${error}`);
-      return false;
-    }
-  };
 
   // Utilidades de credenciais persistidas (por email)
   const readCredentials = (): Record<string, string> => {
@@ -148,16 +134,16 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
       let mappedEmail = null;
       
       // Mapear nomes conhecidos para roles
-      const knownNames = {
+      const knownNames: Record<string, { role: string; email: string }> = {
         'admin': { role: 'admin', email: 'admin@usekaylla.com' },
         'kayla': { role: 'user', email: 'user@usekaylla.com' },
         'test': { role: 'viewer', email: 'test@usekaylla.com' }
       };
       
-      if (knownNames[rawLogin]) {
+      if (knownNames[rawLogin as keyof typeof knownNames]) {
         // Nome conhecido - usar mapeamento direto
-        userRole = knownNames[rawLogin].role;
-        mappedEmail = knownNames[rawLogin].email;
+        userRole = knownNames[rawLogin as keyof typeof knownNames].role;
+        mappedEmail = knownNames[rawLogin as keyof typeof knownNames].email;
         console.log('🔍 Nome conhecido:', rawLogin, '→', userRole);
       } else {
         // Nome desconhecido - buscar por role no Firebase

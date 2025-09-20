@@ -37,7 +37,7 @@ export default function Notes() {
   const [viewerAlertAction, setViewerAlertAction] = useState('');
 
   // Hook do Firebase para anotações
-  const { data: notes, loading, add, update, remove } = useFirestore<Note>('notes');
+  const { data: notes, add, update, remove } = useFirestore<Note>('notes');
 
   // Função para detectar se é visualizador
   const isViewer = () => {
@@ -108,7 +108,9 @@ export default function Notes() {
         type: formData.type,
         priority: formData.priority,
         status: formData.status,
-        relatedTab: formData.relatedTab
+        relatedTab: formData.relatedTab,
+        createdAt: new Date(),
+        updatedAt: new Date()
       });
       
       console.log('Anotação adicionada com sucesso!');
@@ -216,19 +218,6 @@ export default function Notes() {
     setShowForm(true);
   };
 
-  // Função para cancelar edição
-  const handleCancelEdit = () => {
-    setEditingNote(null);
-    setFormData({
-      title: '',
-      content: '',
-      type: 'general',
-      priority: 'medium',
-      status: 'open',
-      relatedTab: 'sales'
-    });
-    setShowForm(false);
-  };
 
   // Função para criar nova anotação
   const handleCreateNote = () => {
@@ -263,10 +252,6 @@ export default function Notes() {
     setShowForm(false);
   };
 
-  // Função para salvar anotações (removida - agora usa Firebase)
-  const saveNotes = (newNotes: Note[]) => {
-    // Função removida - agora usa Firebase
-  };
 
   const getTypeIcon = (type: Note['type']) => {
     switch (type) {
