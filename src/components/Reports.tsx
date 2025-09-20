@@ -197,7 +197,7 @@ export default function Reports() {
   // Mostrar loading se os dados ainda estão carregando
   if (salesLoading || clothingLoading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
         <div className="max-w-7xl mx-auto">
           <div className="flex flex-col items-center justify-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
@@ -211,18 +211,18 @@ export default function Reports() {
 
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
                 <BarChart3 className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Relatórios</h2>
-                <p className="text-sm text-gray-600">Análise completa de vendas e estoque</p>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Relatórios</h2>
+                <p className="text-xs sm:text-sm text-gray-600">Análise completa de vendas e estoque</p>
               </div>
             </div>
             {/* Filtro de data removido - relatórios mostram todos os dados */}
@@ -230,61 +230,61 @@ export default function Reports() {
         </div>
 
         {/* Estatísticas Principais */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <DollarSign className="h-5 w-5 text-blue-600" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Faturamento</p>
-                <p className="text-lg font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Faturamento</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
                 <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Lucro Real</p>
-                <p className={`text-lg font-bold ${realProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Lucro Real</p>
+                <p className={`text-base sm:text-lg font-bold ${realProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                   {formatCurrency(realProfit)}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <Activity className="h-5 w-5 text-purple-600" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Total de Vendas</p>
-                <p className="text-lg font-bold text-gray-900">{totalSales}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Total de Vendas</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">{totalSales}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4">
             <div className="flex items-center">
               <div className="p-2 bg-orange-100 rounded-lg">
                 <BarChart3 className="h-5 w-5 text-orange-600" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Ticket Médio</p>
-                <p className="text-lg font-bold text-gray-900">{formatCurrency(averageTicket)}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Ticket Médio</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(averageTicket)}</p>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
           {/* Vendas por Status */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
             <div className="flex items-center mb-4">
               <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
                 <PieChart className="h-5 w-5 text-white" />
@@ -297,20 +297,20 @@ export default function Reports() {
                   <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
                   <span className="font-medium text-gray-900">Pago</span>
                 </div>
-                <span className="text-lg font-bold text-green-600">{salesByStatus.pago}</span>
+                <span className="text-base sm:text-lg font-bold text-green-600">{salesByStatus.pago}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-yellow-50 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-yellow-500 rounded-full mr-3"></div>
                   <span className="font-medium text-gray-900">Pendente</span>
                 </div>
-                <span className="text-lg font-bold text-yellow-600">{salesByStatus.pendente}</span>
+                <span className="text-base sm:text-lg font-bold text-yellow-600">{salesByStatus.pendente}</span>
               </div>
             </div>
           </div>
 
           {/* Vendas por Forma de Pagamento */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
             <div className="flex items-center mb-4">
               <div className="bg-gradient-to-r from-blue-500 to-indigo-600 p-2 rounded-lg mr-3">
                 <DollarSign className="h-5 w-5 text-white" />
@@ -323,28 +323,28 @@ export default function Reports() {
                   <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
                   <span className="font-medium text-gray-900">Dinheiro/PIX</span>
                 </div>
-                <span className="text-lg font-bold text-green-600">{salesByPayment.dinheiro}</span>
+                <span className="text-base sm:text-lg font-bold text-green-600">{salesByPayment.dinheiro}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
                   <span className="font-medium text-gray-900">Débito</span>
                 </div>
-                <span className="text-lg font-bold text-purple-600">{salesByPayment.cartao_debito}</span>
+                <span className="text-base sm:text-lg font-bold text-purple-600">{salesByPayment.cartao_debito}</span>
               </div>
               <div className="flex items-center justify-between p-3 bg-orange-50 rounded-lg">
                 <div className="flex items-center">
                   <div className="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
                   <span className="font-medium text-gray-900">Crédito</span>
                 </div>
-                <span className="text-lg font-bold text-orange-600">{salesByPayment.cartao_credito}</span>
+                <span className="text-base sm:text-lg font-bold text-orange-600">{salesByPayment.cartao_credito}</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Produtos Mais Vendidos */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center mb-4">
             <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-lg mr-3">
               <Package className="h-5 w-5 text-white" />
@@ -354,20 +354,20 @@ export default function Reports() {
           <div className="space-y-3">
             {topProducts.length > 0 ? (
               topProducts.map((product, index) => (
-                <div key={index} className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                <div key={index} className="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
                         <span className="text-sm font-bold text-blue-600">#{index + 1}</span>
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900">{product.name}</h4>
-                        <p className="text-sm text-gray-600">{product.quantity} unidades vendidas</p>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base">{product.name}</h4>
+                        <p className="text-xs sm:text-sm text-gray-600">{product.quantity} unidades vendidas</p>
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-green-600">{formatCurrency(product.revenue)}</p>
-                      <p className="text-sm text-gray-600">Faturamento</p>
+                      <p className="text-base sm:text-lg font-bold text-green-600">{formatCurrency(product.revenue)}</p>
+                      <p className="text-xs sm:text-sm text-gray-600">Faturamento</p>
                     </div>
                   </div>
                 </div>
@@ -382,37 +382,37 @@ export default function Reports() {
         </div>
 
         {/* Estatísticas de Estoque (contagem de variações) */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center mb-4">
             <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-lg mr-3">
               <Package className="h-5 w-5 text-white" />
             </div>
             <h3 className="text-base font-semibold text-gray-900">Estatísticas de Estoque</h3>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 bg-blue-50 rounded-xl border border-blue-200">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+            <div className="p-3 sm:p-4 bg-blue-50 rounded-xl border border-blue-200">
               <div className="text-center">
-                <div className="text-2xl font-bold text-blue-600">{stockStats.totalVariations}</div>
-                <div className="text-sm text-gray-600">Total de Variações</div>
+                <div className="text-xl sm:text-2xl font-bold text-blue-600">{stockStats.totalVariations}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Total de Variações</div>
               </div>
             </div>
-            <div className="p-4 bg-green-50 rounded-xl border border-green-200">
+            <div className="p-3 sm:p-4 bg-green-50 rounded-xl border border-green-200">
               <div className="text-center">
-                <div className="text-2xl font-bold text-green-600">{stockStats.availableVariations}</div>
-                <div className="text-sm text-gray-600">Variações Disponíveis</div>
+                <div className="text-xl sm:text-2xl font-bold text-green-600">{stockStats.availableVariations}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Variações Disponíveis</div>
               </div>
             </div>
-            <div className="p-4 bg-orange-50 rounded-xl border border-orange-200">
+            <div className="p-3 sm:p-4 bg-orange-50 rounded-xl border border-orange-200">
               <div className="text-center">
-                <div className="text-2xl font-bold text-orange-600">{stockStats.soldVariations}</div>
-                <div className="text-sm text-gray-600">Variações Vendidas</div>
+                <div className="text-xl sm:text-2xl font-bold text-orange-600">{stockStats.soldVariations}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Variações Vendidas</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Estatísticas por Categoria */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center mb-4">
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-lg mr-3">
               <BarChart3 className="h-5 w-5 text-white" />
@@ -422,25 +422,25 @@ export default function Reports() {
           <div className="space-y-3">
             {categoryStats.length > 0 ? (
               categoryStats.map((category, index) => (
-                <div key={index} className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
+                <div key={index} className="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200">
                   <div className="flex justify-between items-center">
                     <div className="flex items-center">
                       <div className="w-8 h-8 bg-indigo-100 rounded-full flex items-center justify-center mr-3">
                         <span className="text-sm font-bold text-indigo-600">#{index + 1}</span>
                       </div>
                       <div>
-                        <h4 className="font-medium text-gray-900">{category.name}</h4>
-                        <p className="text-sm text-gray-600">Categoria de produtos</p>
+                        <h4 className="font-medium text-gray-900 text-sm sm:text-base">{category.name}</h4>
+                        <p className="text-xs sm:text-sm text-gray-600">Categoria de produtos</p>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-6">
+                    <div className="flex items-center space-x-4 sm:space-x-6">
                       <div className="text-center">
-                        <p className="text-lg font-bold text-green-600">{category.available}</p>
-                        <p className="text-sm text-gray-600">Disponíveis</p>
+                        <p className="text-base sm:text-lg font-bold text-green-600">{category.available}</p>
+                        <p className="text-xs sm:text-sm text-gray-600">Disponíveis</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-lg font-bold text-orange-600">{category.sold}</p>
-                        <p className="text-sm text-gray-600">Vendidos</p>
+                        <p className="text-base sm:text-lg font-bold text-orange-600">{category.sold}</p>
+                        <p className="text-xs sm:text-sm text-gray-600">Vendidos</p>
                       </div>
                     </div>
                   </div>

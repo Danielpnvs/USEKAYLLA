@@ -88,6 +88,8 @@ export default function Notes() {
 
   // Função para adicionar anotação
   const handleAddNote = async () => {
+    console.log('handleAddNote chamada');
+    
     if (isViewer()) {
       showViewerAlertForAction('criar anotação');
       return;
@@ -99,6 +101,7 @@ export default function Notes() {
     }
 
     try {
+      console.log('Tentando adicionar anotação no Firebase...');
       await add({
         title: formData.title.trim(),
         content: formData.content.trim(),
@@ -108,6 +111,7 @@ export default function Notes() {
         relatedTab: formData.relatedTab
       });
       
+      console.log('Anotação adicionada com sucesso!');
       setFormData({
         title: '',
         content: '',
@@ -125,6 +129,7 @@ export default function Notes() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Formulário submetido:', formData);
     
     if (isViewer()) {
       showViewerAlertForAction('criar ou editar anotações');
@@ -140,6 +145,7 @@ export default function Notes() {
       return;
     }
 
+    console.log('Chamando função de adicionar/atualizar...');
     if (editingNote) {
       handleUpdateNote();
     } else {
@@ -317,10 +323,10 @@ export default function Notes() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -328,15 +334,15 @@ export default function Notes() {
                   <FileText className="h-5 w-5 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
+                  <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 tracking-tight flex items-center gap-2">
                     Anotações <Sparkles className="h-5 w-5 text-purple-500" />
                   </h2>
                   <p className="text-sm text-gray-600">Registre problemas, ideias e decisões por aba</p>
                 </div>
               </div>
               <button
-                onClick={() => setShowForm(true)}
-                className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg"
+                onClick={handleCreateNote}
+                className="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Anotação
@@ -373,26 +379,26 @@ export default function Notes() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               <div className="p-3 rounded-xl border bg-gradient-to-br from-purple-50 to-white">
                 <div className="text-xs text-gray-600">Total</div>
-                <div className="text-xl font-bold text-gray-900">{notes.length}</div>
+                <div className="text-lg sm:text-xl font-bold text-gray-900">{notes.length}</div>
               </div>
               <div className="p-3 rounded-xl border bg-gradient-to-br from-yellow-50 to-white">
                 <div className="text-xs text-gray-600">Abertas</div>
-                <div className="text-xl font-bold text-yellow-700">{notes.filter(n => n.status === 'open').length}</div>
+                <div className="text-lg sm:text-xl font-bold text-yellow-700">{notes.filter(n => n.status === 'open').length}</div>
               </div>
               <div className="p-3 rounded-xl border bg-gradient-to-br from-blue-50 to-white">
                 <div className="text-xs text-gray-600">Em Andamento</div>
-                <div className="text-xl font-bold text-blue-700">{notes.filter(n => n.status === 'in_progress').length}</div>
+                <div className="text-lg sm:text-xl font-bold text-blue-700">{notes.filter(n => n.status === 'in_progress').length}</div>
               </div>
               <div className="p-3 rounded-xl border bg-gradient-to-br from-green-50 to-white">
                 <div className="text-xs text-gray-600">Resolvidas</div>
-                <div className="text-xl font-bold text-green-700">{notes.filter(n => n.status === 'resolved').length}</div>
+                <div className="text-lg sm:text-xl font-bold text-green-700">{notes.filter(n => n.status === 'resolved').length}</div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex flex-wrap gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
@@ -426,15 +432,15 @@ export default function Notes() {
         {/* Lista de Anotações */}
         <div className="space-y-4">
           {sortedNotes.length === 0 ? (
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-12 text-center">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8 sm:p-12 text-center">
               <FileText className="h-12 w-12 mx-auto mb-4 text-gray-300" />
               <h3 className="text-lg font-medium text-gray-900 mb-2">Nenhuma anotação encontrada</h3>
               <p className="text-gray-600">Crie sua primeira anotação para começar!</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {sortedNotes.map(note => (
-              <div key={note.id} className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 hover:shadow-2xl transition-all group">
+              <div key={note.id} className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 hover:shadow-2xl transition-all group">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
@@ -449,22 +455,22 @@ export default function Notes() {
                         {note.status === 'open' ? 'Aberto' : note.status === 'in_progress' ? 'Em Andamento' : 'Resolvido'}
                       </span>
                     </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-700">{note.title}</h3>
-                    <p className="text-gray-700 whitespace-pre-wrap">{note.content}</p>
+                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-700 break-words">{note.title}</h3>
+                    <p className="text-sm sm:text-base text-gray-700 whitespace-pre-wrap break-words">{note.content}</p>
                     <div className="mt-2 text-xs text-gray-500">
                       Aba relacionada: <span className="font-medium text-red-600 underline">{getTabName(note.relatedTab)}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 ml-4">
                     <button
-                      onClick={() => handleEdit(note)}
+                      onClick={() => handleEditNote(note)}
                       className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
                       title="Editar"
                     >
                       <Edit className="h-4 w-4" />
                     </button>
                     <button
-                      onClick={() => handleDelete(note.id)}
+                      onClick={() => handleDeleteNote(note.id)}
                       className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
                       title="Excluir"
                     >
@@ -486,15 +492,15 @@ export default function Notes() {
 
         {/* Modal de Formulário */}
         {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[90vh] overflow-hidden">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50" style={{ zIndex: 9999 }}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative">
               <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold">
                     {editingNote ? 'Editar Anotação' : 'Nova Anotação'}
                   </h3>
                   <button
-                    onClick={handleCancel}
+                    onClick={handleCloseForm}
                     className="p-2 text-white/80 hover:text-white rounded-lg transition-colors"
                   >
                     <X className="h-5 w-5" />
@@ -502,15 +508,15 @@ export default function Notes() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2">
-                <form onSubmit={handleSubmit} className="p-6 space-y-4">
+              <div className="grid grid-cols-1 lg:grid-cols-2 min-h-0">
+                <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 flex flex-col">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Título *</label>
                     <input
                       type="text"
                       value={formData.title}
                       onChange={(e) => setFormData(prev => ({ ...prev, title: e.target.value }))}
-                      className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       placeholder="Digite o título da anotação"
                       required
                     />
@@ -521,19 +527,19 @@ export default function Notes() {
                     <textarea
                       value={formData.content}
                       onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                      className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 h-32 resize-none"
+                      className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 h-32 resize-none"
                       placeholder="Descreva o problema ou melhoria..."
                       required
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
                       <select
                         value={formData.type}
                         onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as Note['type'] }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       >
                         <option value="general">Geral</option>
                         <option value="problem">Problema</option>
@@ -546,7 +552,7 @@ export default function Notes() {
                       <select
                         value={formData.priority}
                         onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as Note['priority'] }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       >
                         <option value="low">Baixa</option>
                         <option value="medium">Média</option>
@@ -555,14 +561,14 @@ export default function Notes() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                     {isAdmin ? (
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
                         <select
                           value={formData.status}
                           onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Note['status'] }))}
-                          className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                         >
                           <option value="open">Aberto</option>
                           <option value="in_progress">Em Andamento</option>
@@ -575,7 +581,7 @@ export default function Notes() {
                         <input
                           value="Aberto"
                           readOnly
-                          className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 bg-gray-50 text-gray-600"
+                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 bg-gray-50 text-gray-600"
                         />
                       </div>
                     )}
@@ -585,7 +591,7 @@ export default function Notes() {
                       <select
                         value={formData.relatedTab}
                         onChange={(e) => setFormData(prev => ({ ...prev, relatedTab: e.target.value as Note['relatedTab'] }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
                       >
                         <option value="clothing">Cadastrar Peças</option>
                         <option value="inventory">Gerenciar Estoque</option>
@@ -600,17 +606,18 @@ export default function Notes() {
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-3 pt-2">
+                  <div className="flex justify-end gap-3 pt-4 mt-auto">
                     <button
                       type="button"
-                      onClick={handleCancel}
-                      className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+                      onClick={handleCloseForm}
+                      className="px-3 py-2 sm:px-4 text-gray-600 hover:text-gray-800 transition-colors touch-manipulation"
                     >
                       Cancelar
                     </button>
                     <button
                       type="submit"
-                      className="flex items-center px-6 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-colors shadow"
+                      className="flex items-center px-4 py-2 sm:px-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-colors shadow touch-manipulation min-h-[44px] min-w-[100px]"
+                      style={{ WebkitTapHighlightColor: 'transparent' }}
                     >
                       <Save className="h-4 w-4 mr-2" />
                       {editingNote ? 'Atualizar' : 'Salvar'}

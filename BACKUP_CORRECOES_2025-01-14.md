@@ -36,6 +36,25 @@
 - **Resultado**: Anotações iguais para usuário e admin em qualquer navegador
 - **Arquivo**: `src/components/Notes.tsx`
 
+### 7. **Ajustes Responsivos (Mobile) - Parte 1**
+- **InventoryManager**: paddings menores em mobile, grids com `gap` otimizado, quebras de texto para evitar overflow.
+- **Arquivo**: `src/components/InventoryManager.tsx`
+
+### 8. **Ajustes Responsivos (Mobile) - Parte 2**
+- **SalesRegister**:
+  - Inputs/labels com `text-sm` em mobile; `truncate/break-all` em títulos/códigos
+  - Carrinho com `flex-wrap` e tipografia compacta; subtotal com `text-base` em mobile
+  - Resumo com `max-w-full` em mobile; botões com paddings reduzidos
+- **Arquivo**: `src/components/SalesRegister.tsx`
+
+### 9. **Ajustes Responsivos (Mobile) - Parte 3**
+- **Reports**: paddings menores (`p-4 sm:p-6`), cards com tipografia compacta, grids com `gap` reduzido e textos `text-xs` em mobile
+- **Arquivo**: `src/components/Reports.tsx`
+
+### 10. **Ajustes Responsivos (Mobile) - Parte 4**
+- **Investments**: paddings menores, tipografia compacta, grids responsivos nas estatísticas e no modal, truncamento/`break-all` para nomes/códigos
+- **Arquivo**: `src/components/Investments.tsx`
+
 ## 📋 **CREDENCIAIS ATUAIS**
 
 | **Perfil** | **Login** | **Senha** | **Email** |

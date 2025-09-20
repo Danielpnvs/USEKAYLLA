@@ -321,18 +321,18 @@ export default function SalesHistory() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
                 <ShoppingCart className="h-5 w-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Histórico de Vendas</h2>
-                <p className="text-sm text-gray-600">Visualize e gerencie todas as vendas</p>
+                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Histórico de Vendas</h2>
+                <p className="text-xs sm:text-sm text-gray-600">Visualize e gerencie todas as vendas</p>
               </div>
             </div>
             <div className="text-right">
@@ -343,58 +343,108 @@ export default function SalesHistory() {
         </div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+        <div className="block sm:hidden relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-blue-100 rounded-lg">
                 <DollarSign className="h-5 w-5 text-blue-600" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Total em Vendas</p>
-                <p className="text-lg font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Total em Vendas</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-yellow-100 rounded-lg">
                 <Clock className="h-5 w-5 text-yellow-600" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Vendas Pendentes</p>
-                <p className="text-lg font-bold text-gray-900">{formatCurrency(pendingRevenue)}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Vendas Pendentes</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(pendingRevenue)}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-green-100 rounded-lg">
                 <TrendingUp className="h-5 w-5 text-green-600" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Lucro Total</p>
-                <p className="text-lg font-bold text-gray-900">{formatCurrency(totalProfit)}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Lucro Total</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(totalProfit)}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-4">
+          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-purple-100 rounded-lg">
                 <ShoppingCart className="h-5 w-5 text-purple-600" />
               </div>
               <div className="ml-3">
-                <p className="text-sm font-medium text-gray-600">Total de Vendas</p>
-                <p className="text-lg font-bold text-gray-900">{totalSales}</p>
+                <p className="text-xs sm:text-sm font-medium text-gray-600">Total de Vendas</p>
+                <p className="text-base sm:text-lg font-bold text-gray-900">{totalSales}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
+        <div className="hidden sm:block">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
+              <div className="flex items-center">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <DollarSign className="h-5 w-5 text-blue-600" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total em Vendas</p>
+                  <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
+              <div className="flex items-center">
+                <div className="p-2 bg-yellow-100 rounded-lg">
+                  <Clock className="h-5 w-5 text-yellow-600" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Vendas Pendentes</p>
+                  <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(pendingRevenue)}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
+              <div className="flex items-center">
+                <div className="p-2 bg-green-100 rounded-lg">
+                  <TrendingUp className="h-5 w-5 text-green-600" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Lucro Total</p>
+                  <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(totalProfit)}</p>
+                </div>
+              </div>
+            </div>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
+              <div className="flex items-center">
+                <div className="p-2 bg-purple-100 rounded-lg">
+                  <ShoppingCart className="h-5 w-5 text-purple-600" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs sm:text-sm font-medium text-gray-600">Total de Vendas</p>
+                  <p className="text-base sm:text-lg font-bold text-gray-900">{totalSales}</p>
+                </div>
               </div>
             </div>
           </div>
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center mb-4">
             <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
               <Filter className="h-5 w-5 text-white" />
@@ -402,7 +452,7 @@ export default function SalesHistory() {
             <h3 className="text-base font-semibold text-gray-900">Filtros</h3>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
             {/* Busca */}
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -411,7 +461,7 @@ export default function SalesHistory() {
                 placeholder="Buscar por cliente ou ID..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                className="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
               />
             </div>
 
@@ -419,7 +469,7 @@ export default function SalesHistory() {
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              className="border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             >
               <option value="all">Todos os Status</option>
               <option value="pago">Pago</option>
@@ -430,7 +480,7 @@ export default function SalesHistory() {
             <select
               value={dateFilter}
               onChange={(e) => setDateFilter(e.target.value as any)}
-              className="border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              className="border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             >
               <option value="all">Todas as Datas</option>
               <option value="today">Hoje</option>
@@ -441,7 +491,7 @@ export default function SalesHistory() {
         </div>
 
         {/* Lista de Vendas */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center mb-4">
             <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-lg mr-3">
               <Calendar className="h-5 w-5 text-white" />
@@ -458,18 +508,18 @@ export default function SalesHistory() {
           ) : (
             <div className="space-y-3">
               {filteredSales.map(sale => (
-                <div key={sale.id} className="p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200">
-                  <div className="flex justify-between items-start">
-                    <div className="flex-1">
+                <div key={sale.id} className="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200">
+                  <div className="flex justify-between items-start gap-3">
+                    <div className="flex-1 min-w-0">
                       <div className="flex items-center mb-2">
-                        <h4 className="font-bold text-gray-900 text-base">
+                        <h4 className="font-bold text-gray-900 text-sm sm:text-base truncate">
                           {sale.customerName || 'Cliente não informado'}
                         </h4>
                         <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(sale.status)}`}>
                           {sale.status.toUpperCase()}
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm text-gray-600">
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
                           {formatDate(sale.createdAt)}
@@ -484,7 +534,7 @@ export default function SalesHistory() {
                         </div>
                       </div>
                     </div>
-                    <div className="flex items-center space-x-2 ml-4">
+                    <div className="flex items-center space-x-2 ml-1 sm:ml-4">
                       {getStatusIcon(sale.status)}
                       <button
                         onClick={() => handleViewSale(sale)}

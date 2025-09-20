@@ -347,10 +347,9 @@ export default function SalesRegister() {
         }
       } else {
         // Criar nova venda
-        const sale: Omit<Sale, 'id'> = {
-          customerName: formData.customerName || undefined,
-          customerPhone: formData.customerPhone || undefined,
-          // email removido
+        // Criar objeto de venda removendo campos undefined
+        const saleData: any = {
+          customerName: formData.customerName,
           items: cart,
           subtotal,
           discount: discountValue,
@@ -358,11 +357,20 @@ export default function SalesRegister() {
           total,
           paymentMethod: formData.paymentMethod,
           status: 'pago', // Todas as vendas são consideradas pagas
-          notes: formData.notes || undefined,
           createdAt: new Date(),
           updatedAt: new Date(),
           sellerName: 'Vendedor' // TODO: Implementar autenticação
         };
+
+        // Adicionar campos opcionais apenas se tiverem valor
+        if (formData.customerPhone && formData.customerPhone.trim()) {
+          saleData.customerPhone = formData.customerPhone;
+        }
+        if (formData.notes && formData.notes.trim()) {
+          saleData.notes = formData.notes;
+        }
+
+        const sale: Omit<Sale, 'id'> = saleData;
 
         console.log('Criando nova venda:', sale);
         console.log('Estrutura da venda:', JSON.stringify(sale, null, 2));
@@ -491,7 +499,7 @@ export default function SalesRegister() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4">
@@ -532,9 +540,9 @@ export default function SalesRegister() {
         )}
 
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Seleção de Produtos */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 lg:col-span-2">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 lg:col-span-2">
             <div className="flex items-center mb-6">
               <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
                 <Search className="h-5 w-5 text-white" />
@@ -543,14 +551,14 @@ export default function SalesRegister() {
             </div>
             
             {/* Busca */}
-            <div className="relative mb-6 max-w-xl">
+            <div className="relative mb-6 max-w-full sm:max-w-xl">
               <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
               <input
                 type="text"
                 placeholder="🔍 Buscar por nome ou código..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base"
+                className="w-full pl-12 pr-4 py-3 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
               />
             </div>
 
@@ -568,20 +576,20 @@ export default function SalesRegister() {
                      }
                    }, 0);
                  return (
-                     <div key={item.id} className={`p-4 border-2 rounded-xl transition-all duration-200 hover:shadow-lg break-words ${selectedItem?.id === item.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}>
+                  <div key={item.id} className={`p-3 sm:p-4 border-2 rounded-xl transition-all duration-200 hover:shadow-lg break-words ${selectedItem?.id === item.id ? 'border-blue-500 bg-blue-50' : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'}`}>
                        <button
                          type="button"
-                         className="w-full text-left"
+                        className="w-full text-left"
                        onClick={() => {
                          setSelectedItem(item);
                            setSelectedVariation(null);
                        }}
                      >
-                       <div className="flex justify-between items-start">
-                           <div className="flex-1 pr-3">
-                             <h4 className="font-bold text-gray-900 text-base mb-1">{item.name}</h4>
-                             <p className="text-xs text-gray-500 mb-1">Código: {item.code}</p>
-                             <div className="text-sm text-gray-600">
+                      <div className="flex justify-between items-start">
+                          <div className="flex-1 pr-3 min-w-0">
+                            <h4 className="font-bold text-gray-900 text-sm sm:text-base mb-1 truncate">{item.name}</h4>
+                            <p className="text-xs text-gray-500 mb-1 break-all">Código: {item.code}</p>
+                            <div className="text-xs sm:text-sm text-gray-600">
                                <span className="inline-flex items-center px-2 py-0.5 bg-green-100 text-green-800 rounded-full">
                                  <span className="w-1.5 h-1.5 bg-green-500 rounded-full mr-1.5"></span>
                                  {totalAvailable} disponíveis
@@ -589,7 +597,7 @@ export default function SalesRegister() {
                            </div>
                              </div>
                            <div className="text-right">
-                             <div className="text-lg font-bold text-green-600">R$ {item.sellingPrice.toFixed(2)}</div>
+                            <div className="text-base sm:text-lg font-bold text-green-600">R$ {item.sellingPrice.toFixed(2)}</div>
                            </div>
                          </div>
                        </button>
@@ -602,7 +610,7 @@ export default function SalesRegister() {
                      </div>
 
           {/* Painel de Variações (lateral) */}
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 flex flex-col space-y-4">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 flex flex-col space-y-4">
             <div className="flex items-center mb-6">
               <div className="bg-gradient-to-r from-indigo-500 to-blue-600 p-2 rounded-lg mr-3">
                 <Search className="h-5 w-5 text-white" />
@@ -679,7 +687,7 @@ export default function SalesRegister() {
 
         {/* Formulário de Finalização */}
         {cart.length > 0 && (
-          <div id="sales-cart" className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 mt-6">
+          <div id="sales-cart" className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 mt-6">
             <div className="flex items-center mb-6">
               <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-lg mr-3">
                 <ShoppingCart className="h-5 w-5 text-white" />
@@ -688,13 +696,13 @@ export default function SalesRegister() {
             </div>
             <div className="space-y-3 max-h-64 overflow-y-auto">
               {cart.map(item => (
-                <div key={item.id} className="flex items-center justify-between p-3 border-b border-gray-100 last:border-b-0">
-                  <div className="flex-1 pr-4">
-                    <p className="font-medium text-gray-900">{item.clothingItemName}</p>
-                    <p className="text-xs text-gray-600">{item.size} - {item.color}</p>
+                <div key={item.id} className="flex items-center justify-between p-3 border-b border-gray-100 last:border-b-0 flex-wrap gap-2">
+                  <div className="flex-1 pr-4 min-w-0">
+                    <p className="font-medium text-gray-900 text-sm sm:text-base truncate">{item.clothingItemName}</p>
+                    <p className="text-xs text-gray-600 break-words">{item.size} - {item.color}</p>
                 </div>
                   <div className="flex items-center space-x-2">
-                    <span className="font-medium text-gray-900">R$ {(item.unitPrice * item.quantity).toFixed(2)}</span>
+                    <span className="font-medium text-gray-900 text-sm sm:text-base">R$ {(item.unitPrice * item.quantity).toFixed(2)}</span>
                     <button type="button" onClick={() => handleRemoveFromCart(item.id)} className="p-1.5 rounded-full bg-red-100 hover:bg-red-200 text-red-600 transition-colors">
                       <Trash2 className="h-4 w-4" />
                         </button>
@@ -702,7 +710,7 @@ export default function SalesRegister() {
                     </div>
               ))}
                   </div>
-            <div className="mt-4 text-right text-lg font-bold text-green-600">
+            <div className="mt-4 text-right text-base sm:text-lg font-bold text-green-600">
               Subtotal: R$ {subtotal.toFixed(2)}
                  </div>
                </div>
@@ -710,23 +718,23 @@ export default function SalesRegister() {
 
         {/* Formulário de Finalização */}
         {cart.length > 0 && (
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-8">
-            <div className="flex items-center mb-8">
-              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-3 rounded-xl mr-4">
-                <Save className="h-6 w-6 text-white" />
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-8">
+            <div className="flex items-center mb-6 sm:mb-8">
+              <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 sm:p-3 rounded-xl mr-3 sm:mr-4">
+                <Save className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
               </div>
               <div>
-                 <h3 className="text-lg font-bold text-gray-900">Finalizar Venda</h3>
-                 <p className="text-sm text-gray-600">Complete os dados para processar a venda</p>
+                <h3 className="text-base sm:text-lg font-bold text-gray-900">Finalizar Venda</h3>
+                <p className="text-xs sm:text-sm text-gray-600">Complete os dados para processar a venda</p>
               </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="space-y-8" noValidate>
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8" noValidate>
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-8">
                 {/* Dados do Cliente */}
                 <div className="space-y-6">
-                  <h4 className="text-xl font-bold text-gray-900 flex items-center">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-3"></div>
+                  <h4 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mr-2 sm:mr-3"></div>
                     Dados do Cliente
                   </h4>
                   
@@ -738,7 +746,7 @@ export default function SalesRegister() {
                         placeholder="Nome do cliente *"
                         value={formData.customerName}
                         onChange={(e) => setFormData(prev => ({ ...prev, customerName: toTitleCase(e.target.value) }))}
-                        className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-lg"
+                        className="w-full pl-12 pr-4 py-3 sm:py-4 border-2 border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-base sm:text-lg"
                         required
                       />
                     </div>
@@ -747,12 +755,12 @@ export default function SalesRegister() {
 
                 {/* Forma de Pagamento */}
                 <div className="space-y-6">
-                  <h4 className="text-xl font-bold text-gray-900 flex items-center">
-                    <div className="w-2 h-2 bg-green-500 rounded-full mr-3"></div>
+                  <h4 className="text-lg sm:text-xl font-bold text-gray-900 flex items-center">
+                    <div className="w-2 h-2 bg-green-500 rounded-full mr-2 sm:mr-3"></div>
                     Forma de Pagamento
                   </h4>
                   
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                     {[
                       { value: 'dinheiro', label: 'Dinheiro/PIX', icon: DollarSign, color: 'from-green-500 to-emerald-600' },
                       { value: 'cartao_debito', label: 'Débito', icon: CreditCard, color: 'from-purple-500 to-indigo-600' },
@@ -764,16 +772,16 @@ export default function SalesRegister() {
                           key={payment.value}
                           type="button"
                           onClick={() => setFormData(prev => ({ ...prev, paymentMethod: payment.value as PaymentMethod }))}
-                          className={`p-4 border-2 rounded-xl flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-lg ${
+                          className={`p-3 sm:p-4 border-2 rounded-xl flex items-center justify-center space-x-3 transition-all duration-200 hover:shadow-lg ${
                             formData.paymentMethod === payment.value
                               ? 'border-blue-500 bg-blue-50 shadow-lg transform scale-105'
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
                           <div className={`p-2 rounded-lg bg-gradient-to-r ${payment.color}`}>
-                            <Icon className="h-5 w-5 text-white" />
+                            <Icon className="h-4 w-4 sm:h-5 sm:w-5 text-white" />
                           </div>
-                          <span className="font-medium">{payment.label}</span>
+                          <span className="font-medium text-sm sm:text-base">{payment.label}</span>
                         </button>
                       );
                     })}
@@ -784,7 +792,7 @@ export default function SalesRegister() {
 
               {/* Resumo da Venda (compacto, abaixo do carrinho, alinhado à direita) */}
               <div className="flex justify-end">
-                <div key={discountKey} className="mt-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-4 w-full max-w-sm">
+                <div key={discountKey} className="mt-2 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-200 p-4 w-full max-w-full sm:max-w-sm">
                   <h4 className="font-bold text-gray-900 mb-3 text-sm">Resumo da Venda</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
@@ -822,7 +830,7 @@ export default function SalesRegister() {
               </div>
 
               {/* Botões */}
-              <div className="flex justify-between items-center pt-8 border-t border-gray-200">
+              <div className="flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-3 pt-8 border-t border-gray-200">
                 <button
                   type="button"
                   onClick={() => {
@@ -836,7 +844,7 @@ export default function SalesRegister() {
                       notes: ''
                     });
                   }}
-                  className="px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 font-bold text-lg"
+                  className="px-4 py-3 sm:px-8 sm:py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:bg-gray-50 transition-all duration-200 font-bold text-base sm:text-lg"
                 >
                   Limpar Tudo
                 </button>
@@ -875,7 +883,7 @@ export default function SalesRegister() {
                       }
                     }}
                     disabled={isSubmitting}
-                    className="px-6 py-4 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-xl hover:from-yellow-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center font-bold text-lg shadow-xl transition-all duration-200"
+                    className="px-4 py-3 sm:px-6 sm:py-4 bg-gradient-to-r from-yellow-500 to-orange-600 text-white rounded-xl hover:from-yellow-600 hover:to-orange-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center font-bold text-base sm:text-lg shadow-xl transition-all duration-200"
                   >
                     {isSubmitting ? (
                       <>
@@ -893,7 +901,7 @@ export default function SalesRegister() {
                 <button
                   type="submit"
                   disabled={isSubmitting || salesLoading || (isViewer && isEditing)}
-                  className="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center font-bold text-lg shadow-xl transition-all duration-200"
+                  className="px-4 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl hover:from-green-600 hover:to-emerald-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center font-bold text-base sm:text-lg shadow-xl transition-all duration-200"
                 >
                   {isSubmitting || salesLoading ? (
                     <>

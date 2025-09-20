@@ -41,39 +41,517 @@ function getDemoData(collectionName: string): any[] {
 
   if (collectionName === 'clothing') {
     return [
+      // 1. Blusa Básica - 3 variações
       {
         id: 'demo-CL-1',
-        code: 'CAM-001',
-        name: 'Camiseta Básica',
-        description: 'Camiseta de algodão 100% com estampa personalizada',
-        category: 'Camisetas',
+        code: 'BLU-001',
+        name: 'Blusa Básica',
+        description: 'Blusa de algodão 100% com corte clássico',
+        category: 'Blusas',
         brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 25.00,
-        freightPerUnit: 2.50,
-        packagingCost: 1.00,
-        baseCost: 28.50,
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 28.00,
+        freightPerUnit: 2.80,
+        packagingCost: 1.20,
+        baseCost: 32.00,
         creditFeePercent: 3.5,
-        creditFeeAmount: 1.00,
-        salePrice: 49.90,
-        sellingPrice: 49.90,
-        profit: 20.40,
+        creditFeeAmount: 1.12,
+        salePrice: 59.90,
+        sellingPrice: 59.90,
+        profit: 26.78,
         status: 'available',
-        createdAt: new Date('2024-12-15'),
+        createdAt: new Date('2024-12-01'),
         updatedAt: new Date('2025-01-10'),
         variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 2, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Preto', quantity: 1, soldQuantity: 2 },
+          { id: 'v3', size: { label: 'P', value: 'P' }, color: 'Azul', quantity: 3, soldQuantity: 0 }
         ]
       },
+      // 2. Calça Jeans Skinny - 4 variações
       {
         id: 'demo-CL-2',
-        code: 'SAI-002',
+        code: 'CAL-002',
+        name: 'Calça Jeans Skinny',
+        description: 'Calça jeans skinny com elastano para conforto',
+        category: 'Calças',
+        brand: 'Kaylla Fashion',
+        supplier: 'Jeans Brasil Confecções',
+        costPrice: 45.00,
+        freightPerUnit: 4.50,
+        packagingCost: 2.00,
+        baseCost: 51.50,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.80,
+        salePrice: 89.90,
+        sellingPrice: 89.90,
+        profit: 36.60,
+        status: 'available',
+        createdAt: new Date('2024-12-02'),
+        updatedAt: new Date('2025-01-11'),
+        variations: [
+          { id: 'v1', size: { label: '38', value: '38' }, color: 'Azul', quantity: 1, soldQuantity: 1 },
+          { id: 'v2', size: { label: '40', value: '40' }, color: 'Azul', quantity: 0, soldQuantity: 2 },
+          { id: 'v3', size: { label: '42', value: '42' }, color: 'Preto', quantity: 2, soldQuantity: 0 },
+          { id: 'v4', size: { label: '38', value: '38' }, color: 'Branco', quantity: 1, soldQuantity: 1 }
+        ]
+      },
+      // 3. Vestido Elegante - 2 variações
+      {
+        id: 'demo-CL-3',
+        code: 'VES-003',
+        name: 'Vestido Elegante',
+        description: 'Vestido elegante para ocasiões especiais',
+        category: 'Vestidos',
+        brand: 'Kaylla Fashion',
+        supplier: 'Elegance Fashion Group',
+        costPrice: 65.00,
+        freightPerUnit: 6.50,
+        packagingCost: 3.00,
+        baseCost: 74.50,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 2.61,
+        salePrice: 129.90,
+        sellingPrice: 129.90,
+        profit: 52.79,
+        status: 'available',
+        createdAt: new Date('2024-12-03'),
+        updatedAt: new Date('2025-01-12'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 0, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Vermelho', quantity: 1, soldQuantity: 1 }
+        ]
+      },
+      // 4. Saia Midi Floral - 3 variações
+      {
+        id: 'demo-CL-4',
+        code: 'SAI-004',
         name: 'Saia Midi Floral',
         description: 'Saia midi com estampa floral delicada',
         category: 'Saias',
         brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 35.00,
+        freightPerUnit: 3.50,
+        packagingCost: 1.50,
+        baseCost: 40.00,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.40,
+        salePrice: 79.90,
+        sellingPrice: 79.90,
+        profit: 38.50,
+        status: 'available',
+        createdAt: new Date('2024-12-04'),
+        updatedAt: new Date('2025-01-13'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 2, soldQuantity: 0 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Rosa', quantity: 1, soldQuantity: 1 },
+          { id: 'v3', size: { label: 'P', value: 'P' }, color: 'Verde', quantity: 3, soldQuantity: 0 }
+        ]
+      },
+      // 5. Blazer Executivo - 2 variações
+      {
+        id: 'demo-CL-5',
+        code: 'BLA-005',
+        name: 'Blazer Executivo',
+        description: 'Blazer elegante para ocasiões profissionais',
+        category: 'Blazers',
+        brand: 'Kaylla Fashion',
+        supplier: 'Corporate Style Ltda',
+        costPrice: 85.00,
+        freightPerUnit: 8.50,
+        packagingCost: 4.00,
+        baseCost: 97.50,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 3.41,
+        salePrice: 159.90,
+        sellingPrice: 159.90,
+        profit: 59.00,
+        status: 'available',
+        createdAt: new Date('2024-12-05'),
+        updatedAt: new Date('2025-01-14'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 0, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Cinza', quantity: 1, soldQuantity: 0 }
+        ]
+      },
+      // 6. Shorts Jeans - 3 variações
+      {
+        id: 'demo-CL-6',
+        code: 'SHO-006',
+        name: 'Shorts Jeans',
+        description: 'Shorts jeans com corte moderno',
+        category: 'Shorts',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 32.00,
+        freightPerUnit: 3.20,
+        packagingCost: 1.30,
+        baseCost: 36.50,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.28,
+        salePrice: 69.90,
+        sellingPrice: 69.90,
+        profit: 32.12,
+        status: 'available',
+        createdAt: new Date('2024-12-06'),
+        updatedAt: new Date('2025-01-15'),
+        variations: [
+          { id: 'v1', size: { label: '38', value: '38' }, color: 'Azul', quantity: 2, soldQuantity: 1 },
+          { id: 'v2', size: { label: '40', value: '40' }, color: 'Preto', quantity: 1, soldQuantity: 0 },
+          { id: 'v3', size: { label: '42', value: '42' }, color: 'Azul', quantity: 3, soldQuantity: 0 }
+        ]
+      },
+      // 7. Camiseta Polo - 2 variações
+      {
+        id: 'demo-CL-7',
+        code: 'POL-007',
+        name: 'Camiseta Polo',
+        description: 'Camiseta polo com gola e botões',
+        category: 'Camisetas',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 38.00,
+        freightPerUnit: 3.80,
+        packagingCost: 1.60,
+        baseCost: 43.40,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.52,
+        salePrice: 79.90,
+        sellingPrice: 79.90,
+        profit: 34.98,
+        status: 'available',
+        createdAt: new Date('2024-12-07'),
+        updatedAt: new Date('2025-01-16'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 2 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Azul', quantity: 2, soldQuantity: 0 }
+        ]
+      },
+      // 8. Vestido de Festa - 2 variações
+      {
+        id: 'demo-CL-8',
+        code: 'VES-008',
+        name: 'Vestido de Festa',
+        description: 'Vestido elegante para festas e eventos',
+        category: 'Vestidos',
+        brand: 'Kaylla Fashion',
+        supplier: 'Party Wear Solutions',
+        costPrice: 75.00,
+        freightPerUnit: 7.50,
+        packagingCost: 3.50,
+        baseCost: 86.00,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 3.01,
+        salePrice: 149.90,
+        sellingPrice: 149.90,
+        profit: 60.89,
+        status: 'available',
+        createdAt: new Date('2024-12-08'),
+        updatedAt: new Date('2025-01-17'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 0, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Dourado', quantity: 1, soldQuantity: 0 }
+        ]
+      },
+      // 9. Calça Social - 3 variações
+      {
+        id: 'demo-CL-9',
+        code: 'CAL-009',
+        name: 'Calça Social',
+        description: 'Calça social com corte clássico',
+        category: 'Calças',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 55.00,
+        freightPerUnit: 5.50,
+        packagingCost: 2.50,
+        baseCost: 63.00,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 2.21,
+        salePrice: 99.90,
+        sellingPrice: 99.90,
+        profit: 34.69,
+        status: 'available',
+        createdAt: new Date('2024-12-09'),
+        updatedAt: new Date('2025-01-18'),
+        variations: [
+          { id: 'v1', size: { label: '38', value: '38' }, color: 'Preto', quantity: 2, soldQuantity: 0 },
+          { id: 'v2', size: { label: '40', value: '40' }, color: 'Cinza', quantity: 1, soldQuantity: 1 },
+          { id: 'v3', size: { label: '42', value: '42' }, color: 'Azul', quantity: 3, soldQuantity: 0 }
+        ]
+      },
+      // 10. Top Básico - 2 variações
+      {
+        id: 'demo-CL-10',
+        code: 'TOP-010',
+        name: 'Top Básico',
+        description: 'Top básico de algodão',
+        category: 'Tops',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 22.00,
+        freightPerUnit: 2.20,
+        packagingCost: 0.80,
+        baseCost: 25.00,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 0.88,
+        salePrice: 49.90,
+        sellingPrice: 49.90,
+        profit: 24.02,
+        status: 'available',
+        createdAt: new Date('2024-12-10'),
+        updatedAt: new Date('2025-01-19'),
+        variations: [
+          { id: 'v1', size: { label: 'P', value: 'P' }, color: 'Branco', quantity: 4, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Rosa', quantity: 2, soldQuantity: 0 }
+        ]
+      },
+      // 11. Macacão Jeans - 2 variações
+      {
+        id: 'demo-CL-11',
+        code: 'MAC-011',
+        name: 'Macacão Jeans',
+        description: 'Macacão jeans com alças ajustáveis',
+        category: 'Macacões',
+        brand: 'Kaylla Fashion',
+        supplier: 'Denim Works Indústria',
+        costPrice: 68.00,
+        freightPerUnit: 6.80,
+        packagingCost: 3.20,
+        baseCost: 78.00,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 2.73,
+        salePrice: 139.90,
+        sellingPrice: 139.90,
+        profit: 59.17,
+        status: 'available',
+        createdAt: new Date('2024-12-11'),
+        updatedAt: new Date('2025-01-20'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Preto', quantity: 2, soldQuantity: 0 }
+        ]
+      },
+      // 12. Cardigã - 3 variações
+      {
+        id: 'demo-CL-12',
+        code: 'CAR-012',
+        name: 'Cardigã',
+        description: 'Cardigã de tricô com botões',
+        category: 'Cardigãs',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 42.00,
+        freightPerUnit: 4.20,
+        packagingCost: 1.80,
+        baseCost: 48.00,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.68,
+        salePrice: 89.90,
+        sellingPrice: 89.90,
+        profit: 40.22,
+        status: 'available',
+        createdAt: new Date('2024-12-12'),
+        updatedAt: new Date('2025-01-21'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Bege', quantity: 2, soldQuantity: 0 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Cinza', quantity: 1, soldQuantity: 1 },
+          { id: 'v3', size: { label: 'P', value: 'P' }, color: 'Rosa', quantity: 3, soldQuantity: 0 }
+        ]
+      },
+      // 13. Saia Longa - 2 variações
+      {
+        id: 'demo-CL-13',
+        code: 'SAI-013',
+        name: 'Saia Longa',
+        description: 'Saia longa com estampa étnica',
+        category: 'Saias',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 48.00,
+        freightPerUnit: 4.80,
+        packagingCost: 2.20,
+        baseCost: 55.00,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.93,
+        salePrice: 99.90,
+        sellingPrice: 99.90,
+        profit: 42.97,
+        status: 'available',
+        createdAt: new Date('2024-12-13'),
+        updatedAt: new Date('2025-01-22'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Multicolor', quantity: 1, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Azul', quantity: 2, soldQuantity: 0 }
+        ]
+      },
+      // 14. Jaqueta Jeans - 2 variações
+      {
+        id: 'demo-CL-14',
+        code: 'JAQ-014',
+        name: 'Jaqueta Jeans',
+        description: 'Jaqueta jeans clássica',
+        category: 'Jaquetas',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 58.00,
+        freightPerUnit: 5.80,
+        packagingCost: 2.60,
+        baseCost: 66.40,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 2.32,
+        salePrice: 119.90,
+        sellingPrice: 119.90,
+        profit: 51.18,
+        status: 'available',
+        createdAt: new Date('2024-12-14'),
+        updatedAt: new Date('2025-01-23'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 0, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Preto', quantity: 1, soldQuantity: 0 }
+        ]
+      },
+      // 15. Body Básico - 3 variações
+      {
+        id: 'demo-CL-15',
+        code: 'BOD-015',
+        name: 'Body Básico',
+        description: 'Body básico de algodão',
+        category: 'Bodies',
+        brand: 'Kaylla Fashion',
+        supplier: 'Intimate Wear Corp',
+        costPrice: 28.00,
+        freightPerUnit: 2.80,
+        packagingCost: 1.20,
+        baseCost: 32.00,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.12,
+        salePrice: 59.90,
+        sellingPrice: 59.90,
+        profit: 26.78,
+        status: 'available',
+        createdAt: new Date('2024-12-15'),
+        updatedAt: new Date('2025-01-24'),
+        variations: [
+          { id: 'v1', size: { label: 'P', value: 'P' }, color: 'Branco', quantity: 3, soldQuantity: 0 },
+          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 2, soldQuantity: 1 },
+          { id: 'v3', size: { label: 'G', value: 'G' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
+        ]
+      },
+      // 16. Vestido Midi - 2 variações
+      {
+        id: 'demo-CL-16',
+        code: 'VES-016',
+        name: 'Vestido Midi',
+        description: 'Vestido midi com estampa floral',
+        category: 'Vestidos',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 52.00,
+        freightPerUnit: 5.20,
+        packagingCost: 2.30,
+        baseCost: 59.50,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 2.08,
+        salePrice: 109.90,
+        sellingPrice: 109.90,
+        profit: 48.32,
+        status: 'available',
+        createdAt: new Date('2024-12-16'),
+        updatedAt: new Date('2025-01-25'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Floral', quantity: 1, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Rosa', quantity: 2, soldQuantity: 0 }
+        ]
+      },
+      // 17. Calça Legging - 2 variações
+      {
+        id: 'demo-CL-17',
+        code: 'CAL-017',
+        name: 'Calça Legging',
+        description: 'Calça legging com elastano',
+        category: 'Calças',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 32.00,
+        freightPerUnit: 3.20,
+        packagingCost: 1.30,
+        baseCost: 36.50,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.28,
+        salePrice: 69.90,
+        sellingPrice: 69.90,
+        profit: 32.12,
+        status: 'available',
+        createdAt: new Date('2024-12-17'),
+        updatedAt: new Date('2025-01-26'),
+        variations: [
+          { id: 'v1', size: { label: 'P', value: 'P' }, color: 'Preto', quantity: 4, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 2, soldQuantity: 0 }
+        ]
+      },
+      // 18. Blusa de Seda - 2 variações
+      {
+        id: 'demo-CL-18',
+        code: 'BLU-018',
+        name: 'Blusa de Seda',
+        description: 'Blusa de seda com corte elegante',
+        category: 'Blusas',
+        brand: 'Kaylla Fashion',
+        supplier: 'Silk & Luxury Fashion',
+        costPrice: 65.00,
+        freightPerUnit: 6.50,
+        packagingCost: 3.00,
+        baseCost: 74.50,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 2.61,
+        salePrice: 129.90,
+        sellingPrice: 129.90,
+        profit: 52.79,
+        status: 'available',
+        createdAt: new Date('2024-12-18'),
+        updatedAt: new Date('2025-01-27'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Bege', quantity: 0, soldQuantity: 1 }
+        ]
+      },
+      // 19. Saia Plissada - 2 variações
+      {
+        id: 'demo-CL-19',
+        code: 'SAI-019',
+        name: 'Saia Plissada',
+        description: 'Saia plissada com pregas',
+        category: 'Saias',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
+        costPrice: 38.00,
+        freightPerUnit: 3.80,
+        packagingCost: 1.60,
+        baseCost: 43.40,
+        creditFeePercent: 3.5,
+        creditFeeAmount: 1.52,
+        salePrice: 79.90,
+        sellingPrice: 79.90,
+        profit: 34.98,
+        status: 'available',
+        createdAt: new Date('2024-12-19'),
+        updatedAt: new Date('2025-01-28'),
+        variations: [
+          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 2, soldQuantity: 0 },
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Azul', quantity: 1, soldQuantity: 1 }
+        ]
+      },
+      // 20. Vestido Tubinho - 2 variações
+      {
+        id: 'demo-CL-20',
+        code: 'VES-020',
+        name: 'Vestido Tubinho',
+        description: 'Vestido tubinho com corte clássico',
+        category: 'Vestidos',
+        brand: 'Kaylla Fashion',
+        supplier: 'Moda & Estilo Ltda',
         costPrice: 45.00,
         freightPerUnit: 4.50,
         packagingCost: 2.00,
@@ -85,460 +563,10 @@ function getDemoData(collectionName: string): any[] {
         profit: 36.60,
         status: 'available',
         createdAt: new Date('2024-12-20'),
-        updatedAt: new Date('2025-01-12'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-3',
-        code: 'VES-003',
-        name: 'Vestido Elegante',
-        description: 'Vestido elegante para ocasiões especiais',
-        category: 'Vestidos',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 65.00,
-        freightPerUnit: 6.50,
-        packagingCost: 3.00,
-        baseCost: 74.50,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 2.61,
-        salePrice: 129.90,
-        sellingPrice: 129.90,
-        profit: 52.79,
-        status: 'available',
-        createdAt: new Date('2024-12-25'),
-        updatedAt: new Date('2025-01-15'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-4',
-        code: 'CAL-004',
-        name: 'Calça Jeans Skinny',
-        description: 'Calça jeans skinny com elastano',
-        category: 'Calças',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 55.00,
-        freightPerUnit: 5.50,
-        packagingCost: 2.50,
-        baseCost: 63.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 2.21,
-        salePrice: 119.90,
-        sellingPrice: 119.90,
-        profit: 54.69,
-        status: 'available',
-        createdAt: new Date('2024-12-30'),
-        updatedAt: new Date('2025-01-18'),
-        variations: [
-          { id: 'v1', size: { label: '38', value: '38' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: '38', value: '38' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-5',
-        code: 'BLA-005',
-        name: 'Blusa de Seda',
-        description: 'Blusa de seda com detalhes em renda',
-        category: 'Blusas',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 35.00,
-        freightPerUnit: 3.50,
-        packagingCost: 1.50,
-        baseCost: 40.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.40,
-        salePrice: 79.90,
-        sellingPrice: 79.90,
-        profit: 38.50,
-        status: 'available',
-        createdAt: new Date('2025-01-05'),
-        updatedAt: new Date('2025-01-20'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-6',
-        code: 'SHO-006',
-        name: 'Short Jeans',
-        category: 'Shorts',
-        description: 'Short jeans confortável para o dia a dia',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 35.00,
-        freightPerUnit: 3.50,
-        packagingCost: 1.50,
-        baseCost: 40.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.40,
-        salePrice: 69.90,
-        sellingPrice: 69.90,
-        profit: 34.90,
-        status: 'available',
-        createdAt: new Date('2025-01-08'),
-        updatedAt: new Date('2025-01-22'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-7',
-        code: 'JAC-007',
-        name: 'Jaqueta Jeans',
-        category: 'Jaquetas',
-        description: 'Jaqueta jeans clássica e versátil',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 55.00,
-        freightPerUnit: 3.50,
-        packagingCost: 1.50,
-        baseCost: 60.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 2.10,
-        salePrice: 99.90,
-        sellingPrice: 99.90,
-        profit: 44.90,
-        status: 'available',
-        createdAt: new Date('2025-01-10'),
-        updatedAt: new Date('2025-01-25'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-8',
-        code: 'TOP-008',
-        name: 'Top Cropped',
-        category: 'Blusas',
-        description: 'Top cropped moderno e estiloso',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 25.00,
-        freightPerUnit: 3.50,
-        packagingCost: 1.50,
-        baseCost: 30.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.05,
-        salePrice: 49.90,
-        sellingPrice: 49.90,
-        profit: 24.90,
-        status: 'available',
-        createdAt: new Date('2025-01-12'),
-        updatedAt: new Date('2025-01-28'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-9',
-        code: 'CON-009',
-        name: 'Conjunto Esportivo',
-        description: 'Conjunto esportivo confortável',
-        category: 'Vestidos',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 45.00,
-        freightPerUnit: 4.50,
-        packagingCost: 2.00,
-        baseCost: 51.50,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.80,
-        salePrice: 89.90,
-        sellingPrice: 89.90,
-        profit: 36.60,
-        status: 'available',
-        createdAt: new Date('2025-01-15'),
-        updatedAt: new Date('2025-01-30'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-10',
-        code: 'MAC-010',
-        name: 'Macacão Jeans',
-        description: 'Macacão jeans moderno e versátil',
-        category: 'Vestidos',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 60.00,
-        freightPerUnit: 6.00,
-        packagingCost: 3.00,
-        baseCost: 69.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 2.42,
-        salePrice: 119.90,
-        sellingPrice: 119.90,
-        profit: 48.48,
-        status: 'available',
-        createdAt: new Date('2025-01-18'),
-        updatedAt: new Date('2025-02-02'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-11',
-        code: 'BOL-011',
-        name: 'Bolero de Tricô',
-        description: 'Bolero de tricô elegante',
-        category: 'Blusas',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 40.00,
-        freightPerUnit: 4.00,
-        packagingCost: 2.00,
-        baseCost: 46.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.61,
-        salePrice: 79.90,
-        sellingPrice: 79.90,
-        profit: 32.29,
-        status: 'available',
-        createdAt: new Date('2025-01-20'),
-        updatedAt: new Date('2025-02-05'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-12',
-        code: 'LEG-012',
-        name: 'Legging Estampada',
-        description: 'Legging estampada confortável',
-        category: 'Calças',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 30.00,
-        freightPerUnit: 3.00,
-        packagingCost: 1.50,
-        baseCost: 34.50,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.21,
-        salePrice: 59.90,
-        sellingPrice: 59.90,
-        profit: 24.19,
-        status: 'available',
-        createdAt: new Date('2025-01-22'),
-        updatedAt: new Date('2025-02-08'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-13',
-        code: 'KIM-013',
-        name: 'Kimono Floral',
-        description: 'Kimono floral leve e elegante',
-        category: 'Blusas',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 35.00,
-        freightPerUnit: 3.50,
-        packagingCost: 1.50,
-        baseCost: 40.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.40,
-        salePrice: 69.90,
-        sellingPrice: 69.90,
-        profit: 28.50,
-        status: 'available',
-        createdAt: new Date('2025-01-25'),
-        updatedAt: new Date('2025-02-10'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-14',
-        code: 'BAT-014',
-        name: 'Bata de Praia',
-        description: 'Bata de praia confortável',
-        category: 'Blusas',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 25.00,
-        freightPerUnit: 2.50,
-        packagingCost: 1.00,
-        baseCost: 28.50,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.00,
-        salePrice: 49.90,
-        sellingPrice: 49.90,
-        profit: 20.40,
-        status: 'available',
-        createdAt: new Date('2025-01-28'),
-        updatedAt: new Date('2025-02-12'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-15',
-        code: 'BLU-015',
-        name: 'Blusa de Seda',
-        description: 'Blusa de seda elegante e confortável',
-        category: 'Blusas',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 35.00,
-        freightPerUnit: 3.50,
-        packagingCost: 1.50,
-        baseCost: 40.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.40,
-        salePrice: 69.90,
-        sellingPrice: 69.90,
-        profit: 28.50,
-        status: 'available',
-        createdAt: new Date('2025-01-30'),
-        updatedAt: new Date('2025-02-15'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Preto', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-16',
-        code: 'CAL-016',
-        name: 'Calça Jeans Skinny',
-        description: 'Calça jeans skinny moderna',
-        category: 'Calças',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 45.00,
-        freightPerUnit: 4.50,
-        packagingCost: 2.00,
-        baseCost: 51.50,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.80,
-        salePrice: 89.90,
-        sellingPrice: 89.90,
-        profit: 36.60,
-        status: 'available',
-        createdAt: new Date('2025-02-02'),
-        updatedAt: new Date('2025-02-18'),
-        variations: [
-          { id: 'v1', size: { label: '38', value: '38' }, color: 'Azul', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: '40', value: '40' }, color: 'Preto', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-17',
-        code: 'VES-017',
-        name: 'Vestido Midi Floral',
-        description: 'Vestido midi com estampa floral delicada',
-        category: 'Vestidos',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 55.00,
-        freightPerUnit: 5.50,
-        packagingCost: 2.50,
-        baseCost: 63.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 2.21,
-        salePrice: 109.90,
-        sellingPrice: 109.90,
-        profit: 44.69,
-        status: 'available',
-        createdAt: new Date('2025-02-05'),
-        updatedAt: new Date('2025-02-20'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Rosa', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Azul', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-18',
-        code: 'SHO-018',
-        name: 'Short Jeans Desfiado',
-        description: 'Short jeans com detalhes desfiados',
-        category: 'Shorts',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 30.00,
-        freightPerUnit: 3.00,
-        packagingCost: 1.50,
-        baseCost: 34.50,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 1.21,
-        salePrice: 59.90,
-        sellingPrice: 59.90,
-        profit: 24.19,
-        status: 'available',
-        createdAt: new Date('2025-02-08'),
-        updatedAt: new Date('2025-02-22'),
-        variations: [
-          { id: 'v1', size: { label: '38', value: '38' }, color: 'Azul', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: '40', value: '40' }, color: 'Preto', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-19',
-        code: 'JAC-019',
-        name: 'Jaqueta de Couro Sintético',
-        description: 'Jaqueta de couro sintético moderna',
-        category: 'Jaquetas',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 70.00,
-        freightPerUnit: 7.00,
-        packagingCost: 3.00,
-        baseCost: 80.00,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 2.80,
-        salePrice: 139.90,
-        sellingPrice: 139.90,
-        profit: 57.10,
-        status: 'available',
-        createdAt: new Date('2025-02-10'),
-        updatedAt: new Date('2025-02-25'),
+        updatedAt: new Date('2025-01-29'),
         variations: [
           { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Marrom', quantity: 1, soldQuantity: 0 }
-        ]
-      },
-      {
-        id: 'demo-CL-20',
-        code: 'BLA-020',
-        name: 'Blazer Clássico',
-        description: 'Blazer clássico para ocasiões formais',
-        category: 'Blazers',
-        brand: 'Kaylla Fashion',
-        supplier: 'Fornecedor Textil SP',
-        costPrice: 80.00,
-        freightPerUnit: 8.00,
-        packagingCost: 3.50,
-        baseCost: 91.50,
-        creditFeePercent: 3.5,
-        creditFeeAmount: 3.20,
-        salePrice: 159.90,
-        sellingPrice: 159.90,
-        profit: 65.20,
-        status: 'available',
-        createdAt: new Date('2025-02-12'),
-        updatedAt: new Date('2025-02-28'),
-        variations: [
-          { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 1, soldQuantity: 1 },
-          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Azul Marinho', quantity: 1, soldQuantity: 0 }
+          { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Vermelho', quantity: 2, soldQuantity: 0 }
         ]
       }
     ];
@@ -546,549 +574,737 @@ function getDemoData(collectionName: string): any[] {
 
   if (collectionName === 'sales') {
     return [
+      // Venda 1 - Maria Silva (Paga)
       {
-        id: 'demo-S-1',
+        id: 'demo-SALE-1',
         customerName: 'Maria Silva',
-        customerPhone: '(11) 99999-9999',
+        customerPhone: '(11) 99999-1111',
         items: [
-          { id: 'item-1', clothingItemId: 'demo-CL-1', clothingItemName: 'Camiseta Básica', clothingItemCode: 'CAM-001', size: 'M', color: 'Branco', quantity: 2, unitPrice: 49.90, totalPrice: 99.80 }
+          {
+            clothingItemId: 'demo-CL-1',
+            clothingItemCode: 'BLU-001',
+            clothingItemName: 'Blusa Básica',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Branco',
+            quantity: 1,
+            unitPrice: 59.90,
+            totalPrice: 59.90
+          },
+          {
+            clothingItemId: 'demo-CL-4',
+            clothingItemCode: 'SAI-004',
+            clothingItemName: 'Saia Midi Floral',
+            variationId: 'v2',
+            size: 'G',
+            color: 'Rosa',
+            quantity: 1,
+            unitPrice: 79.90,
+            totalPrice: 79.90
+          }
         ],
-        subtotal: 99.80,
-        discount: 10.00,
-        total: 89.80,
+        discount: 0,
+        discountType: 'percentual',
+        total: 139.80,
         paymentMethod: 'dinheiro',
         status: 'pago',
         notes: 'Cliente satisfeita com a qualidade',
-        createdAt: new Date('2025-01-10'),
-        updatedAt: new Date('2025-01-10')
-      },
-      {
-        id: 'demo-S-2',
-        customerName: 'Ana Costa',
-        customerPhone: '(11) 88888-8888',
-        items: [
-          { id: 'item-2', clothingItemId: 'demo-CL-2', clothingItemName: 'Saia Midi Floral', clothingItemCode: 'SAI-002', size: 'M', color: 'Floral', quantity: 1, unitPrice: 89.90, totalPrice: 89.90 }
-        ],
-        subtotal: 89.90,
-        discount: 0,
-        total: 89.90,
-        paymentMethod: 'pix',
-        status: 'pago',
-        notes: 'Pagamento via PIX instantâneo',
-        createdAt: new Date('2025-01-12'),
-        updatedAt: new Date('2025-01-12')
-      },
-      {
-        id: 'demo-S-3',
-        customerName: 'Carla Santos',
-        customerPhone: '(11) 77777-7777',
-        items: [
-          { id: 'item-3a', clothingItemId: 'demo-CL-3', clothingItemName: 'Vestido Elegante', clothingItemCode: 'VES-003', size: 'M', color: 'Azul', quantity: 1, unitPrice: 129.90, totalPrice: 129.90 },
-          { id: 'item-3b', clothingItemId: 'demo-CL-5', clothingItemName: 'Blusa de Seda', clothingItemCode: 'BLA-005', size: 'M', color: 'Bege', quantity: 1, unitPrice: 79.90, totalPrice: 79.90 }
-        ],
-        subtotal: 209.80,
-        discount: 15.00,
-        total: 194.80,
-        paymentMethod: 'cartao_credito',
-        status: 'pago',
-        notes: 'Compra para evento especial - desconto aplicado',
         createdAt: new Date('2025-01-15'),
         updatedAt: new Date('2025-01-15')
       },
+      // Venda 2 - João Santos (Paga com desconto)
       {
-        id: 'demo-S-4',
-        customerName: 'Fernanda Lima',
-        customerPhone: '(11) 66666-6666',
+        id: 'demo-SALE-2',
+        customerName: 'João Santos',
+        customerPhone: '(11) 99999-2222',
         items: [
-          { id: 'item-4', clothingItemId: 'demo-CL-4', clothingItemName: 'Calça Jeans Skinny', clothingItemCode: 'CAL-004', size: '38', color: 'Azul', quantity: 1, unitPrice: 119.90, totalPrice: 119.90 }
+          {
+            clothingItemId: 'demo-CL-2',
+            clothingItemCode: 'CAL-002',
+            clothingItemName: 'Calça Jeans Skinny',
+            variationId: 'v2',
+            size: '40',
+            color: 'Azul',
+            quantity: 2,
+            unitPrice: 89.90,
+            totalPrice: 179.80
+          },
+          {
+            clothingItemId: 'demo-CL-7',
+            clothingItemCode: 'POL-007',
+            clothingItemName: 'Camiseta Polo',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Branco',
+            quantity: 2,
+            unitPrice: 79.90,
+            totalPrice: 159.80
+          }
         ],
-        subtotal: 119.90,
-        discount: 0,
-        total: 119.90,
-        paymentMethod: 'cartao_debito',
+        discount: 10,
+        discountType: 'percentual',
+        total: 305.64,
+        paymentMethod: 'cartao',
         status: 'pago',
-        notes: 'Cliente retornou para comprar novamente',
+        notes: 'Compra para presente',
         createdAt: new Date('2025-01-18'),
         updatedAt: new Date('2025-01-18')
       },
+      // Venda 3 - Ana Costa (Pendente)
       {
-        id: 'demo-S-5',
-        customerName: 'Juliana Oliveira',
-        customerPhone: '(11) 55555-5555',
+        id: 'demo-SALE-3',
+        customerName: 'Ana Costa',
+        customerPhone: '(11) 99999-3333',
         items: [
-          { id: 'item-5a', clothingItemId: 'demo-CL-1', clothingItemName: 'Camiseta Básica', clothingItemCode: 'CAM-001', size: 'P', color: 'Preto', quantity: 3, unitPrice: 49.90, totalPrice: 149.70 },
-          { id: 'item-5b', clothingItemId: 'demo-CL-2', clothingItemName: 'Saia Midi Floral', clothingItemCode: 'SAI-002', size: 'P', color: 'Floral', quantity: 1, unitPrice: 89.90, totalPrice: 89.90 }
+          {
+            clothingItemId: 'demo-CL-3',
+            clothingItemCode: 'VES-003',
+            clothingItemName: 'Vestido Elegante',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Preto',
+            quantity: 1,
+            unitPrice: 129.90,
+            totalPrice: 129.90
+          }
         ],
-        subtotal: 239.60,
-        discount: 20.00,
-        total: 219.60,
-        paymentMethod: 'cartao_credito',
-        status: 'pago',
-        notes: 'Compra em quantidade - desconto especial',
+        discount: 0,
+        discountType: 'percentual',
+        total: 129.90,
+        paymentMethod: 'pix',
+        status: 'pendente',
+        notes: 'Aguardando pagamento',
         createdAt: new Date('2025-01-20'),
         updatedAt: new Date('2025-01-20')
       },
+      // Venda 4 - Carlos Oliveira (Paga)
       {
-        id: 'demo-S-6',
-        customerName: 'Patricia Rocha',
-        customerPhone: '(11) 44444-4444',
+        id: 'demo-SALE-4',
+        customerName: 'Carlos Oliveira',
+        customerPhone: '(11) 99999-4444',
         items: [
-          { id: 'item-6', clothingItemId: 'demo-CL-3', clothingItemName: 'Vestido Elegante', clothingItemCode: 'VES-003', size: 'G', color: 'Rosa', quantity: 1, unitPrice: 129.90, totalPrice: 129.90 }
+          {
+            clothingItemId: 'demo-CL-5',
+            clothingItemCode: 'BLA-005',
+            clothingItemName: 'Blazer Executivo',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Preto',
+            quantity: 1,
+            unitPrice: 159.90,
+            totalPrice: 159.90
+          },
+          {
+            clothingItemId: 'demo-CL-9',
+            clothingItemCode: 'CAL-009',
+            clothingItemName: 'Calça Social',
+            variationId: 'v2',
+            size: '40',
+            color: 'Cinza',
+            quantity: 1,
+            unitPrice: 99.90,
+            totalPrice: 99.90
+          }
         ],
-        subtotal: 129.90,
-        discount: 5.00,
-        total: 124.90,
-        paymentMethod: 'pix',
+        discount: 5,
+        discountType: 'percentual',
+        total: 246.86,
+        paymentMethod: 'cartao',
         status: 'pago',
-        notes: 'Cliente nova - primeira compra',
+        notes: 'Cliente corporativo',
         createdAt: new Date('2025-01-22'),
         updatedAt: new Date('2025-01-22')
       },
+      // Venda 5 - Fernanda Lima (Paga)
       {
-        id: 'demo-S-7',
-        customerName: 'Luciana Mendes',
-        customerPhone: '(11) 33333-3333',
+        id: 'demo-SALE-5',
+        customerName: 'Fernanda Lima',
+        customerPhone: '(11) 99999-5555',
         items: [
-          { id: 'item-7a', clothingItemId: 'demo-CL-1', clothingItemName: 'Camiseta Básica', clothingItemCode: 'CAM-001', size: 'G', color: 'Branco', quantity: 2, unitPrice: 49.90, totalPrice: 99.80 },
-          { id: 'item-7b', clothingItemId: 'demo-CL-1', clothingItemName: 'Camiseta Básica', clothingItemCode: 'CAM-001', size: 'M', color: 'Preto', quantity: 1, unitPrice: 49.90, totalPrice: 49.90 }
+          {
+            clothingItemId: 'demo-CL-8',
+            clothingItemCode: 'VES-008',
+            clothingItemName: 'Vestido de Festa',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Preto',
+            quantity: 1,
+            unitPrice: 149.90,
+            totalPrice: 149.90
+          },
+          {
+            clothingItemId: 'demo-CL-18',
+            clothingItemCode: 'BLU-018',
+            clothingItemName: 'Blusa de Seda',
+            variationId: 'v2',
+            size: 'G',
+            color: 'Bege',
+            quantity: 1,
+            unitPrice: 129.90,
+            totalPrice: 129.90
+          }
         ],
-        subtotal: 149.70,
         discount: 0,
-        total: 149.70,
+        discountType: 'percentual',
+        total: 279.80,
         paymentMethod: 'pix',
         status: 'pago',
-        notes: 'Compra para presente',
+        notes: 'Compra para evento especial',
         createdAt: new Date('2025-01-25'),
         updatedAt: new Date('2025-01-25')
       },
+      // Venda 6 - Roberto Alves (Pendente)
       {
-        id: 'demo-S-8',
-        customerName: 'Roberta Alves',
-        customerPhone: '(11) 22222-2222',
+        id: 'demo-SALE-6',
+        customerName: 'Roberto Alves',
+        customerPhone: '(11) 99999-6666',
         items: [
-          { id: 'item-8', clothingItemId: 'demo-CL-2', clothingItemName: 'Saia Midi Floral', clothingItemCode: 'SAI-002', size: 'G', color: 'Floral', quantity: 1, unitPrice: 89.90, totalPrice: 89.90 }
+          {
+            clothingItemId: 'demo-CL-14',
+            clothingItemCode: 'JAQ-014',
+            clothingItemName: 'Jaqueta Jeans',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Azul',
+            quantity: 1,
+            unitPrice: 119.90,
+            totalPrice: 119.90
+          }
         ],
-        subtotal: 89.90,
-        discount: 5.00,
-        total: 84.90,
-        paymentMethod: 'cartao_credito',
-        status: 'pago',
-        notes: 'Cliente fiel - desconto especial',
+        discount: 0,
+        discountType: 'percentual',
+        total: 119.90,
+        paymentMethod: 'dinheiro',
+        status: 'pendente',
+        notes: 'Cliente vai buscar amanhã',
         createdAt: new Date('2025-01-28'),
         updatedAt: new Date('2025-01-28')
       },
+      // Venda 7 - Juliana Santos (Paga)
       {
-        id: 'demo-S-9',
-        customerName: 'Camila Ferreira',
-        customerPhone: '(11) 11111-1111',
+        id: 'demo-SALE-7',
+        customerName: 'Juliana Santos',
+        customerPhone: '(11) 99999-7777',
         items: [
-          { id: 'item-9a', clothingItemId: 'demo-CL-3', clothingItemName: 'Vestido Elegante', clothingItemCode: 'VES-003', size: 'P', color: 'Azul', quantity: 1, unitPrice: 129.90, totalPrice: 129.90 },
-          { id: 'item-9b', clothingItemId: 'demo-CL-5', clothingItemName: 'Blusa de Seda', clothingItemCode: 'BLA-005', size: 'P', color: 'Bege', quantity: 1, unitPrice: 79.90, totalPrice: 79.90 }
+          {
+            clothingItemId: 'demo-CL-10',
+            clothingItemCode: 'TOP-010',
+            clothingItemName: 'Top Básico',
+            variationId: 'v1',
+            size: 'P',
+            color: 'Branco',
+            quantity: 1,
+            unitPrice: 49.90,
+            totalPrice: 49.90
+          },
+          {
+            clothingItemId: 'demo-CL-17',
+            clothingItemCode: 'CAL-017',
+            clothingItemName: 'Calça Legging',
+            variationId: 'v1',
+            size: 'P',
+            color: 'Preto',
+            quantity: 1,
+            unitPrice: 69.90,
+            totalPrice: 69.90
+          },
+          {
+            clothingItemId: 'demo-CL-19',
+            clothingItemCode: 'SAI-019',
+            clothingItemName: 'Saia Plissada',
+            variationId: 'v2',
+            size: 'G',
+            color: 'Azul',
+            quantity: 1,
+            unitPrice: 79.90,
+            totalPrice: 79.90
+          }
         ],
-        subtotal: 209.80,
-        discount: 10.00,
-        total: 199.80,
-        paymentMethod: 'cartao_debito',
+        discount: 15,
+        discountType: 'percentual',
+        total: 169.35,
+        paymentMethod: 'cartao',
         status: 'pago',
-        notes: 'Compra para casamento',
+        notes: 'Compra em lote com desconto',
         createdAt: new Date('2025-01-30'),
         updatedAt: new Date('2025-01-30')
       },
+      // Venda 8 - Marcos Pereira (Paga)
       {
-        id: 'demo-S-10',
-        customerName: 'Mariana Costa',
-        customerPhone: '(11) 00000-0000',
+        id: 'demo-SALE-8',
+        customerName: 'Marcos Pereira',
+        customerPhone: '(11) 99999-8888',
         items: [
-          { id: 'item-10', clothingItemId: 'demo-CL-4', clothingItemName: 'Calça Jeans Skinny', clothingItemCode: 'CAL-004', size: '40', color: 'Azul', quantity: 1, unitPrice: 119.90, totalPrice: 119.90 }
+          {
+            clothingItemId: 'demo-CL-6',
+            clothingItemCode: 'SHO-006',
+            clothingItemName: 'Shorts Jeans',
+            variationId: 'v1',
+            size: '38',
+            color: 'Azul',
+            quantity: 1,
+            unitPrice: 69.90,
+            totalPrice: 69.90
+          },
+          {
+            clothingItemId: 'demo-CL-12',
+            clothingItemCode: 'CAR-012',
+            clothingItemName: 'Cardigã',
+            variationId: 'v2',
+            size: 'G',
+            color: 'Cinza',
+            quantity: 1,
+            unitPrice: 89.90,
+            totalPrice: 89.90
+          }
         ],
-        subtotal: 119.90,
         discount: 0,
-        total: 119.90,
-        paymentMethod: 'pix',
-        status: 'pago',
-        notes: 'Primeira compra na loja',
-        createdAt: new Date('2025-02-02'),
-        updatedAt: new Date('2025-02-02')
-      },
-      {
-        id: 'demo-S-11',
-        customerName: 'Beatriz Santos',
-        customerPhone: '(11) 11111-1111',
-        items: [
-          { id: 'item-11', clothingItemId: 'demo-CL-1', clothingItemName: 'Camiseta Básica', clothingItemCode: 'CAM-001', size: 'G', color: 'Azul', quantity: 2, unitPrice: 49.90, totalPrice: 99.80 }
-        ],
-        subtotal: 99.80,
-        discount: 0,
-        total: 99.80,
-        paymentMethod: 'cartao_credito',
-        status: 'pendente',
-        notes: 'Aguardando confirmação do pagamento',
-        createdAt: new Date('2025-02-05'),
-        updatedAt: new Date('2025-02-05')
-      },
-      {
-        id: 'demo-S-12',
-        customerName: 'Isabela Lima',
-        customerPhone: '(11) 22222-2222',
-        items: [
-          { id: 'item-12a', clothingItemId: 'demo-CL-3', clothingItemName: 'Vestido Elegante', clothingItemCode: 'VES-003', size: 'M', color: 'Rosa', quantity: 1, unitPrice: 129.90, totalPrice: 129.90 },
-          { id: 'item-12b', clothingItemId: 'demo-CL-5', clothingItemName: 'Blusa de Seda', clothingItemCode: 'BLA-005', size: 'M', color: 'Branco', quantity: 1, unitPrice: 79.90, totalPrice: 79.90 }
-        ],
-        subtotal: 209.80,
-        discount: 15.00,
-        total: 194.80,
-        paymentMethod: 'cartao_debito',
-        status: 'pendente',
-        notes: 'Pagamento em análise - cartão de débito',
-        createdAt: new Date('2025-02-08'),
-        updatedAt: new Date('2025-02-08')
-      },
-      {
-        id: 'demo-S-13',
-        customerName: 'Fernanda Oliveira',
-        customerPhone: '(11) 11111-1111',
-        items: [
-          { id: 'item-13', clothingItemId: 'demo-CL-6', clothingItemName: 'Short Jeans', clothingItemCode: 'SHO-006', size: 'M', color: 'Azul', quantity: 1, unitPrice: 69.90, totalPrice: 69.90 }
-        ],
-        subtotal: 69.90,
-        discount: 0,
-        total: 69.90,
+        discountType: 'percentual',
+        total: 159.80,
         paymentMethod: 'dinheiro',
         status: 'pago',
-        notes: 'Pagamento à vista',
-        createdAt: new Date('2025-02-10'),
-        updatedAt: new Date('2025-02-10')
+        notes: 'Cliente frequente',
+        createdAt: new Date('2025-02-01'),
+        updatedAt: new Date('2025-02-01')
       },
+      // Venda 9 - Patricia Costa (Pendente)
       {
-        id: 'demo-S-14',
-        customerName: 'Patricia Souza',
-        customerPhone: '(11) 33333-3333',
-        items: [
-          { id: 'item-14', clothingItemId: 'demo-CL-7', clothingItemName: 'Jaqueta Jeans', clothingItemCode: 'JAC-007', size: 'M', color: 'Azul', quantity: 1, unitPrice: 99.90, totalPrice: 99.90 }
-        ],
-        subtotal: 99.90,
-        discount: 5.00,
-        total: 94.90,
-        paymentMethod: 'pix',
-        status: 'pago',
-        notes: 'Desconto de cliente fiel',
-        createdAt: new Date('2025-02-12'),
-        updatedAt: new Date('2025-02-12')
-      },
-      {
-        id: 'demo-S-15',
-        customerName: 'Mariana Costa',
-        customerPhone: '(11) 44444-4444',
-        items: [
-          { id: 'item-15', clothingItemId: 'demo-CL-8', clothingItemName: 'Top Cropped', clothingItemCode: 'TOP-008', size: 'M', color: 'Azul', quantity: 1, unitPrice: 49.90, totalPrice: 49.90 }
-        ],
-        subtotal: 49.90,
-        discount: 0,
-        total: 49.90,
-        paymentMethod: 'cartao_credito',
-        status: 'pago',
-        notes: 'Compra online',
-        createdAt: new Date('2025-02-14'),
-        updatedAt: new Date('2025-02-14')
-      },
-      {
-        id: 'demo-S-16',
-        customerName: 'Juliana Santos',
-        customerPhone: '(11) 55555-5555',
-        items: [
-          { id: 'item-16', clothingItemId: 'demo-CL-9', clothingItemName: 'Conjunto Esportivo', clothingItemCode: 'CON-009', size: 'M', color: 'Azul', quantity: 1, unitPrice: 89.90, totalPrice: 89.90 }
-        ],
-        subtotal: 89.90,
-        discount: 10.00,
-        total: 79.90,
-        paymentMethod: 'dinheiro',
-        status: 'pago',
-        notes: 'Desconto por quantidade',
-        createdAt: new Date('2025-02-16'),
-        updatedAt: new Date('2025-02-16')
-      },
-      {
-        id: 'demo-S-17',
-        customerName: 'Camila Lima',
-        customerPhone: '(11) 66666-6666',
-        items: [
-          { id: 'item-17', clothingItemId: 'demo-CL-10', clothingItemName: 'Macacão Jeans', clothingItemCode: 'MAC-010', size: 'M', color: 'Azul', quantity: 1, unitPrice: 119.90, totalPrice: 119.90 }
-        ],
-        subtotal: 119.90,
-        discount: 0,
-        total: 119.90,
-        paymentMethod: 'pix',
-        status: 'pago',
-        notes: 'Pagamento via PIX',
-        createdAt: new Date('2025-02-18'),
-        updatedAt: new Date('2025-02-18')
-      },
-      {
-        id: 'demo-S-18',
-        customerName: 'Larissa Ferreira',
-        customerPhone: '(11) 77777-7777',
-        items: [
-          { id: 'item-18', clothingItemId: 'demo-CL-11', clothingItemName: 'Bolero de Tricô', clothingItemCode: 'BOL-011', size: 'M', color: 'Azul', quantity: 1, unitPrice: 79.90, totalPrice: 79.90 }
-        ],
-        subtotal: 79.90,
-        discount: 0,
-        total: 79.90,
-        paymentMethod: 'cartao_debito',
-        status: 'pendente',
-        notes: 'Aguardando confirmação do pagamento',
-        createdAt: new Date('2025-02-20'),
-        updatedAt: new Date('2025-02-20')
-      },
-      {
-        id: 'demo-S-19',
-        customerName: 'Beatriz Alves',
-        customerPhone: '(11) 88888-8888',
-        items: [
-          { id: 'item-19', clothingItemId: 'demo-CL-12', clothingItemName: 'Legging Estampada', clothingItemCode: 'LEG-012', size: 'M', color: 'Azul', quantity: 1, unitPrice: 59.90, totalPrice: 59.90 }
-        ],
-        subtotal: 59.90,
-        discount: 5.00,
-        total: 54.90,
-        paymentMethod: 'cartao_credito',
-        status: 'pendente',
-        notes: 'Pagamento em processamento',
-        createdAt: new Date('2025-02-22'),
-        updatedAt: new Date('2025-02-22')
-      },
-      {
-        id: 'demo-S-20',
-        customerName: 'Gabriela Rocha',
+        id: 'demo-SALE-9',
+        customerName: 'Patricia Costa',
         customerPhone: '(11) 99999-9999',
         items: [
-          { id: 'item-20', clothingItemId: 'demo-CL-13', clothingItemName: 'Kimono Floral', clothingItemCode: 'KIM-013', size: 'M', color: 'Azul', quantity: 1, unitPrice: 69.90, totalPrice: 69.90 }
+          {
+            clothingItemId: 'demo-CL-16',
+            clothingItemCode: 'VES-016',
+            clothingItemName: 'Vestido Midi',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Floral',
+            quantity: 1,
+            unitPrice: 109.90,
+            totalPrice: 109.90
+          }
         ],
-        subtotal: 69.90,
         discount: 0,
-        total: 69.90,
-        paymentMethod: 'dinheiro',
+        discountType: 'percentual',
+        total: 109.90,
+        paymentMethod: 'pix',
         status: 'pendente',
-        notes: 'Aguardando pagamento',
-        createdAt: new Date('2025-02-24'),
-        updatedAt: new Date('2025-02-24')
+        notes: 'Aguardando confirmação de pagamento',
+        createdAt: new Date('2025-02-03'),
+        updatedAt: new Date('2025-02-03')
+      },
+      // Venda 10 - Ricardo Silva (Paga)
+      {
+        id: 'demo-SALE-10',
+        customerName: 'Ricardo Silva',
+        customerPhone: '(11) 99999-0000',
+        items: [
+          {
+            clothingItemId: 'demo-CL-11',
+            clothingItemCode: 'MAC-011',
+            clothingItemName: 'Macacão Jeans',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Azul',
+            quantity: 1,
+            unitPrice: 139.90,
+            totalPrice: 139.90
+          },
+          {
+            clothingItemId: 'demo-CL-20',
+            clothingItemCode: 'VES-020',
+            clothingItemName: 'Vestido Tubinho',
+            variationId: 'v1',
+            size: 'M',
+            color: 'Preto',
+            quantity: 1,
+            unitPrice: 89.90,
+            totalPrice: 89.90
+          }
+        ],
+        discount: 8,
+        discountType: 'percentual',
+        total: 211.30,
+        paymentMethod: 'cartao',
+        status: 'pago',
+        notes: 'Compra para viagem',
+        createdAt: new Date('2025-02-05'),
+        updatedAt: new Date('2025-02-05')
       }
     ];
   }
 
   if (collectionName === 'fluxo') {
     return [
+      // Saída - Embalagem
       {
-        id: 'demo-F-1',
-        data: new Date('2025-01-05'),
-        descricao: 'Compra de Estoque - Lote 1 (Camisetas e Saias)',
+        id: 'demo-FLUXO-1',
         tipo: 'saida',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: -300.00,
-        createdAt: new Date('2025-01-05'),
-        updatedAt: new Date('2025-01-05')
-      },
-      {
-        id: 'demo-F-2',
-        data: new Date('2025-01-08'),
-        descricao: 'Compra de Estoque - Lote 2 (Vestidos e Calças)',
-        tipo: 'saida',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: -200.00,
-        createdAt: new Date('2025-01-08'),
-        updatedAt: new Date('2025-01-08')
-      },
-      {
-        id: 'demo-F-3',
+        origem: 'embalagem',
+        descricao: 'Sacos de papel - Janeiro 2025',
+        valor: 30.00,
         data: new Date('2025-01-10'),
-        descricao: 'Venda - Maria Silva (2x Camiseta M Branco)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 89.80,
         createdAt: new Date('2025-01-10'),
         updatedAt: new Date('2025-01-10')
       },
+      // Saída - Caixa da Loja
       {
-        id: 'demo-F-4',
-        data: new Date('2025-01-12'),
-        descricao: 'Venda - Ana Costa (1x Saia M Floral)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 89.90,
-        createdAt: new Date('2025-01-12'),
-        updatedAt: new Date('2025-01-12')
-      },
-      {
-        id: 'demo-F-5',
-        data: new Date('2025-01-15'),
-        descricao: 'Venda - Carla Santos (Vestido M Azul + Blusa M Bege)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 194.80,
-        createdAt: new Date('2025-01-15'),
-        updatedAt: new Date('2025-01-15')
-      },
-      {
-        id: 'demo-F-6',
-        data: new Date('2025-01-18'),
-        descricao: 'Venda - Fernanda Lima (1x Calça 38 Azul)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 119.90,
-        createdAt: new Date('2025-01-18'),
-        updatedAt: new Date('2025-01-18')
-      },
-      {
-        id: 'demo-F-7',
-        data: new Date('2025-01-20'),
-        descricao: 'Venda - Juliana Oliveira (3x Camiseta P Preto + 1x Saia P Floral)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 219.60,
-        createdAt: new Date('2025-01-20'),
-        updatedAt: new Date('2025-01-20')
-      },
-      {
-        id: 'demo-F-8',
-        data: new Date('2025-01-22'),
-        descricao: 'Venda - Patricia Rocha (1x Vestido G Rosa)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 124.90,
-        createdAt: new Date('2025-01-22'),
-        updatedAt: new Date('2025-01-22')
-      },
-      {
-        id: 'demo-F-9',
-        data: new Date('2025-01-25'),
-        descricao: 'Venda - Luciana Mendes (2x Camiseta G Branco + 1x Camiseta M Preto)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 149.70,
-        createdAt: new Date('2025-01-25'),
-        updatedAt: new Date('2025-01-25')
-      },
-      {
-        id: 'demo-F-10',
-        data: new Date('2025-01-28'),
-        descricao: 'Venda - Roberta Alves (1x Saia G Floral)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 84.90,
-        createdAt: new Date('2025-01-28'),
-        updatedAt: new Date('2025-01-28')
-      },
-      {
-        id: 'demo-F-11',
-        data: new Date('2025-01-30'),
-        descricao: 'Venda - Camila Ferreira (1x Vestido P Azul + 1x Blusa P Bege)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 199.80,
-        createdAt: new Date('2025-01-30'),
-        updatedAt: new Date('2025-01-30')
-      },
-      {
-        id: 'demo-F-12',
-        data: new Date('2025-02-02'),
-        descricao: 'Venda - Mariana Costa (1x Calça 40 Azul)',
-        tipo: 'entrada',
-        origem: 'caixa',
-        suborigem: 'reinvestimento',
-        valor: 119.90,
-        createdAt: new Date('2025-02-02'),
-        updatedAt: new Date('2025-02-02')
-      },
-      {
-        id: 'demo-F-13',
-        data: new Date('2025-01-25'),
-        descricao: 'Salário - Janeiro',
-        tipo: 'saida',
-        origem: 'caixa',
-        suborigem: 'salario',
-        valor: -200.00,
-        createdAt: new Date('2025-01-25'),
-        updatedAt: new Date('2025-01-25')
-      },
-      {
-        id: 'demo-F-14',
-        data: new Date('2025-01-30'),
-        descricao: 'Aluguel da Loja - Janeiro',
+        id: 'demo-FLUXO-2',
         tipo: 'saida',
         origem: 'caixa',
         suborigem: 'caixa_loja',
-        valor: -150.00,
-        createdAt: new Date('2025-01-30'),
-        updatedAt: new Date('2025-01-30')
+        descricao: 'Conta de energia - Janeiro 2025',
+        valor: 120.00,
+        data: new Date('2025-01-15'),
+        createdAt: new Date('2025-01-15'),
+        updatedAt: new Date('2025-01-15')
       },
+      // Saída - Salário
       {
-        id: 'demo-F-15',
+        id: 'demo-FLUXO-3',
+        tipo: 'saida',
+        origem: 'caixa',
+        suborigem: 'salario',
+        descricao: 'Salário - Janeiro 2025',
+        valor: 300.00,
         data: new Date('2025-01-31'),
-        descricao: 'Compra de Estoque - Lote 3 (Blusas de Seda)',
+        createdAt: new Date('2025-01-31'),
+        updatedAt: new Date('2025-01-31')
+      },
+      // Saída - Reinvestimento
+      {
+        id: 'demo-FLUXO-4',
         tipo: 'saida',
         origem: 'caixa',
         suborigem: 'reinvestimento',
-        valor: -100.00,
-        createdAt: new Date('2025-01-31'),
-        updatedAt: new Date('2025-01-31')
+        descricao: 'Lote Moda & Estilo - Fev 2025',
+        valor: 500.00,
+        data: new Date('2025-02-01'),
+        createdAt: new Date('2025-02-01'),
+        updatedAt: new Date('2025-02-01')
       }
     ];
   }
 
   if (collectionName === 'investments') {
     return [
+      // Lote 1 - Moda & Estilo Ltda (Completo)
       {
         id: 'demo-INV-1',
-        supplier: 'Fornecedor Textil SP',
-        totalCost: 600.00,
-        totalSold: 400.00,
-        data: new Date('2025-01-05'),
+        name: 'Lote Moda & Estilo - Jan 2025',
+        supplier: 'Moda & Estilo Ltda',
+        date: new Date('2025-01-05'),
         status: 'completed',
         items: [
-          { id: 'demo-CL-1', name: 'Camiseta Básica', quantity: 8, soldQuantity: 12 },
-          { id: 'demo-CL-2', name: 'Saia Midi Floral', quantity: 6, soldQuantity: 4 }
-        ],
-        totalVariations: 14,
-        soldVariations: 16,
-        progress: 100
+          {
+            id: 'demo-CL-1',
+            code: 'BLU-001',
+            name: 'Blusa Básica',
+            costPrice: 28.00,
+            freightCost: 14.00,
+            freightQuantity: 5,
+            extraCosts: 6.00,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 3 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Preto', quantity: 3 },
+              { id: 'v3', size: { label: 'P', value: 'P' }, color: 'Azul', quantity: 3 }
+            ]
+          },
+          {
+            id: 'demo-CL-4',
+            code: 'SAI-004',
+            name: 'Saia Midi Floral',
+            costPrice: 35.00,
+            freightCost: 10.50,
+            freightQuantity: 3,
+            extraCosts: 4.50,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 2 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Rosa', quantity: 2 },
+              { id: 'v3', size: { label: 'P', value: 'P' }, color: 'Verde', quantity: 3 }
+            ]
+          }
+        ]
       },
+      // Lote 2 - Jeans Brasil Confecções (Completo)
       {
         id: 'demo-INV-2',
-        supplier: 'Fornecedor Textil SP',
-        totalCost: 400.00,
-        totalSold: 300.00,
-        data: new Date('2025-01-08'),
+        name: 'Lote Jeans Brasil - Jan 2025',
+        supplier: 'Jeans Brasil Confecções',
+        date: new Date('2025-01-08'),
         status: 'completed',
         items: [
-          { id: 'demo-CL-3', name: 'Vestido Elegante', quantity: 8, soldQuantity: 4 },
-          { id: 'demo-CL-4', name: 'Calça Jeans Skinny', quantity: 8, soldQuantity: 4 }
-        ],
-        totalVariations: 16,
-        soldVariations: 8,
-        progress: 100
+          {
+            id: 'demo-CL-2',
+            code: 'CAL-002',
+            name: 'Calça Jeans Skinny',
+            costPrice: 45.00,
+            freightCost: 18.00,
+            freightQuantity: 4,
+            extraCosts: 8.00,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: '38', value: '38' }, color: 'Azul', quantity: 2 },
+              { id: 'v2', size: { label: '40', value: '40' }, color: 'Azul', quantity: 2 },
+              { id: 'v3', size: { label: '42', value: '42' }, color: 'Preto', quantity: 2 },
+              { id: 'v4', size: { label: '38', value: '38' }, color: 'Branco', quantity: 2 }
+            ]
+          },
+          {
+            id: 'demo-CL-6',
+            code: 'SHO-006',
+            name: 'Shorts Jeans',
+            costPrice: 32.00,
+            freightCost: 9.60,
+            freightQuantity: 3,
+            extraCosts: 3.90,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: '38', value: '38' }, color: 'Azul', quantity: 3 },
+              { id: 'v2', size: { label: '40', value: '40' }, color: 'Preto', quantity: 1 },
+              { id: 'v3', size: { label: '42', value: '42' }, color: 'Azul', quantity: 3 }
+            ]
+          }
+        ]
       },
+      // Lote 3 - Elegance Fashion Group (Completo)
       {
         id: 'demo-INV-3',
-        supplier: 'Fornecedor Textil SP',
-        totalCost: 200.00,
-        totalSold: 150.00,
-        data: new Date('2025-01-31'),
+        name: 'Lote Elegance - Jan 2025',
+        supplier: 'Elegance Fashion Group',
+        date: new Date('2025-01-12'),
         status: 'completed',
         items: [
-          { id: 'demo-CL-5', name: 'Blusa de Seda', quantity: 8, soldQuantity: 5 }
-        ],
-        totalVariations: 8,
-        soldVariations: 5,
-        progress: 100
+          {
+            id: 'demo-CL-3',
+            code: 'VES-003',
+            name: 'Vestido Elegante',
+            costPrice: 65.00,
+            freightCost: 13.00,
+            freightQuantity: 2,
+            extraCosts: 6.00,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 1 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Vermelho', quantity: 2 }
+            ]
+          },
+          {
+            id: 'demo-CL-16',
+            code: 'VES-016',
+            name: 'Vestido Midi',
+            costPrice: 52.00,
+            freightCost: 10.40,
+            freightQuantity: 2,
+            extraCosts: 4.60,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Floral', quantity: 2 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Rosa', quantity: 2 }
+            ]
+          }
+        ]
+      },
+      // Lote 4 - Corporate Style Ltda (Completo)
+      {
+        id: 'demo-INV-4',
+        name: 'Lote Corporate - Jan 2025',
+        supplier: 'Corporate Style Ltda',
+        date: new Date('2025-01-15'),
+        status: 'completed',
+        items: [
+          {
+            id: 'demo-CL-5',
+            code: 'BLA-005',
+            name: 'Blazer Executivo',
+            costPrice: 85.00,
+            freightCost: 17.00,
+            freightQuantity: 2,
+            extraCosts: 8.00,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 1 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Cinza', quantity: 1 }
+            ]
+          },
+          {
+            id: 'demo-CL-9',
+            code: 'CAL-009',
+            name: 'Calça Social',
+            costPrice: 55.00,
+            freightCost: 11.00,
+            freightQuantity: 2,
+            extraCosts: 5.00,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: '38', value: '38' }, color: 'Preto', quantity: 2 },
+              { id: 'v2', size: { label: '40', value: '40' }, color: 'Cinza', quantity: 1 },
+              { id: 'v3', size: { label: '42', value: '42' }, color: 'Azul', quantity: 3 }
+            ]
+          }
+        ]
+      },
+      // Lote 5 - Party Wear Solutions (Completo)
+      {
+        id: 'demo-INV-5',
+        name: 'Lote Party Wear - Jan 2025',
+        supplier: 'Party Wear Solutions',
+        date: new Date('2025-01-18'),
+        status: 'completed',
+        items: [
+          {
+            id: 'demo-CL-8',
+            code: 'VES-008',
+            name: 'Vestido de Festa',
+            costPrice: 75.00,
+            freightCost: 15.00,
+            freightQuantity: 2,
+            extraCosts: 7.00,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 1 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Dourado', quantity: 1 }
+            ]
+          }
+        ]
+      },
+      // Lote 6 - Denim Works Indústria (Completo)
+      {
+        id: 'demo-INV-6',
+        name: 'Lote Denim Works - Jan 2025',
+        supplier: 'Denim Works Indústria',
+        date: new Date('2025-01-22'),
+        status: 'completed',
+        items: [
+          {
+            id: 'demo-CL-11',
+            code: 'MAC-011',
+            name: 'Macacão Jeans',
+            costPrice: 68.00,
+            freightCost: 13.60,
+            freightQuantity: 2,
+            extraCosts: 6.40,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 2 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Preto', quantity: 2 }
+            ]
+          },
+          {
+            id: 'demo-CL-14',
+            code: 'JAQ-014',
+            name: 'Jaqueta Jeans',
+            costPrice: 58.00,
+            freightCost: 11.60,
+            freightQuantity: 2,
+            extraCosts: 5.20,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Azul', quantity: 1 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Preto', quantity: 1 }
+            ]
+          }
+        ]
+      },
+      // Lote 7 - Silk & Luxury Fashion (Completo)
+      {
+        id: 'demo-INV-7',
+        name: 'Lote Silk & Luxury - Jan 2025',
+        supplier: 'Silk & Luxury Fashion',
+        date: new Date('2025-01-25'),
+        status: 'completed',
+        items: [
+          {
+            id: 'demo-CL-18',
+            code: 'BLU-018',
+            name: 'Blusa de Seda',
+            costPrice: 65.00,
+            freightCost: 13.00,
+            freightQuantity: 2,
+            extraCosts: 6.00,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 2 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Bege', quantity: 1 }
+            ]
+          }
+        ]
+      },
+      // Lote 8 - Intimate Wear Corp (Completo)
+      {
+        id: 'demo-INV-8',
+        name: 'Lote Intimate Wear - Jan 2025',
+        supplier: 'Intimate Wear Corp',
+        date: new Date('2025-01-28'),
+        status: 'completed',
+        items: [
+          {
+            id: 'demo-CL-15',
+            code: 'BOD-015',
+            name: 'Body Básico',
+            costPrice: 28.00,
+            freightCost: 8.40,
+            freightQuantity: 3,
+            extraCosts: 3.60,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'P', value: 'P' }, color: 'Branco', quantity: 3 },
+              { id: 'v2', size: { label: 'M', value: 'M' }, color: 'Preto', quantity: 3 },
+              { id: 'v3', size: { label: 'G', value: 'G' }, color: 'Azul', quantity: 1 }
+            ]
+          }
+        ]
+      },
+      // Lote 9 - Moda & Estilo Ltda (Em Andamento)
+      {
+        id: 'demo-INV-9',
+        name: 'Lote Moda & Estilo - Fev 2025',
+        supplier: 'Moda & Estilo Ltda',
+        date: new Date('2025-02-01'),
+        status: 'in_progress',
+        items: [
+          {
+            id: 'demo-CL-7',
+            code: 'POL-007',
+            name: 'Camiseta Polo',
+            costPrice: 38.00,
+            freightCost: 11.40,
+            freightQuantity: 3,
+            extraCosts: 4.80,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Branco', quantity: 3 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Azul', quantity: 2 }
+            ]
+          },
+          {
+            id: 'demo-CL-12',
+            code: 'CAR-012',
+            name: 'Cardigã',
+            costPrice: 42.00,
+            freightCost: 12.60,
+            freightQuantity: 3,
+            extraCosts: 5.40,
+            creditFeePercent: 3.5,
+            variations: [
+              { id: 'v1', size: { label: 'M', value: 'M' }, color: 'Bege', quantity: 2 },
+              { id: 'v2', size: { label: 'G', value: 'G' }, color: 'Cinza', quantity: 2 },
+              { id: 'v3', size: { label: 'P', value: 'P' }, color: 'Rosa', quantity: 3 }
+            ]
+          }
+        ]
+      },
+      // Lote 10 - Vazio (Para demonstração)
+      {
+        id: 'demo-INV-10',
+        name: 'Lote Vazio - Fev 2025',
+        supplier: 'Fornecedor Novo',
+        date: new Date('2025-02-05'),
+        status: 'empty',
+        items: []
       }
     ];
   }
@@ -1096,59 +1312,49 @@ function getDemoData(collectionName: string): any[] {
   if (collectionName === 'notes') {
     return [
       {
-        id: 'demo-N-1',
-        title: 'Reunião com Fornecedor - Próxima Semana',
-        content: 'Agendar reunião para negociar preços do próximo lote de camisetas. Verificar possibilidade de desconto por volume. Objetivo: reduzir custo unitário em 10%.',
-        type: 'general',
-        priority: 'high',
-        status: 'open',
-        relatedTab: 'inventory',
+        id: 'demo-NOTE-1',
+        title: 'Reunião com fornecedor',
+        content: 'Reunião agendada com Moda & Estilo Ltda para discutir novos produtos da coleção verão 2025. Interesse em blusas de seda e vestidos elegantes.',
+        priority: 'alta',
+        category: 'fornecedores',
+        createdAt: new Date('2025-01-15'),
+        updatedAt: new Date('2025-01-15')
+      },
+      {
+        id: 'demo-NOTE-2',
+        title: 'Promoção Black Friday',
+        content: 'Preparar promoção especial para Black Friday: 30% de desconto em calças jeans e 20% em vestidos. Atualizar preços e preparar material de marketing.',
+        priority: 'média',
+        category: 'marketing',
         createdAt: new Date('2025-01-20'),
         updatedAt: new Date('2025-01-20')
       },
       {
-        id: 'demo-N-2',
-        title: 'Análise de Performance - Janeiro',
-        content: 'Janeiro foi excelente! Faturamento de R$ 1.373,20 com 10 vendas. Camisetas foram o produto mais vendido (35 unidades). Manter estratégia de preços.',
-        type: 'general',
-        priority: 'low',
-        status: 'resolved',
-        relatedTab: 'reports',
-        createdAt: new Date('2025-01-10'),
-        updatedAt: new Date('2025-02-01')
+        id: 'demo-NOTE-3',
+        title: 'Inventário mensal',
+        content: 'Realizar inventário completo no final do mês. Verificar estoque de peças em falta e atualizar sistema. Focar em produtos com baixa rotatividade.',
+        priority: 'alta',
+        category: 'estoque',
+        createdAt: new Date('2025-01-25'),
+        updatedAt: new Date('2025-01-25')
       },
       {
-        id: 'demo-N-3',
-        title: 'Campanha de Marketing - Fevereiro',
-        content: 'Criar campanha nas redes sociais para promover os vestidos elegantes. Focar no público feminino 25-40 anos. Orçamento: R$ 500,00.',
-        type: 'improvement',
-        priority: 'medium',
-        status: 'in_progress',
-        relatedTab: 'sales',
-        createdAt: new Date('2025-01-15'),
+        id: 'demo-NOTE-4',
+        title: 'Cliente VIP - Maria Silva',
+        content: 'Cliente frequente, sempre compra vestidos elegantes. Oferecer desconto especial de 15% na próxima compra. Telefone: (11) 99999-1111',
+        priority: 'baixa',
+        category: 'clientes',
+        createdAt: new Date('2025-01-28'),
         updatedAt: new Date('2025-01-28')
       },
       {
-        id: 'demo-N-4',
-        title: 'Controle de Estoque - Calças Jeans',
-        content: 'Calças jeans 42 estão com baixa rotatividade (apenas 1 vendida). Considerar promoção ou ajuste de preço. Tamanho 38 e 40 vendem bem.',
-        type: 'problem',
-        priority: 'medium',
-        status: 'open',
-        relatedTab: 'inventory',
-        createdAt: new Date('2025-01-18'),
-        updatedAt: new Date('2025-01-25')
-      },
-      {
-        id: 'demo-N-5',
-        title: 'Novo Fornecedor - Blusas de Seda',
-        content: 'Pesquisar novo fornecedor para blusas de seda. Atual fornecedor tem preços altos. Objetivo: reduzir custo em 15% mantendo qualidade.',
-        type: 'general',
-        priority: 'high',
-        status: 'open',
-        relatedTab: 'inventory',
-        createdAt: new Date('2025-01-25'),
-        updatedAt: new Date('2025-01-25')
+        id: 'demo-NOTE-5',
+        title: 'Manutenção do sistema',
+        content: 'Atualizar sistema de vendas e fazer backup dos dados. Verificar integração com sistema de pagamento e testar funcionalidades.',
+        priority: 'média',
+        category: 'sistema',
+        createdAt: new Date('2025-02-01'),
+        updatedAt: new Date('2025-02-01')
       }
     ];
   }
@@ -1162,196 +1368,85 @@ export function useFirestore<T>(collectionName: string) {
   const [error, setError] = useState<string | null>(null);
   const [initialized, setInitialized] = useState(false);
 
-  // Carregar dados automaticamente quando o hook é usado com real-time updates
   useEffect(() => {
     const role = getCurrentUserRole();
-    const isViewer = role === 'viewer';
-    console.log('useFirestore:', collectionName, '- role:', role);
-
-    if (isViewer) {
-      // For viewer, serve demo data and skip Firestore subscriptions
-      console.log('useFirestore: Modo viewer - usando dados demonstrativos para', collectionName);
-      setLoading(true);
-      setError(null);
-      setInitialized(false);
-      
-      // Usar setTimeout para simular carregamento e evitar problemas de renderização
-      setTimeout(() => {
-        const demo = getDemoData(collectionName) as T[];
-        console.log('useFirestore: Dados demo carregados para', collectionName, '- Quantidade:', demo.length);
-        setData(demo);
-        setLoading(false);
-        setError(null);
-        setInitialized(true);
-      }, 100);
-      
-      // Return noop cleanup
-      return () => {};
+    
+    // For viewer role, return demo data immediately
+    if (role === 'viewer') {
+      console.log(`useFirestore: Retornando hook para coleção: ${collectionName} - Dados: ${getDemoData(collectionName).length} documentos - Inicializado: true`);
+      setData(getDemoData(collectionName) as T[]);
+      setLoading(false);
+      setInitialized(true);
+      return;
     }
 
-    console.log('useFirestore: Iniciando onSnapshot para coleção:', collectionName);
-    setLoading(true);
-    setError(null);
-    setInitialized(false);
-    
+    console.log(`useFirestore: ${collectionName} - role: ${role}`);
+    console.log(`useFirestore: Iniciando onSnapshot para coleção: ${collectionName}`);
+
+    const collectionRef = collection(db, collectionName);
     const unsubscribe = onSnapshot(
-      collection(db, collectionName),
-      (querySnapshot) => {
-        console.log('useFirestore: onSnapshot recebeu dados para:', collectionName, '- Tamanho:', querySnapshot.size);
-        const items: T[] = [];
-        querySnapshot.forEach((doc) => {
-          items.push({
+      collectionRef,
+      (snapshot) => {
+        console.log(`useFirestore: onSnapshot recebeu dados para: ${collectionName} - Tamanho: ${snapshot.docs.length}`);
+        
+        const processedData = snapshot.docs.map(doc => {
+          const data = doc.data();
+          return {
             id: doc.id,
-            ...convertTimestamps(doc.data())
-          } as T);
+            ...convertTimestamps(data)
+          };
         });
-        console.log('useFirestore: Dados processados:', items.length, 'documentos');
-        setData(items);
+        
+        console.log(`useFirestore: Dados processados: ${processedData.length} documentos`);
+        setData(processedData as T[]);
         setLoading(false);
         setError(null);
         setInitialized(true);
       },
       (error) => {
-        console.error('useFirestore: Erro ao carregar dados:', error);
-        setError('Erro ao carregar dados');
+        console.error(`useFirestore: Erro ao escutar coleção ${collectionName}:`, error);
+        setError(error.message);
         setLoading(false);
-        setInitialized(true);
       }
     );
 
     return () => {
-      console.log('useFirestore: Cleanup onSnapshot para coleção:', collectionName);
+      console.log(`useFirestore: Cleanup onSnapshot para coleção: ${collectionName}`);
       unsubscribe();
     };
   }, [collectionName]);
 
-  // Converter Timestamp do Firebase para Date
-  const convertTimestamps = (obj: any): any => {
-    if (obj === null || obj === undefined) return obj;
-    if (obj instanceof Timestamp) {
-      console.log('useFirestore: Convertendo Timestamp para Date');
-      return obj.toDate();
-    }
-    if (Array.isArray(obj)) {
-      console.log('useFirestore: Convertendo array com', obj.length, 'itens');
-      return obj.map(convertTimestamps);
-    }
-    if (typeof obj === 'object') {
-      console.log('useFirestore: Convertendo objeto com', Object.keys(obj).length, 'propriedades');
-      const converted: any = {};
-      for (const key in obj) {
-        converted[key] = convertTimestamps(obj[key]);
-      }
-      return converted;
-    }
-    return obj;
-  };
-
-  // Buscar todos os documentos
-  const fetchAll = async () => {
-    const role = getCurrentUserRole();
-    if (role === 'viewer') {
-      console.log('useFirestore.fetchAll: Modo viewer - retornando dados demonstrativos');
-      setData(getDemoData(collectionName) as T[]);
-      setLoading(false);
-      return;
-    }
-    try {
-      console.log('useFirestore: fetchAll chamado para coleção:', collectionName);
-      console.log('useFirestore: Carregando dados da coleção:', collectionName);
-      setLoading(true);
-      setError(null);
-      const querySnapshot = await getDocs(collection(db, collectionName));
-      console.log('useFirestore: QuerySnapshot recebido:', querySnapshot.size, 'documentos');
-      const docs = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...convertTimestamps(doc.data())
-      })) as T[];
-      console.log('useFirestore: Dados carregados:', docs.length, 'documentos');
-      setData(docs);
-    } catch (err) {
-      console.error('useFirestore: Erro ao carregar dados:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao buscar dados');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Buscar documento por ID
-  const fetchById = async (id: string): Promise<T | null> => {
-    const role = getCurrentUserRole();
-    if (role === 'viewer') {
-      const demo = (getDemoData(collectionName) as any[]).find(d => d.id === id) ?? null;
-      return demo as T | null;
-    }
-    try {
-      console.log('useFirestore: fetchById chamado para ID:', id, 'na coleção:', collectionName);
-      console.log('useFirestore: Buscando documento por ID:', id, 'na coleção:', collectionName);
-      const docRef = doc(db, collectionName, id);
-      const docSnap = await getDoc(docRef);
-      console.log('useFirestore: Documento existe:', docSnap.exists());
-      if (docSnap.exists()) {
-        console.log('useFirestore: Documento encontrado:', docSnap.id);
-        return {
-          id: docSnap.id,
-          ...convertTimestamps(docSnap.data())
-        } as T;
-      }
-      console.log('useFirestore: Documento não encontrado');
-      return null;
-    } catch (err) {
-      console.error('useFirestore: Erro ao buscar documento:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao buscar documento');
-      return null;
-    }
-  };
-
   // Adicionar documento
   const add = async (item: Omit<T, 'id'>): Promise<string | null> => {
     const role = getCurrentUserRole();
+    
     if (role === 'viewer') {
       console.warn('useFirestore.add: Operação bloqueada para viewer (somente visualização)');
       setError('🔒 Modo Demonstração: Esta é uma conta de visualização. Alterações não são permitidas. Para usar todas as funcionalidades, faça login com uma conta de administrador ou usuário.');
       return null;
     }
+    
+    if (!role) {
+      console.error('❌ useFirestore.add: Usuário não logado ou role não detectado');
+      setError('❌ Usuário não logado. Faça login para continuar.');
+      return null;
+    }
+    
     try {
-      console.log('🔍 useFirestore: Adicionando documento na coleção:', collectionName);
-      console.log('🔍 useFirestore: Dados do item:', JSON.stringify(item, null, 2));
-      console.log('🔍 useFirestore: DB object:', db);
-      console.log('🔍 useFirestore: Collection exists?', collection(db, collectionName));
+      console.log('useFirestore: add chamado para coleção:', collectionName);
+      console.log('useFirestore: Dados para adicionar:', item);
       setError(null);
       
-      // Remover campos undefined antes de enviar para o Firebase
-      const cleanItem = Object.fromEntries(
-        Object.entries(item).filter(([_, value]) => value !== undefined)
-      );
-      
-      const dataToSave = {
-        ...cleanItem,
+      const docRef = await addDoc(collection(db, collectionName), {
+        ...item,
         createdAt: new Date(),
         updatedAt: new Date()
-      };
-      console.log('🔍 useFirestore: Dados para salvar:', JSON.stringify(dataToSave, null, 2));
-      
-      console.log('🔍 useFirestore: Chamando addDoc...');
-      const docRef = await addDoc(collection(db, collectionName), dataToSave);
-      console.log('✅ useFirestore: addDoc retornou:', docRef);
-      console.log('✅ useFirestore: Documento adicionado com ID:', docRef.id);
-      console.log('✅ useFirestore: Tipo do ID:', typeof docRef.id);
-      console.log('✅ useFirestore: ID válido?', docRef.id && docRef.id.length > 0);
-      
-      if (!docRef || !docRef.id) {
-        console.error('❌ useFirestore: ERRO - docRef ou docRef.id é inválido!');
-        console.error('❌ useFirestore: docRef:', docRef);
-        return null;
-      }
+      });
       
       console.log('✅ useFirestore: Documento salvo com sucesso! ID:', docRef.id);
       return docRef.id;
     } catch (err) {
       console.error('❌ useFirestore: Erro ao adicionar documento:', err);
-      console.error('❌ useFirestore: Detalhes do erro:', err);
-      console.error('❌ useFirestore: Stack do erro:', err instanceof Error ? err.stack : 'N/A');
       setError(err instanceof Error ? err.message : 'Erro ao adicionar documento');
       return null;
     }
@@ -1365,22 +1460,19 @@ export function useFirestore<T>(collectionName: string) {
       setError('🔒 Modo Demonstração: Esta é uma conta de visualização. Alterações não são permitidas. Para usar todas as funcionalidades, faça login com uma conta de administrador ou usuário.');
       return false;
     }
+    
     try {
       console.log('useFirestore: update chamado para ID:', id, 'na coleção:', collectionName);
-      console.log('useFirestore: Atualizando documento na coleção:', collectionName);
-      console.log('useFirestore: ID do documento:', id);
-      console.log('useFirestore: Dados para atualizar:', updates);
       setError(null);
       const docRef = doc(db, collectionName, id);
       await updateDoc(docRef, {
         ...updates,
         updatedAt: new Date()
       });
-      console.log('useFirestore: Documento atualizado com sucesso');
-      console.log('useFirestore: Documento atualizado com sucesso');
+      console.log('✅ useFirestore: Documento atualizado com sucesso');
       return true;
     } catch (err) {
-      console.error('useFirestore: Erro ao atualizar documento:', err);
+      console.error('❌ useFirestore: Erro ao atualizar documento:', err);
       setError(err instanceof Error ? err.message : 'Erro ao atualizar documento');
       return false;
     }
@@ -1394,126 +1486,62 @@ export function useFirestore<T>(collectionName: string) {
       setError('🔒 Modo Demonstração: Esta é uma conta de visualização. Alterações não são permitidas. Para usar todas as funcionalidades, faça login com uma conta de administrador ou usuário.');
       return false;
     }
+    
     try {
       console.log('useFirestore: remove chamado para ID:', id, 'na coleção:', collectionName);
-      console.log('useFirestore: Deletando documento:', id, 'na coleção:', collectionName);
       setError(null);
       const docRef = doc(db, collectionName, id);
       await deleteDoc(docRef);
-      console.log('useFirestore: Documento deletado com sucesso');
-      console.log('useFirestore: Documento deletado com sucesso');
+      console.log('✅ useFirestore: Documento removido com sucesso');
       return true;
     } catch (err) {
-      console.error('useFirestore: Erro ao deletar documento:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao deletar documento');
+      console.error('❌ useFirestore: Erro ao remover documento:', err);
+      setError(err instanceof Error ? err.message : 'Erro ao remover documento');
       return false;
     }
   };
 
-  // Buscar com filtros
-  const queryData = async (filters: any[] = [], orderByField?: string, orderDirection: 'asc' | 'desc' = 'asc', limitCount?: number) => {
-    const role = getCurrentUserRole();
-    if (role === 'viewer') {
-      console.log('useFirestore.queryData: Modo viewer - retornando dados demonstrativos');
-      setData(getDemoData(collectionName) as T[]);
-      setLoading(false);
-      return;
-    }
-    try {
-      console.log('useFirestore: queryData chamado para coleção:', collectionName);
-      console.log('useFirestore: Buscando com filtros na coleção:', collectionName);
-      setLoading(true);
-      setError(null);
-      
-      let q = query(collection(db, collectionName));
-      
-      // Aplicar filtros
-      filters.forEach(filter => {
-        q = query(q, where(filter.field, filter.operator, filter.value));
-      });
-      
-      // Aplicar ordenação
-      if (orderByField) {
-        q = query(q, orderBy(orderByField, orderDirection));
-      }
-      
-      // Aplicar limite
-      if (limitCount) {
-        q = query(q, limit(limitCount));
-      }
-      
-      const querySnapshot = await getDocs(q);
-      const docs = querySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...convertTimestamps(doc.data())
-      })) as T[];
-      
-      console.log('useFirestore: Dados encontrados com filtros:', docs.length, 'documentos');
-      setData(docs);
-    } catch (err) {
-      console.error('useFirestore: Erro ao buscar dados com filtros:', err);
-      setError(err instanceof Error ? err.message : 'Erro ao buscar dados');
-    } finally {
-      setLoading(false);
-    }
-  };
+  return { data, loading, error, initialized, add, update, remove };
+}
 
-  // Escutar mudanças em tempo real
-  const subscribe = (filters: any[] = [], orderByField?: string, orderDirection: 'asc' | 'desc' = 'asc') => {
-    useEffect(() => {
-      const role = getCurrentUserRole();
-      if (role === 'viewer') {
-        console.log('useFirestore.subscribe: Modo viewer - usando dados demonstrativos e ignorando Firestore');
-        setData(getDemoData(collectionName) as T[]);
-        setLoading(false);
-        return () => {};
+// Helper function to convert Firestore Timestamps to Date objects
+function convertTimestamps(obj: any): any {
+  if (obj === null || obj === undefined) {
+    return obj;
+  }
+  
+  if (obj instanceof Timestamp) {
+    console.log('useFirestore: Convertendo Timestamp para Date');
+    return obj.toDate();
+  }
+  
+  if (Array.isArray(obj)) {
+    console.log(`useFirestore: Convertendo array com ${obj.length} itens`);
+    return obj.map(convertTimestamps);
+  }
+  
+  if (typeof obj === 'object') {
+    console.log(`useFirestore: Convertendo objeto com ${Object.keys(obj).length} propriedades`);
+    const converted: any = {};
+    for (const key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        converted[key] = convertTimestamps(obj[key]);
       }
-      console.log('useFirestore: subscribe chamado para coleção:', collectionName);
-      console.log('useFirestore: Iniciando subscribe para coleção:', collectionName);
-      let q = query(collection(db, collectionName));
-      
-      // Aplicar filtros
-      filters.forEach(filter => {
-        q = query(q, where(filter.field, filter.operator, filter.value));
-      });
-      
-      // Aplicar ordenação
-      if (orderByField) {
-        q = query(q, orderBy(orderByField, orderDirection));
-      }
-      
-      const unsubscribe = onSnapshot(q, (querySnapshot) => {
-        console.log('useFirestore: Subscribe recebeu dados para:', collectionName);
-        const docs = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...convertTimestamps(doc.data())
-        })) as T[];
-        setData(docs);
-        setLoading(false);
-      }, (err) => {
-        console.error('useFirestore: Erro no subscribe:', err);
-        setError(err.message);
-        setLoading(false);
-      });
-      
-      return () => unsubscribe();
-    }, []);
-  };
+    }
+    return converted;
+  }
+  
+  return obj;
+}
 
-  console.log('useFirestore: Retornando hook para coleção:', collectionName, '- Dados:', data.length, 'documentos', '- Inicializado:', initialized);
-  return {
-    data,
-    loading,
-    error,
-    initialized,
-    fetchAll,
-    fetchById,
-    add,
-    update,
-    remove,
-    queryData,
-    subscribe
-  };
+// Helper function to check if current user is viewer
+export function isViewer(): boolean {
+  return getCurrentUserRole() === 'viewer';
+}
+
+// Helper function to get current user role
+export function getCurrentRole(): 'admin' | 'user' | 'viewer' | null {
+  return getCurrentUserRole();
 }
 
 // Funções para gerenciar usuários no Firebase

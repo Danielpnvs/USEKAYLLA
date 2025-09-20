@@ -307,6 +307,36 @@ export default function CashFlow() {
       alert('Por favor, preencha a descrição e um valor válido');
       return;
     }
+
+    // VALIDAÇÃO DE SALDO DISPONÍVEL
+    if (form.origem === 'caixa') {
+      const subcategoria = form.suborigem || 'reinvestimento';
+      const saldoDisponivel = bucketSaldos[subcategoria as keyof typeof bucketSaldos];
+      
+      console.log('🔍 registrarSaida: Validando saldo disponível');
+      console.log('🔍 registrarSaida: Subcategoria:', subcategoria);
+      console.log('🔍 registrarSaida: Saldo disponível:', saldoDisponivel);
+      console.log('🔍 registrarSaida: Valor da saída:', form.valor);
+      
+      if (form.valor > saldoDisponivel + 0.01) {
+        console.log('❌ registrarSaida: Valor excede saldo disponível');
+        const subcategoriaNome = formatarSuborigem(subcategoria);
+        alert(`❌ Valor insuficiente!\n\nSaldo disponível em ${subcategoriaNome}: ${formatarMoeda(saldoDisponivel)}\nValor solicitado: ${formatarMoeda(form.valor)}\n\nAjuste o valor ou escolha outra subcategoria.`);
+        return;
+      }
+    } else if (form.origem === 'embalagem') {
+      const saldoEmbalagem = caixa.saldoEmbalagem;
+      
+      console.log('🔍 registrarSaida: Validando saldo de embalagem');
+      console.log('🔍 registrarSaida: Saldo embalagem:', saldoEmbalagem);
+      console.log('🔍 registrarSaida: Valor da saída:', form.valor);
+      
+      if (form.valor > saldoEmbalagem + 0.01) {
+        console.log('❌ registrarSaida: Valor excede saldo de embalagem');
+        alert(`❌ Valor insuficiente!\n\nSaldo disponível em Embalagem: ${formatarMoeda(saldoEmbalagem)}\nValor solicitado: ${formatarMoeda(form.valor)}\n\nAjuste o valor.`);
+        return;
+      }
+    }
     
     try {
       setSaving(true);
@@ -371,6 +401,48 @@ export default function CashFlow() {
   const salvarEdicao = async () => {
     if (!editing) return;
     if (!editForm.descricao.trim() || editForm.valor <= 0) return;
+
+    // VALIDAÇÃO DE SALDO DISPONÍVEL (para edição)
+    if (editForm.origem === 'caixa') {
+      const subcategoria = editForm.suborigem || 'reinvestimento';
+      const saldoDisponivel = bucketSaldos[subcategoria as keyof typeof bucketSaldos];
+      
+      // Calcular o valor atual da movimentação sendo editada para subtrair do cálculo
+      const valorAtualMovimento = editing.valor;
+      const saldoDisponivelComEdicao = saldoDisponivel + valorAtualMovimento;
+      
+      console.log('🔍 salvarEdicao: Validando saldo disponível');
+      console.log('🔍 salvarEdicao: Subcategoria:', subcategoria);
+      console.log('🔍 salvarEdicao: Saldo disponível:', saldoDisponivel);
+      console.log('🔍 salvarEdicao: Valor atual da movimentação:', valorAtualMovimento);
+      console.log('🔍 salvarEdicao: Saldo disponível com edição:', saldoDisponivelComEdicao);
+      console.log('🔍 salvarEdicao: Novo valor:', editForm.valor);
+      
+      if (editForm.valor > saldoDisponivelComEdicao + 0.01) {
+        console.log('❌ salvarEdicao: Valor excede saldo disponível');
+        const subcategoriaNome = formatarSuborigem(subcategoria);
+        alert(`❌ Valor insuficiente!\n\nSaldo disponível em ${subcategoriaNome}: ${formatarMoeda(saldoDisponivelComEdicao)}\nValor solicitado: ${formatarMoeda(editForm.valor)}\n\nAjuste o valor ou escolha outra subcategoria.`);
+        return;
+      }
+    } else if (editForm.origem === 'embalagem') {
+      const saldoEmbalagem = caixa.saldoEmbalagem;
+      
+      // Calcular o valor atual da movimentação sendo editada para subtrair do cálculo
+      const valorAtualMovimento = editing.valor;
+      const saldoEmbalagemComEdicao = saldoEmbalagem + valorAtualMovimento;
+      
+      console.log('🔍 salvarEdicao: Validando saldo de embalagem');
+      console.log('🔍 salvarEdicao: Saldo embalagem:', saldoEmbalagem);
+      console.log('🔍 salvarEdicao: Valor atual da movimentação:', valorAtualMovimento);
+      console.log('🔍 salvarEdicao: Saldo embalagem com edição:', saldoEmbalagemComEdicao);
+      console.log('🔍 salvarEdicao: Novo valor:', editForm.valor);
+      
+      if (editForm.valor > saldoEmbalagemComEdicao + 0.01) {
+        console.log('❌ salvarEdicao: Valor excede saldo de embalagem');
+        alert(`❌ Valor insuficiente!\n\nSaldo disponível em Embalagem: ${formatarMoeda(saldoEmbalagemComEdicao)}\nValor solicitado: ${formatarMoeda(editForm.valor)}\n\nAjuste o valor.`);
+        return;
+      }
+    }
     
     const updates: any = {
       data: new Date(`${editForm.data}T12:00:00`),
@@ -587,6 +659,44 @@ export default function CashFlow() {
                   onChange={(e) => setForm(prev => ({ ...prev, valor: parseFloat(e.target.value) || 0 }))}
                   className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                 />
+                {form.origem === 'caixa' && (
+                  <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-blue-700">
+                        Saldo disponível em {formatarSuborigem(form.suborigem || 'reinvestimento')}:
+                      </span>
+                      <span className={`text-sm font-bold ${(form.valor > (bucketSaldos[form.suborigem as keyof typeof bucketSaldos] || 0) + 0.01) ? 'text-red-600' : 'text-blue-600'}`}>
+                        {formatarMoeda(bucketSaldos[form.suborigem as keyof typeof bucketSaldos] || 0)}
+                      </span>
+                    </div>
+                    {form.valor > (bucketSaldos[form.suborigem as keyof typeof bucketSaldos] || 0) + 0.01 && (
+                      <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded-lg">
+                        <p className="text-xs text-red-700 font-medium">
+                          ⚠️ Valor excede o saldo disponível!
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {form.origem === 'embalagem' && (
+                  <div className="mt-2 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-orange-700">
+                        Saldo disponível em Embalagem:
+                      </span>
+                      <span className={`text-sm font-bold ${(form.valor > caixa.saldoEmbalagem + 0.01) ? 'text-red-600' : 'text-orange-600'}`}>
+                        {formatarMoeda(caixa.saldoEmbalagem)}
+                      </span>
+                    </div>
+                    {form.valor > caixa.saldoEmbalagem + 0.01 && (
+                      <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded-lg">
+                        <p className="text-xs text-red-700 font-medium">
+                          ⚠️ Valor excede o saldo disponível!
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               <button
@@ -617,9 +727,17 @@ export default function CashFlow() {
                   <p className="text-sm">Registre saídas para ver o histórico</p>
                 </div>
               ) : (
-                movimentosReg
-                  .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
-                  .map(movimento => (
+                (() => {
+                  console.log('🔍 DEBUG: movimentosReg:', movimentosReg);
+                  return movimentosReg
+                    .sort((a, b) => {
+                      const dateA = a.data instanceof Date ? a.data : new Date(a.data);
+                      const dateB = b.data instanceof Date ? b.data : new Date(b.data);
+                      return dateB.getTime() - dateA.getTime();
+                    })
+                    .map(movimento => {
+                      console.log('🔍 DEBUG: movimento individual:', movimento);
+                      return (
                     <div key={movimento.id} className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
                       <div className="flex justify-between items-start">
                         <div className="flex-1">
@@ -636,13 +754,35 @@ export default function CashFlow() {
                           </div>
                           <div className="flex items-center text-sm text-gray-600">
                             <Calendar className="h-3 w-3 mr-1" />
-                            {new Date(movimento.data).toLocaleDateString('pt-BR')}
+                            {(() => {
+                              try {
+                                const date = movimento.data instanceof Date ? movimento.data : new Date(movimento.data);
+                                if (isNaN(date.getTime())) {
+                                  return 'Data inválida';
+                                }
+                                return date.toLocaleDateString('pt-BR');
+                              } catch (error) {
+                                console.error('Erro ao formatar data:', error, movimento.data);
+                                return 'Data inválida';
+                              }
+                            })()}
                           </div>
                         </div>
                         <div className="flex items-center space-x-2 ml-4">
                           <div className="text-right">
                             <p className="text-lg font-bold text-red-600">
-                              -{formatarMoeda(movimento.valor)}
+                              -{(() => {
+                                try {
+                                  const valor = Number(movimento.valor);
+                                  if (isNaN(valor) || valor === 0) {
+                                    return 'R$ 0,00';
+                                  }
+                                  return formatarMoeda(valor);
+                                } catch (error) {
+                                  console.error('Erro ao formatar valor:', error, movimento.valor);
+                                  return 'R$ 0,00';
+                                }
+                              })()}
                             </p>
                           </div>
                           <button
@@ -662,7 +802,9 @@ export default function CashFlow() {
                         </div>
                       </div>
                     </div>
-                  ))
+                      );
+                    });
+                })()
               )}
             </div>
           </div>
@@ -837,6 +979,44 @@ export default function CashFlow() {
                     onChange={(e) => setEditForm(prev => ({ ...prev, valor: parseFloat(e.target.value) || 0 }))}
                     className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                   />
+                  {editForm.origem === 'caixa' && (
+                    <div className="mt-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-blue-700">
+                          Saldo disponível em {formatarSuborigem(editForm.suborigem || 'reinvestimento')}:
+                        </span>
+                        <span className={`text-sm font-bold ${(editForm.valor > ((bucketSaldos[editForm.suborigem as keyof typeof bucketSaldos] || 0) + editing.valor) + 0.01) ? 'text-red-600' : 'text-blue-600'}`}>
+                          {formatarMoeda((bucketSaldos[editForm.suborigem as keyof typeof bucketSaldos] || 0) + editing.valor)}
+                        </span>
+                      </div>
+                      {editForm.valor > ((bucketSaldos[editForm.suborigem as keyof typeof bucketSaldos] || 0) + editing.valor) + 0.01 && (
+                        <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded-lg">
+                          <p className="text-xs text-red-700 font-medium">
+                            ⚠️ Valor excede o saldo disponível!
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {editForm.origem === 'embalagem' && (
+                    <div className="mt-2 p-3 bg-orange-50 border border-orange-200 rounded-lg">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-orange-700">
+                          Saldo disponível em Embalagem:
+                        </span>
+                        <span className={`text-sm font-bold ${(editForm.valor > (caixa.saldoEmbalagem + editing.valor) + 0.01) ? 'text-red-600' : 'text-orange-600'}`}>
+                          {formatarMoeda(caixa.saldoEmbalagem + editing.valor)}
+                        </span>
+                      </div>
+                      {editForm.valor > (caixa.saldoEmbalagem + editing.valor) + 0.01 && (
+                        <div className="mt-2 p-2 bg-red-100 border border-red-300 rounded-lg">
+                          <p className="text-xs text-red-700 font-medium">
+                            ⚠️ Valor excede o saldo disponível!
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <div className="flex justify-end space-x-3 pt-4">

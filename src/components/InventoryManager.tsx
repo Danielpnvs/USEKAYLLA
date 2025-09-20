@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, Filter, Eye, Edit, Trash2, Package, TrendingUp, DollarSign, X, Calendar, Tag, ShoppingBag, List, Plus, CheckCircle, AlertTriangle, CheckCircle2, ShoppingCart } from 'lucide-react';
 import type { ClothingItem, ClothingCategory, Sale } from '../types';
 import { useFirestore } from '../hooks/useFirestore';
@@ -6,6 +6,25 @@ import { useApp } from '../contexts/AppContext';
 import ViewerAlert from './ViewerAlert';
 
 export default function InventoryManager() {
+  // Bloquear zoom em mobile nesta aba para evitar "miniaturização" ao dar zoom out
+  useEffect(() => {
+    const meta = document.querySelector('meta[name="viewport"]') as HTMLMetaElement | null;
+    if (!meta) return;
+    const previous = meta.getAttribute('content') || '';
+    meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
+    // Bloquear rolagem horizontal da página inteira enquanto esta aba estiver ativa
+    const htmlEl = document.documentElement;
+    const bodyEl = document.body;
+    const prevHtmlOverflowX = htmlEl.style.overflowX;
+    const prevBodyOverflowX = bodyEl.style.overflowX;
+    htmlEl.style.overflowX = 'hidden';
+    bodyEl.style.overflowX = 'hidden';
+    return () => {
+      meta.setAttribute('content', previous);
+      htmlEl.style.overflowX = prevHtmlOverflowX;
+      bodyEl.style.overflowX = prevBodyOverflowX;
+    };
+  }, []);
   const { data: clothingItems, loading, error, remove, update } = useFirestore<ClothingItem>('clothing');
   const { data: sales } = useFirestore<Sale>('sales');
   const { setActiveTab } = useApp();
@@ -78,6 +97,13 @@ export default function InventoryManager() {
       return matchesSearch && matchesCategory && matchesStatus;
     })
     .sort((a, b) => {
+      // Primeiro ordenar por status: 'available' antes de 'sold'
+      if (a.status !== b.status) {
+        if (a.status === 'available') return -1;
+        if (b.status === 'available') return 1;
+      }
+      
+      // Depois ordenar pelo critério selecionado
       let aValue, bValue;
       switch (sortBy) {
         case 'name':
@@ -107,23 +133,38 @@ export default function InventoryManager() {
       }
     });
 
-  // Calcular estatísticas por variações (mantendo nome "produto")
+  // Calcular estatísticas com 4 informações: disponíveis, vendidas, variações e total de peças
   const stats = {
-    totalItems: clothingItems.reduce((sum, item) => sum + item.variations.length, 0),
-    availableItems: clothingItems.reduce((sum, item) => {
-      // Para visualizador (dados demo), calcular disponível
-      if (isViewer()) {
-        return sum + item.variations.reduce((itemSum, variation) => {
-          return itemSum + (variation.quantity - ((variation as any).soldQuantity || 0));
-        }, 0);
-      } else {
-        // Para admin/usuário (dados reais), calcular disponível baseado nas vendas
-        const soldQuantity = getSoldQuantityForItem(item.id);
-        const totalVariations = item.variations.length;
-        const availableVariations = Math.max(0, totalVariations - soldQuantity);
-        return sum + availableVariations;
-      }
+    // Total de peças (disponíveis + vendidas)
+    totalItems: clothingItems.reduce((sum, item) => {
+      // Calcular disponíveis (quantidade atual das variações)
+      const available = item.variations.reduce((itemSum, variation) => {
+        return itemSum + variation.quantity;
+      }, 0);
+      
+      // Calcular vendidas
+      const sold = (() => {
+        // Para visualizador (dados demo), usar soldQuantity das variações
+        if (isViewer()) {
+          return item.variations.reduce((itemSum, variation) => {
+            return itemSum + ((variation as any).soldQuantity || 0);
+          }, 0);
+        } else {
+          // Para admin/usuário (dados reais), calcular vendas baseado na coleção sales
+          return getSoldQuantityForItem(item.id);
+        }
+      })();
+      
+      return sum + available + sold;
     }, 0),
+    // Peças disponíveis (quantidade atual das variações - já descontadas as vendas)
+    availableItems: clothingItems.reduce((sum, item) => {
+      // Usar sempre a quantidade atual das variações (já descontadas as vendas)
+      return sum + item.variations.reduce((itemSum, variation) => {
+        return itemSum + variation.quantity;
+      }, 0);
+    }, 0),
+    // Peças vendidas
     soldItems: clothingItems.reduce((sum, item) => {
       // Para visualizador (dados demo), usar soldQuantity das variações
       if (isViewer()) {
@@ -134,6 +175,10 @@ export default function InventoryManager() {
         // Para admin/usuário (dados reais), calcular vendas baseado na coleção sales
         return sum + getSoldQuantityForItem(item.id);
       }
+    }, 0),
+    // Total de variações (cores/tamanhos diferentes)
+    totalVariations: clothingItems.reduce((sum, item) => {
+      return sum + item.variations.length;
     }, 0),
     totalValue: clothingItems.reduce((sum, item) => {
       return sum + (item.sellingPrice * item.variations.length);
@@ -232,10 +277,10 @@ export default function InventoryManager() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 overflow-x-hidden">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 w-[40%] sm:w-full mr-auto ml-0">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3 rounded-xl mr-4">
@@ -256,44 +301,57 @@ export default function InventoryManager() {
         </div>
 
         {/* Estatísticas */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-          <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 rounded-xl shadow-lg text-white">
+        <div className="block sm:hidden">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+           <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <ShoppingBag className="h-6 w-6 text-white" />
               </div>
               <div className="ml-3">
-                <p className="text-xs font-medium text-blue-100">Total de Produtos</p>
+                <p className="text-xs font-medium text-blue-100">Total de Peças</p>
                 <p className="text-xl font-bold text-white">{stats.totalItems}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <CheckCircle className="h-6 w-6 text-white" />
               </div>
               <div className="ml-3">
-                <p className="text-xs font-medium text-green-100">Produtos Disponíveis</p>
+                <p className="text-xs font-medium text-green-100">Disponíveis</p>
                 <p className="text-xl font-bold text-white">{stats.availableItems}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <ShoppingCart className="h-6 w-6 text-white" />
               </div>
               <div className="ml-3">
-                <p className="text-xs font-medium text-red-100">Produtos Vendidos</p>
+                <p className="text-xs font-medium text-red-100">Vendidas</p>
                 <p className="text-xl font-bold text-white">{stats.soldItems}</p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+            <div className="flex items-center">
+              <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                <Package className="h-6 w-6 text-white" />
+              </div>
+              <div className="ml-3">
+                <p className="text-xs font-medium text-indigo-100">Variações</p>
+                <p className="text-xl font-bold text-white">{stats.totalVariations}</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <DollarSign className="h-6 w-6 text-white" />
@@ -307,7 +365,7 @@ export default function InventoryManager() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4 rounded-xl shadow-lg text-white">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <TrendingUp className="h-6 w-6 text-white" />
@@ -321,9 +379,89 @@ export default function InventoryManager() {
             </div>
           </div>
         </div>
+        <div className="hidden sm:block">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <ShoppingBag className="h-6 w-6 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-blue-100">Total de Peças</p>
+                  <p className="text-xl font-bold text-white">{stats.totalItems}</p>
+                </div>
+              </div>
+            </div>
+
+             <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <CheckCircle className="h-6 w-6 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-green-100">Disponíveis</p>
+                  <p className="text-xl font-bold text-white">{stats.availableItems}</p>
+                </div>
+              </div>
+            </div>
+
+             <div className="bg-gradient-to-r from-red-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <ShoppingCart className="h-6 w-6 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-red-100">Vendidas</p>
+                  <p className="text-xl font-bold text-white">{stats.soldItems}</p>
+                </div>
+              </div>
+            </div>
+
+             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <Package className="h-6 w-6 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-indigo-100">Variações</p>
+                  <p className="text-xl font-bold text-white">{stats.totalVariations}</p>
+                </div>
+              </div>
+            </div>
+
+             <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <DollarSign className="h-6 w-6 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-yellow-100">Valor Total</p>
+                  <p className="text-lg font-bold text-white leading-tight">
+                    R$ {stats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+             <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <TrendingUp className="h-6 w-6 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-purple-100">Lucro Esperado</p>
+                  <p className="text-lg font-bold text-white leading-tight">
+                    R$ {stats.expectedProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 w-[40%] sm:w-full mr-auto ml-0">
           <div className="flex items-center mb-6">
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-lg mr-3">
               <Filter className="h-5 w-5 text-white" />
@@ -406,7 +544,7 @@ export default function InventoryManager() {
         </div>
 
         {/* Lista de Itens */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-hidden">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-x-auto w-[40%] sm:w-full mr-auto ml-0">
           <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -496,20 +634,7 @@ export default function InventoryManager() {
                       <div className="space-y-1">
                         <div className="flex items-center space-x-2">
                           <span className="text-xs text-green-600 font-medium">
-                            Disponíveis: {(() => {
-                              // Para visualizador (dados demo), calcular disponível
-                              if (isViewer()) {
-                                return item.variations.reduce((sum, v) => {
-                                  return sum + (v.quantity - ((v as any).soldQuantity || 0));
-                                }, 0);
-                              } else {
-                                // Para admin/usuário (dados reais), calcular disponível baseado nas vendas
-                                const soldQuantity = getSoldQuantityForItem(item.id);
-                                const totalVariations = item.variations.length;
-                                const availableVariations = Math.max(0, totalVariations - soldQuantity);
-                                return availableVariations;
-                              }
-                            })()}
+                            Disponíveis: {item.variations.reduce((sum, v) => sum + v.quantity, 0)}
                           </span>
                         </div>
                         <div className="flex items-center space-x-2">
@@ -527,8 +652,31 @@ export default function InventoryManager() {
                             })()}
                           </span>
                         </div>
+                        <div className="flex items-center space-x-2">
+                          <span className="text-xs text-indigo-600 font-medium">
+                            Variações: {item.variations.length}
+                          </span>
+                        </div>
                         <div className="text-xs text-gray-400">
-                          Total: {item.variations.length} variações
+                          Total: {(() => {
+                            // Calcular disponíveis (quantidade atual das variações)
+                            const available = item.variations.reduce((sum, v) => sum + v.quantity, 0);
+                            
+                            // Calcular vendidas
+                            const sold = (() => {
+                              // Para visualizador (dados demo), usar soldQuantity das variações
+                              if (isViewer()) {
+                                return item.variations.reduce((sum, v) => {
+                                  return sum + ((v as any).soldQuantity || 0);
+                                }, 0);
+                              } else {
+                                // Para admin/usuário (dados reais), calcular vendas baseado na coleção sales
+                                return getSoldQuantityForItem(item.id);
+                              }
+                            })();
+                            
+                            return available + sold;
+                          })()} peças
                         </div>
                       </div>
                     </td>
@@ -680,22 +828,75 @@ export default function InventoryManager() {
               <div>
                 <h4 className="font-medium text-gray-900 mb-3">Variações</h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {selectedItem.variations.map((variation, index) => (
-                    <div key={index} className="bg-gray-50 p-3 rounded-lg">
-                      <div className="flex justify-between items-center">
-                        <span className="font-medium">{variation.size.displayName}</span>
-                        <span className="text-sm text-gray-600">Qtd: {variation.quantity}</span>
-                      </div>
-                      <div className="text-sm text-gray-600 mt-1">
-                        Cor: {variation.color}
-                      </div>
-                      {variation.sku && (
-                        <div className="text-xs text-gray-500 mt-1">
-                          SKU: {variation.sku}
+                  {selectedItem.variations.map((variation, index) => {
+                    // Calcular vendas para esta variação específica
+                    const soldQuantity = (() => {
+                      // Para visualizador (dados demo), usar soldQuantity das variações
+                      if (isViewer()) {
+                        const sold = (variation as any).soldQuantity || 0;
+                        console.log(`=== MODAL DEBUG ${variation.color} (VIEWER) ===`);
+                        console.log(`Item ID: ${selectedItem.id}`);
+                        console.log(`Variação ID: ${variation.id}`);
+                        console.log(`Variação size: ${variation.size.displayName}`);
+                        console.log(`Variação color: ${variation.color}`);
+                        console.log(`Quantidade atual: ${variation.quantity}`);
+                        console.log(`Vendidas (soldQuantity): ${sold}`);
+                        console.log(`Quantidade original: ${variation.quantity + sold}`);
+                        console.log(`Disponíveis: ${variation.quantity}`);
+                        return sold;
+                      } else {
+                        // Para admin/usuário (dados reais), usar vendas da coleção sales
+                        if (sales && sales.length > 0) {
+                          const sold = sales.reduce((total, sale) => {
+                            return total + sale.items.reduce((saleTotal, item) => {
+                              return saleTotal + (item.clothingItemId === selectedItem.id && item.variationId === variation.id ? item.quantity : 0);
+                            }, 0);
+                          }, 0);
+                          console.log(`=== MODAL DEBUG ${variation.color} (REAL) ===`);
+                          console.log(`Item ID: ${selectedItem.id}`);
+                          console.log(`Variação ID: ${variation.id}`);
+                          console.log(`Variação size: ${variation.size.displayName}`);
+                          console.log(`Variação color: ${variation.color}`);
+                          console.log(`Quantidade atual: ${variation.quantity}`);
+                          console.log(`Vendidas calculadas: ${sold}`);
+                          console.log(`Quantidade original: ${variation.quantity + sold}`);
+                          console.log(`Disponíveis: ${variation.quantity}`);
+                          return sold;
+                        } else {
+                          return 0;
+                        }
+                      }
+                    })();
+                    
+                    // Quantidade original = quantidade atual + vendidas
+                    const originalQuantity = variation.quantity + soldQuantity;
+                    
+                    // Disponíveis = quantidade atual (já descontadas as vendas)
+                    const availableQuantity = variation.quantity;
+                    
+                    return (
+                      <div key={index} className="bg-gray-50 p-3 rounded-lg">
+                        <div className="flex justify-between items-center">
+                          <span className="font-medium">{variation.size.displayName}</span>
+                          <div className="text-right">
+                            <div className="text-sm text-gray-600">Qtd Cadastrada: {originalQuantity}</div>
+                            {soldQuantity > 0 && (
+                              <div className="text-xs text-red-600">Vendidas: {soldQuantity}</div>
+                            )}
+                            <div className="text-xs text-green-600 font-medium">Disponíveis: {availableQuantity}</div>
+                          </div>
                         </div>
-                      )}
-                    </div>
-                  ))}
+                        <div className="text-sm text-gray-600 mt-1">
+                          Cor: {variation.color}
+                        </div>
+                        {variation.sku && (
+                          <div className="text-xs text-gray-500 mt-1">
+                            SKU: {variation.sku}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
                 </div>
               </div>
 

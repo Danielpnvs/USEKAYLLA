@@ -10,15 +10,15 @@ const DEFAULT_USERS = [
     role: 'admin'
   },
   {
-    email: 'usuario@usekaylla.com',
+    email: 'user@usekaylla.com',
     password: 'user123',
-    name: 'Usuário',
+    name: 'kayla',
     role: 'user'
   },
   {
-    email: 'visualizador@usekaylla.com',
-    password: 'view123',
-    name: 'Visualizador',
+    email: 'test@usekaylla.com',
+    password: 'test123',
+    name: 'test',
     role: 'viewer'
   }
 ];
@@ -32,18 +32,18 @@ export const initializeUsers = async () => {
     const usersSnapshot = await getDocs(collection(db, 'users'));
     const existingUsers = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     
-    console.log('Usuários existentes no Firebase:', existingUsers);
+    console.log('Usuários existentes no Firebase:', existingUsers.length, 'usuários');
     
     // Sempre garantir que os usuários padrão existam (criar ou atualizar)
     for (const user of DEFAULT_USERS) {
       const existingUser = existingUsers.find(u => u.email === user.email);
       
       if (existingUser) {
-        console.log(`Usuário já existe: ${user.name} (${user.email})`);
+        console.log(`Usuário já existe: ${user.name}`);
         // Opcional: atualizar senha se necessário
         // await updateDoc(doc(db, 'users', existingUser.id), { password: user.password });
       } else {
-        console.log(`Criando usuário: ${user.name} (${user.email})`);
+        console.log(`Criando usuário: ${user.name}`);
         await addDoc(collection(db, 'users'), {
           ...user,
           createdAt: new Date(),

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User, LogIn, LogOut, Settings, Shield, Mail, X, Eye, EyeOff } from 'lucide-react';
+import { User, LogIn, LogOut, Settings, Shield, Mail, Eye, EyeOff, X } from 'lucide-react';
 // Quick action icons
 import { Edit3, KeyRound, Download } from 'lucide-react';
 import { useUsers } from '../hooks/useFirestore';
@@ -29,15 +29,15 @@ const USERS: UserCredentials[] = [
     role: 'admin'
   },
   {
-    email: 'user@usekaylla.com',
+    email: 'usuario@usekaylla.com',
     password: 'user123',
-    name: 'kayla',
+    name: 'Usuário',
     role: 'user'
   },
   {
     email: 'test@usekaylla.com',
     password: 'test123',
-    name: 'test',
+    name: 'Teste',
     role: 'viewer'
   }
 ];
@@ -89,6 +89,8 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
   // Estados para feedback de erro
   const [showError, setShowError] = useState(false);
   const [errorType, setErrorType] = useState<'password_incorrect' | 'passwords_dont_match'>('password_incorrect');
+  const [showUserPassword, setShowUserPassword] = useState(false);
+  const [showViewerPassword, setShowViewerPassword] = useState(false);
 
   // Hook para gerenciar usuários no Firebase
   const { updateUser, createUser, getUserByEmail } = useUsers();
@@ -132,96 +134,76 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
       const rawLogin = (loginForm.email || '').trim().toLowerCase();
       const loginEmail = rawLogin.includes('@') ? rawLogin : `${rawLogin}@usekaylla.com`;
       
-      console.log('🔍 Tentando login:', { rawLogin, loginEmail });
+      console.log('🔍 Tentando login:', { rawLogin, loginEmail, password: loginForm.password });
       
-      // NOVA LÓGICA: LOGIN POR NOME APENAS (SEM EMAILS)
-      console.log('🔍 INICIANDO LOGIN POR NOME');
+      // Primeiro, tentar buscar no Firebase
+      let firebaseUser = await getUserByEmail(loginEmail);
+      console.log('🔥 Firebase user encontrado:', firebaseUser);
       
-      let baseUser = null;
-      let effectivePassword = '';
+      // Se não encontrar no Firebase, buscar no array USERS local
+      let baseUser = USERS.find(u => 
+        u.email.toLowerCase() === loginEmail || 
+        (u.role === 'user' && u.name.toLowerCase().replace(/\s+/g, '') === rawLogin)
+      );
+      console.log('📋 Array local user encontrado:', baseUser);
       
-      // 1. PRIMEIRO: Buscar no Firebase por nome (sem email)
-      let firebaseUser = null;
-      
-      // NOVA LÓGICA: Buscar por role baseado no nome de login
-      let userRole = null;
-      let mappedEmail = null;
-      
-      // Mapear nomes conhecidos para roles
-      const knownNames = {
-        'admin': { role: 'admin', email: 'admin@usekaylla.com' },
-        'kayla': { role: 'user', email: 'user@usekaylla.com' },
-        'test': { role: 'viewer', email: 'test@usekaylla.com' }
-      };
-      
-      if (knownNames[rawLogin]) {
-        // Nome conhecido - usar mapeamento direto
-        userRole = knownNames[rawLogin].role;
-        mappedEmail = knownNames[rawLogin].email;
-        console.log('🔍 Nome conhecido:', rawLogin, '→', userRole);
-      } else {
-        // Nome desconhecido - buscar por role no Firebase
-        // Tentar encontrar usuário com esse nome em qualquer role
-        const allUsers = await Promise.all([
-          getUserByEmail('admin@usekaylla.com'),
-          getUserByEmail('user@usekaylla.com'),
-          getUserByEmail('test@usekaylla.com')
-        ]);
-        
-        const foundUser = allUsers.find(user => 
-          user && user.name.toLowerCase() === rawLogin.toLowerCase()
-        );
-        
-        if (foundUser) {
-          userRole = foundUser.role;
-          mappedEmail = foundUser.email;
-          console.log('🔍 Nome encontrado no Firebase:', rawLogin, '→', userRole, 'Email:', mappedEmail);
-        } else {
-          console.log('❌ Nome não encontrado no Firebase:', rawLogin);
-        }
-      }
-      
-      if (userRole && mappedEmail) {
-        firebaseUser = await getUserByEmail(mappedEmail);
-        console.log('🔥 Firebase user encontrado:', firebaseUser ? 'Sim' : 'Não');
-        if (firebaseUser) {
-          console.log('🔥 Firebase user data:', {
-            name: firebaseUser.name,
-            role: firebaseUser.role,
-            hasPassword: !!firebaseUser.password
-          });
-        }
-      }
-      
-      // 2. FIREBASE SEMPRE PRIMEIRO (admin e usuário salvam aqui)
+      // Se encontrou no Firebase, usar dados do Firebase (prioridade máxima)
       if (firebaseUser) {
-        // Usar dados do Firebase (onde tanto admin quanto usuário salvam)
         baseUser = {
           email: firebaseUser.email,
           name: firebaseUser.name,
           role: firebaseUser.role,
           password: firebaseUser.password
         };
-        effectivePassword = firebaseUser.password;
-        console.log('🔥 FIREBASE: Usuário encontrado no Firebase');
-      } else {
-        // 3. FALLBACK: Se não encontrou no Firebase, usar array USERS
-        baseUser = USERS.find(u => u.role === userRole);
-        console.log('📋 Fallback - Array USERS');
-        
-        if (baseUser) {
-          effectivePassword = baseUser.password;
-          console.log('🔐 Usando dados do array USERS');
+        console.log('✅ Usando dados do Firebase:', baseUser);
+      }
+      
+      // Se não encontrou no Firebase nem no array local, tentar com email completo
+      if (!baseUser && !rawLogin.includes('@')) {
+        const fullEmail = `${rawLogin}@usekaylla.com`;
+        firebaseUser = await getUserByEmail(fullEmail);
+        console.log('🔄 Tentando com email completo:', fullEmail, firebaseUser);
+        if (firebaseUser) {
+          baseUser = {
+            email: firebaseUser.email,
+            name: firebaseUser.name,
+            role: firebaseUser.role,
+            password: firebaseUser.password
+          };
+          console.log('✅ Usando dados do Firebase (email completo):', baseUser);
         }
+      }
+      
+      // Suporte para login antigo "visualizador" (compatibilidade)
+      if (!baseUser && rawLogin === 'visualizador') {
+        const oldViewerUser = USERS.find(u => u.role === 'viewer');
+        if (oldViewerUser) {
+          baseUser = oldViewerUser;
+          console.log('🔄 Usando login antigo "visualizador" para compatibilidade');
+        }
+      }
+      
+      // CORREÇÃO: Sempre priorizar senha do Firebase se o usuário existir no Firebase
+      // Isso garante que mudanças de senha sejam respeitadas em todos os navegadores
+      let effectivePassword = '';
+      if (firebaseUser) {
+        // Se existe no Firebase, usar SEMPRE a senha do Firebase
+        effectivePassword = firebaseUser.password;
+        console.log('🔐 Usando senha do Firebase (prioridade máxima):', effectivePassword);
+      } else if (baseUser) {
+        // Se não existe no Firebase, usar senha do array local
+        effectivePassword = baseUser.password;
+        console.log('🔐 Usando senha do array local:', effectivePassword);
       }
       
       const isValid = !!baseUser && effectivePassword === loginForm.password;
       
-      // Logs de segurança - sem expor dados sensíveis
-      console.log('🔐 Verificação de login:', {
-        usuario: rawLogin,
-        encontrado: !!baseUser,
-        valido: isValid
+      console.log('🔐 Verificação de senha:', {
+        effectivePassword,
+        inputPassword: loginForm.password,
+        isValid,
+        firebasePassword: firebaseUser?.password,
+        localPassword: baseUser?.password
       });
       
       if (isValid && baseUser) {
@@ -337,8 +319,8 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         const firebaseUser = await getUserByEmail(currentUser?.email || '');
         
         const updateData: any = {
-            name: selfEditForm.name,
-            email: newEmail
+          name: selfEditForm.name,
+          email: newEmail
         };
         
         // Se nova senha foi fornecida, incluir na atualização
@@ -410,34 +392,68 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
   // Funções para Admin editar usuário - ADMIN TEM PRIORIDADE ABSOLUTA
   const handleEditUser = async () => {
     try {
-      // ADMIN SEMPRE BUSCA DADOS ATUALIZADOS DO FIREBASE
+      // ADMIN BUSCA A SENHA QUE O USUÁRIO REALMENTE ESTÁ USANDO PARA LOGIN
       const userEmail = 'user@usekaylla.com';
       const firebaseUser = await getUserByEmail(userEmail);
       
-      console.log('🔍 Admin buscando dados do user no Firebase...');
-      
-      if (firebaseUser) {
-        setUserEditForm({
-          name: firebaseUser.name,
-          email: firebaseUser.email,
-          password: firebaseUser.password,
-          newPassword: ''
-        });
-        console.log('✅ Admin vendo dados atualizados do user no Firebase:', {
-          name: firebaseUser.name,
-          hasPassword: !!firebaseUser.password
-        });
-      } else {
-        // Fallback para dados originais
-        const userUser = USERS.find(u => u.role === 'user');
-        if (userUser) {
+      // PRIMEIRO: Buscar no localStorage (senha que usuário está usando)
+      const userData = localStorage.getItem('usekaylla_user_data');
+      if (userData) {
+        try {
+          const parsed = JSON.parse(userData);
           setUserEditForm({
-            name: userUser.name,
-            email: userUser.email,
-            password: userUser.password,
+            name: parsed.name,
+            email: parsed.email,
+            password: parsed.password, // SENHA REAL QUE USUÁRIO USA PARA LOGIN
             newPassword: ''
           });
-          console.log('⚠️ Fallback para dados originais do user');
+          console.log('✅ ADMIN VENDO SENHA REAL DO USUÁRIO (localStorage):', parsed.password);
+        } catch {
+          // Se falhar, tentar Firebase
+          if (firebaseUser) {
+            setUserEditForm({
+              name: firebaseUser.name,
+              email: firebaseUser.email,
+              password: firebaseUser.password,
+              newPassword: ''
+            });
+            console.log('Admin vendo senha do Firebase:', firebaseUser.password);
+          } else {
+        // Se não encontrar no Firebase, buscar no localStorage (dados do usuário)
+        const userData = localStorage.getItem('usekaylla_user_data');
+        if (userData) {
+          try {
+            const parsed = JSON.parse(userData);
+            setUserEditForm({
+              name: parsed.name,
+              email: parsed.email,
+              password: parsed.password, // SENHA ATUAL DO LOCALSTORAGE
+              newPassword: ''
+            });
+            console.log('✅ ADMIN VENDO SENHA REAL DO USUÁRIO (localStorage):', parsed.password);
+          } catch {
+            // Fallback para dados originais
+            const userUser = USERS.find(u => u.role === 'user');
+            if (userUser) {
+              setUserEditForm({
+                name: userUser.name,
+                email: userUser.email,
+                password: userUser.password,
+                newPassword: ''
+              });
+            }
+          }
+        } else {
+          // Fallback para dados originais
+          const userUser = USERS.find(u => u.role === 'user');
+          if (userUser) {
+            setUserEditForm({
+              name: userUser.name,
+              email: userUser.email,
+              password: userUser.password,
+              newPassword: ''
+            });
+          }
         }
       }
     } catch (error) {
@@ -456,37 +472,55 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
     setShowEditUser(true);
   };
 
-  // Função para editar usuário test/viewer - ADMIN TEM PRIORIDADE ABSOLUTA
+  // Função para editar usuário test/viewer
   const handleEditTest = async () => {
     try {
-      // ADMIN SEMPRE BUSCA DADOS ATUALIZADOS DO FIREBASE
+      // Buscar dados atualizados do usuário test do Firebase
       const testEmail = 'test@usekaylla.com';
       const firebaseUser = await getUserByEmail(testEmail);
-      
-      console.log('🔍 Admin buscando dados do test no Firebase...');
       
       if (firebaseUser) {
         setUserEditForm({
           name: firebaseUser.name,
           email: firebaseUser.email,
-          password: firebaseUser.password,
+          password: firebaseUser.password, // Senha atual do Firebase
           newPassword: ''
         });
-        console.log('✅ Admin vendo dados atualizados do test no Firebase:', {
-          name: firebaseUser.name,
-          hasPassword: !!firebaseUser.password
-        });
       } else {
-        // Fallback para dados originais
-        const testUser = USERS.find(u => u.role === 'viewer');
-        if (testUser) {
-          setUserEditForm({
-            name: testUser.name,
-            email: testUser.email,
-            password: testUser.password,
-            newPassword: ''
-          });
-          console.log('⚠️ Fallback para dados originais do test');
+        // Fallback: buscar dados do localStorage primeiro, depois do array USERS
+        const testData = localStorage.getItem('usekaylla_test_data');
+        if (testData) {
+          try {
+            const parsed = JSON.parse(testData);
+            setUserEditForm({
+              name: parsed.name,
+              email: parsed.email,
+              password: parsed.password, // Senha atual do localStorage
+              newPassword: ''
+            });
+          } catch {
+            // Se falhar, usar dados originais
+            const testUser = USERS.find(u => u.role === 'viewer');
+            if (testUser) {
+              setUserEditForm({
+                name: testUser.name,
+                email: testUser.email,
+                password: testUser.password,
+                newPassword: ''
+              });
+            }
+          }
+        } else {
+          // Fallback para dados originais
+          const testUser = USERS.find(u => u.role === 'viewer');
+          if (testUser) {
+            setUserEditForm({
+              name: testUser.name,
+              email: testUser.email,
+              password: testUser.password,
+              newPassword: ''
+            });
+          }
         }
       }
     } catch (error) {
@@ -505,11 +539,10 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
     setShowEditUser(true);
   };
 
-
   const handleSaveUserEdit = async () => {
     if (userEditForm.name && userEditForm.password) {
       try {
-        // Determinar qual senha usar (nova senha se fornecida, senão manter a atual)
+        // ADMIN TEM PRIORIDADE ABSOLUTA - SUA VONTADE PREVALECE
         const finalPassword = userEditForm.newPassword || userEditForm.password;
         
         // Determinar se é user ou test baseado no email
@@ -517,62 +550,64 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         const userEmail = isTest ? 'test@usekaylla.com' : 'user@usekaylla.com';
         const userRole = isTest ? 'viewer' : 'user';
         
-        console.log('💾 ADMIN SALVANDO E SINCRONIZANDO:', { name: userEditForm.name });
+        console.log('ADMIN ALTERANDO:', { name: userEditForm.name, password: finalPassword });
         
-        // 1. ATUALIZAR FIREBASE PRIMEIRO (PRIORIDADE ABSOLUTA)
+        // ADMIN FORÇA ATUALIZAÇÃO NO FIREBASE (PRIORIDADE ABSOLUTA)
         const firebaseUser = await getUserByEmail(userEmail);
         
         if (firebaseUser) {
+          // ADMIN ATUALIZA NO FIREBASE - SUA VONTADE PREVALECE
           await updateUser(firebaseUser.id, {
             name: userEditForm.name,
             email: userEmail,
             password: finalPassword
           });
-          console.log('✅ FIREBASE ATUALIZADO AUTOMATICAMENTE');
+          console.log('Admin atualizou no Firebase - SENHA FORÇADA:', finalPassword);
         } else {
+          // Criar usuário no Firebase se não existir
           await createUser({
             name: userEditForm.name,
             email: userEmail,
             password: finalPassword,
             role: userRole
           });
-          console.log('✅ FIREBASE CRIADO AUTOMATICAMENTE');
+          console.log('Admin criou no Firebase - SENHA FORÇADA:', finalPassword);
         }
         
-        // 2. ATUALIZAR ARRAY USERS (compatibilidade)
+        // ADMIN FORÇA ATUALIZAÇÃO NO ARRAY USERS (COMPATIBILIDADE)
         const userIndex = USERS.findIndex(u => u.role === userRole);
         if (userIndex !== -1) {
           USERS[userIndex] = {
             ...USERS[userIndex],
             name: userEditForm.name,
             email: userEmail,
-            password: finalPassword
+            password: finalPassword // ADMIN FORÇA A SENHA
           };
         }
         
-        // 3. ATUALIZAR LOCALSTORAGE (sincronização)
+        // ADMIN FORÇA ATUALIZAÇÃO NO LOCALSTORAGE (SINCRONIZAÇÃO)
         if (isTest) {
           localStorage.setItem('usekaylla_test_data', JSON.stringify({
             name: userEditForm.name,
             email: userEmail,
-            password: finalPassword,
+            password: finalPassword, // ADMIN FORÇA A SENHA
             role: userRole
           }));
         } else {
           localStorage.setItem('usekaylla_user_data', JSON.stringify({
             name: userEditForm.name,
             email: userEmail,
-            password: finalPassword,
+            password: finalPassword, // ADMIN FORÇA A SENHA
             role: userRole
           }));
         }
         
-        // 4. LIMPAR CREDENCIAIS PARA FORÇAR USO DO FIREBASE
+        // ADMIN LIMPA CREDENCIAIS PARA FORÇAR USO DO FIREBASE
         const creds = readCredentials();
         delete creds[userEmail];
         writeCredentials(creds);
         
-        console.log('✅ SINCRONIZAÇÃO COMPLETA - Nova senha já funciona para login');
+        console.log('ADMIN FINALIZOU ALTERAÇÃO - SUA VONTADE PREVALECEU');
         
         // Mostrar feedback de sucesso
         setSuccessType('user_updated');
@@ -645,12 +680,8 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
       }
 
       // Atualizar ou criar usuário no Firebase
-      // NOVA HIERARQUIA: Usuário pode mudar senha e salva no Firebase
-      // Admin pode sobrescrever a qualquer momento
-      console.log('👤 USUÁRIO MUDANDO SENHA - Salvando no Firebase');
-      
-      // Atualizar no Firebase (usuário tem autonomia para senha)
       if (firebaseUser) {
+        // Atualizar senha no Firebase
         console.log('🔄 Atualizando senha no Firebase para:', currentUser.email);
         const updateSuccess = await updateUser(firebaseUser.id, {
           password: newPassword
@@ -953,6 +984,44 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                         </span>
                     </div>
                       <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Email do Usuário</span>
+                        <span className="text-sm font-medium text-gray-900">
+                          {(() => {
+                            const userData = localStorage.getItem('usekaylla_user_data');
+                            if (userData) {
+                              const parsed = JSON.parse(userData);
+                              return parsed.email;
+                            }
+                            return USERS.find(u => u.role === 'user')?.email;
+                          })()}
+                        </span>
+                  </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Senha do Usuário</span>
+                        <span className="text-sm font-medium text-gray-900 font-mono bg-gray-100 px-2 py-1 rounded flex items-center gap-2">
+                          {showUserPassword ? (
+                            (() => {
+                              const userData = localStorage.getItem('usekaylla_user_data');
+                              if (userData) {
+                                const parsed = JSON.parse(userData);
+                                return parsed.password;
+                              }
+                              return USERS.find(u => u.role === 'user')?.password;
+                            })()
+                          ) : (
+                            '••••••••'
+                          )}
+                    <button
+                            type="button"
+                            onClick={() => setShowUserPassword(p => !p)}
+                            className="text-gray-500 hover:text-gray-700"
+                            aria-label="Mostrar senha do usuário"
+                          >
+                            {showUserPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                        </span>
+                      </div>
+                      <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Último Acesso do Usuário</span>
                         <span className="text-sm font-medium text-gray-900">
                           {(() => {
@@ -965,6 +1034,24 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                           })()}
                         </span>
                       </div>
+                      <div className="flex justify-between items-center">
+                        <span className="text-sm text-gray-600">Senha do Visualizador</span>
+                        <span className="text-sm font-medium text-gray-900 font-mono bg-gray-100 px-2 py-1 rounded flex items-center gap-2">
+                          {showViewerPassword ? (
+                            (() => USERS.find(u => u.role === 'viewer')?.password)() || ''
+                          ) : (
+                            '••••••••'
+                          )}
+                    <button
+                            type="button"
+                            onClick={() => setShowViewerPassword(p => !p)}
+                            className="text-gray-500 hover:text-gray-700"
+                            aria-label="Mostrar senha do visualizador"
+                          >
+                            {showViewerPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                        </span>
+                  </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Último Acesso do Visualizador</span>
                         <span className="text-sm font-medium text-gray-900">
@@ -1116,11 +1203,11 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                 </div>
                 {currentUser?.role === 'user' ? (
                   <button 
-                    onClick={() => setShowChangePassword(true)}
+                    onClick={handleEditSelf}
                     className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
                   >
-                    <KeyRound className="h-4 w-4 mr-2 text-gray-500" />
-                    Alterar Senha
+                    <Edit3 className="h-4 w-4 mr-2 text-gray-500" />
+                    Editar Nome de Usuário
                   </button>
                 ) : currentUser?.role === 'admin' ? (
                   <button 
@@ -1135,7 +1222,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                 <>
                 <button 
                     onClick={handleEditUser}
-                  className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
                 >
                     <Edit3 className="h-4 w-4 mr-2 text-gray-500" />
                     Editar Usuário
