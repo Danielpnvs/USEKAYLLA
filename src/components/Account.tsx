@@ -3,6 +3,7 @@ import { User, LogIn, LogOut, Settings, Shield, Mail, X, Eye, EyeOff } from 'luc
 // Quick action icons
 import { Edit3, KeyRound, Download } from 'lucide-react';
 import { useUsers } from '../hooks/useFirestore';
+import { registerLogin, useAccessData, formatAccessDate } from '../utils/accessTracker';
 
 interface UserProfile {
   id: string;
@@ -92,6 +93,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
 
   // Hook para gerenciar usuários no Firebase
   const { updateUser, createUser, getUserByEmail } = useUsers();
+  const { accessData, loading: accessLoading, loadAccessData } = useAccessData();
 
   // Utilidades de credenciais persistidas (por email)
   const readCredentials = (): Record<string, string> => {
@@ -232,6 +234,14 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         } else if (baseUser.role === 'viewer') {
           localStorage.setItem('usekaylla_viewer_last_login', new Date().toISOString());
         }
+        
+        // Registrar login no Firebase
+        await registerLogin({
+          id: baseUser.email,
+          name: baseUser.name,
+          role: baseUser.role,
+          email: baseUser.email
+        });
         
         // Notificar componente pai
         if (onLogin) {
@@ -759,6 +769,13 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
     }
   }, [propIsLoggedIn, propCurrentUser]);
 
+  // Carregar dados de acesso quando o admin estiver logado
+  useEffect(() => {
+    if (currentUser?.role === 'admin') {
+      loadAccessData();
+    }
+  }, [currentUser?.role, loadAccessData]);
+
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
@@ -940,29 +957,23 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Último Acesso do Usuário</span>
                         <span className="text-sm font-medium text-gray-900">
-                          {(() => {
-                            const userLastLogin = localStorage.getItem('usekaylla_user_last_login');
-                            if (userLastLogin) {
-                              const lastLogin = new Date(userLastLogin);
-                              return `${lastLogin.toLocaleDateString('pt-BR')} às ${lastLogin.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
-                            }
-                            return 'Nunca acessou';
-                          })()}
+                          {accessLoading ? (
+                            <span className="text-gray-500">Carregando...</span>
+                          ) : (
+                            formatAccessDate(accessData?.user?.lastAccess || null)
+                          )}
                         </span>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Último Acesso do Visualizador</span>
                         <span className="text-sm font-medium text-gray-900">
-                          {(() => {
-                            const viewerLastLogin = localStorage.getItem('usekaylla_viewer_last_login');
-                            if (viewerLastLogin) {
-                              const lastLogin = new Date(viewerLastLogin);
-                              return `${lastLogin.toLocaleDateString('pt-BR')} às ${lastLogin.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`;
-                            }
-                            return 'Nunca acessou';
-                          })()}
-                  </span>
-                </div>
+                          {accessLoading ? (
+                            <span className="text-gray-500">Carregando...</span>
+                          ) : (
+                            formatAccessDate(accessData?.viewer?.lastAccess || null)
+                          )}
+                        </span>
+                      </div>
                       </div>
                   </>
                 ) : currentUser?.role === 'viewer' ? (
