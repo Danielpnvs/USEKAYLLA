@@ -56,7 +56,6 @@ export const useAccessTracking = () => {
   const getLocationInfo = (): string => {
     try {
       const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-      const language = navigator.language;
       const country = Intl.DateTimeFormat().resolvedOptions().locale;
       const now = new Date();
       const offset = now.getTimezoneOffset();
@@ -75,15 +74,6 @@ export const useAccessTracking = () => {
       const deviceInfo = getDeviceInfo();
       const locationInfo = getLocationInfo();
       const timestamp = new Date();
-
-      // Dados do acesso
-      const accessInfo = {
-        timestamp: serverTimestamp(),
-        device: deviceInfo.type,
-        platform: deviceInfo.platform,
-        location: locationInfo,
-        userAgent: deviceInfo.userAgent.substring(0, 100) // Limitar tamanho
-      };
 
       // Atualizar no Firebase - usando coleção users para evitar problemas de permissão
       const accessRef = doc(db, 'users', 'accessTracking');
