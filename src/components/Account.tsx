@@ -3,7 +3,7 @@ import { User, LogIn, LogOut, Settings, Shield, Mail, X, Eye, EyeOff } from 'luc
 // Quick action icons
 import { Edit3, KeyRound, Download } from 'lucide-react';
 import { useUsers } from '../hooks/useFirestore';
-import { registerLogin, useAccessData, formatAccessDate } from '../utils/accessTracker';
+import { useAccessTracking } from '../hooks/useAccessTracking';
 
 interface UserProfile {
   id: string;
@@ -93,7 +93,9 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
 
   // Hook para gerenciar usuários no Firebase
   const { updateUser, createUser, getUserByEmail } = useUsers();
-  const { accessData, loading: accessLoading, loadAccessData } = useAccessData();
+  
+  // Hook para rastreamento de acessos
+  const { accessData, trackAccess, fetchAccessData } = useAccessTracking();
 
   // Utilidades de credenciais persistidas (por email)
   const readCredentials = (): Record<string, string> => {
@@ -228,20 +230,18 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         // Salvar no localStorage
         localStorage.setItem('usekaylla_user', JSON.stringify(userProfile));
         
-        // Salvar último acesso por perfil
+        // Salvar último acesso por perfil (localStorage como backup)
         if (baseUser.role === 'user') {
           localStorage.setItem('usekaylla_user_last_login', new Date().toISOString());
         } else if (baseUser.role === 'viewer') {
           localStorage.setItem('usekaylla_viewer_last_login', new Date().toISOString());
         }
         
-        // Registrar login no Firebase
-        await registerLogin({
-          id: baseUser.email,
-          name: baseUser.name,
-          role: baseUser.role,
-          email: baseUser.email
-        });
+        // 🔥 REGISTRAR ACESSO NO FIREBASE (DADOS REAIS)
+        trackAccess(baseUser.role as 'user' | 'viewer' | 'admin');
+        
+        // Atualizar dados de acesso para o admin
+        fetchAccessData();
         
         // Notificar componente pai
         if (onLogin) {
@@ -769,13 +769,6 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
     }
   }, [propIsLoggedIn, propCurrentUser]);
 
-  // Carregar dados de acesso quando o admin estiver logado
-  useEffect(() => {
-    if (currentUser?.role === 'admin') {
-      loadAccessData();
-    }
-  }, [currentUser?.role, loadAccessData]);
-
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-6">
@@ -956,23 +949,35 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                     </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Último Acesso do Usuário</span>
-                        <span className="text-sm font-medium text-gray-900">
-                          {accessLoading ? (
-                            <span className="text-gray-500">Carregando...</span>
-                          ) : (
-                            formatAccessDate(accessData?.user?.lastAccess || null)
+                        <div className="text-right">
+                          <span className="text-sm font-medium text-gray-900">
+                            {accessData.lastUserAccess 
+                              ? `${accessData.lastUserAccess.toLocaleDateString('pt-BR')} às ${accessData.lastUserAccess.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+                              : 'Nunca acessou'
+                            }
+                          </span>
+                          {accessData.userDevice && (
+                            <div className="text-xs text-blue-600">
+                              📱 {accessData.userDevice} • {accessData.userLocation || 'Localização não disponível'}
+                            </div>
                           )}
-                        </span>
+                        </div>
                       </div>
                       <div className="flex justify-between items-center">
                         <span className="text-sm text-gray-600">Último Acesso do Visualizador</span>
-                        <span className="text-sm font-medium text-gray-900">
-                          {accessLoading ? (
-                            <span className="text-gray-500">Carregando...</span>
-                          ) : (
-                            formatAccessDate(accessData?.viewer?.lastAccess || null)
+                        <div className="text-right">
+                          <span className="text-sm font-medium text-gray-900">
+                            {accessData.lastViewerAccess 
+                              ? `${accessData.lastViewerAccess.toLocaleDateString('pt-BR')} às ${accessData.lastViewerAccess.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}`
+                              : 'Nunca acessou'
+                            }
+                          </span>
+                          {accessData.viewerDevice && (
+                            <div className="text-xs text-blue-600">
+                              📱 {accessData.viewerDevice} • {accessData.viewerLocation || 'Localização não disponível'}
+                            </div>
                           )}
-                        </span>
+                        </div>
                       </div>
                       </div>
                   </>
@@ -1152,6 +1157,15 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                   <Shield className="h-4 w-4 mr-2 text-gray-500" />
                   Privacidade e Segurança
                 </button>
+                {currentUser?.role === 'admin' && (
+                  <button 
+                    onClick={() => fetchAccessData()}
+                    className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"
+                  >
+                    <Eye className="h-4 w-4 mr-2 text-gray-500" />
+                    Atualizar Dados de Acesso
+                  </button>
+                )}
                 <button 
                   onClick={handleExportData}
                   className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg transition-colors flex items-center"

@@ -43,6 +43,12 @@ service cloud.firestore {
       allow read, write: if true;
     }
     
+    // Regras para rastreamento de acessos
+    match /accessTracking/{document} {
+      // Permitir leitura e escrita para desenvolvimento
+      allow read, write: if true;
+    }
+    
     // Bloquear acesso a outras coleções não autorizadas
     match /{document=**} {
       allow read, write: if false;
