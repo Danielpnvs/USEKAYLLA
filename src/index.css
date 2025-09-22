@@ -57,6 +57,54 @@ body {
   @apply w-full px-3 py-2 border border-secondary-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;
 }
 
+/* Mobile optimizations */
+@media (max-width: 768px) {
+  .input-field {
+    @apply py-3 text-base; /* Maior altura e fonte para touch */
+  }
+  
+  .btn-primary, .btn-secondary, .btn-danger {
+    @apply py-3 px-6 text-base min-h-[48px]; /* Botões maiores para touch */
+  }
+  
+  /* Melhorar legibilidade dos textos em mobile */
+  .text-sm {
+    @apply text-base; /* Textos pequenos ficam maiores */
+  }
+  
+  .text-xs {
+    @apply text-sm; /* Textos extra pequenos ficam pequenos */
+  }
+  
+  /* Destacar números e valores importantes */
+  .font-medium {
+    @apply font-semibold; /* Textos médios ficam mais destacados */
+  }
+  
+  .font-bold {
+    @apply text-lg; /* Textos em negrito ficam maiores */
+  }
+  
+  /* Labels específicos para mobile */
+  .form-label {
+    @apply text-base font-semibold text-gray-700 mb-2;
+  }
+  
+  /* Valores e números destacados */
+  .value-text {
+    @apply text-lg font-semibold;
+  }
+  
+  .price-text {
+    @apply text-xl font-bold;
+  }
+  
+  /* Placeholders mais legíveis */
+  .input-field::placeholder {
+    @apply text-gray-500 text-base;
+  }
+}
+
 .card {
   @apply bg-white rounded-xl shadow-sm border border-secondary-200 p-6;
 }
