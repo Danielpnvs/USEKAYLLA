@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { createPortal } from 'react-dom';
-import { Plus, Save, X, Trash2, ShoppingBag, Tag, Palette, DollarSign, Sparkles, FileText, Shirt } from 'lucide-react';
+import { Plus, Save, X, Trash2, ShoppingBag, Tag, Palette, DollarSign, Sparkles } from 'lucide-react';
 import type { ClothingItem, ClothingCategory, ClothingSize, ClothingVariation } from '../types';
 import { useFirestore } from '../hooks/useFirestore';
 import { useApp } from '../contexts/AppContext';
@@ -1069,7 +1068,6 @@ export default function ClothingForm() {
       {showSuccess && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[9999] p-4" style={{zIndex: 9999, position: 'fixed'}}>
           <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full mx-4 p-6 text-center">
-            {console.log('🔔 Modal renderizado! showSuccess:', showSuccess)}
             <div className="text-4xl sm:text-6xl mb-4">🎉</div>
             <h3 className="text-xl sm:text-2xl font-bold text-green-600 mb-2">
               {isEditing ? 'Peça Atualizada com Sucesso!' : 'Peça Cadastrada com Sucesso!'}
