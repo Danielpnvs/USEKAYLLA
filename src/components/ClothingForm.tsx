@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { Plus, Save, X, Trash2, ShoppingBag, Tag, Palette, DollarSign, Sparkles } from 'lucide-react';
 import type { ClothingItem, ClothingCategory, ClothingSize, ClothingVariation } from '../types';
 import { useFirestore } from '../hooks/useFirestore';
-import { useApp } from '../contexts/AppContext';
 import ViewerAlert from './ViewerAlert';
 
 const categories: ClothingCategory[] = [
@@ -40,7 +39,6 @@ const sizes: ClothingSize[] = [
 
 export default function ClothingForm() {
   const { data: clothingItems, add, update, loading, error } = useFirestore<ClothingItem>('clothing');
-  const { setActiveTab } = useApp();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
@@ -319,6 +317,10 @@ export default function ClothingForm() {
     console.log('Evento:', e);
     console.log('isSubmitting:', isSubmitting);
     console.log('loading:', loading);
+    console.log('formData:', formData);
+    console.log('variations:', variations);
+    // Alert para debug no mobile
+    // alert('🚀 handleSubmit iniciado!');
     
     // Verificar se é visualizador
     if (isViewer()) {
@@ -335,6 +337,9 @@ export default function ClothingForm() {
     if (!formData.category) missingFields.push('Categoria');
     if (!formData.supplier.trim()) missingFields.push('Fornecedor');
     if (variations.length === 0) missingFields.push('Pelo menos uma variação (tamanho e cor)');
+    
+    console.log('🔍 Campos faltando:', missingFields);
+    // alert(`🔍 Campos faltando: ${missingFields.length > 0 ? missingFields.join(', ') : 'Nenhum'}`);
     
     if (missingFields.length > 0) {
       // Marcar campos como tocados para mostrar erros visuais
@@ -404,18 +409,31 @@ export default function ClothingForm() {
         };
 
         console.log('Salvando peça:', clothingItem);
-        const result = await add(clothingItem);
+        // alert('💾 Salvando peça...');
         
-        console.log('Resultado do add:', result);
-        console.log('Tipo do resultado:', typeof result);
+        let result;
+        try {
+          result = await add(clothingItem);
+          console.log('Resultado do add:', result);
+          console.log('Tipo do resultado:', typeof result);
+          // alert(`💾 Resultado: ${result}`);
+        } catch (error) {
+          console.error('Erro no add:', error);
+          alert(`❌ Erro no salvamento: ${error}`);
+          return;
+        }
         
         if (result && typeof result === 'string' && result.length > 0) {
         console.log('Peça salva com sucesso, ID:', result);
         
         // Mostrar sucesso IMEDIATAMENTE
         console.log('🔔 Mostrando modal de sucesso...');
-        setShowSuccess(true);
-        console.log('🔔 showSuccess definido como true');
+        
+        // Usar setTimeout para garantir que o modal apareça antes de qualquer redirecionamento
+        setTimeout(() => {
+          setShowSuccess(true);
+          console.log('🔔 showSuccess definido como true');
+        }, 100);
         
         // Tocar som de sucesso (respeitando preferência do usuário)
         try {
@@ -450,6 +468,7 @@ export default function ClothingForm() {
       console.error('Erro no salvamento:', error);
       alert('Erro ao salvar peça. Tente novamente.');
     } finally {
+      console.log('🏁 === FIM handleSubmit ===');
       setIsSubmitting(false);
     }
   };
@@ -1043,7 +1062,17 @@ export default function ClothingForm() {
             <button
               type="submit"
               disabled={isSubmitting || loading}
-              onClick={() => console.log('🔘 Botão submit clicado!')}
+              onClick={(e) => {
+                console.log('🔘 Botão submit clicado!');
+                console.log('Evento:', e);
+                console.log('isSubmitting:', isSubmitting);
+                console.log('loading:', loading);
+                // Forçar execução do handleSubmit
+                e.preventDefault();
+                handleSubmit(e);
+                // Log adicional para debug
+                // alert('🔘 Botão clicado! Verifique o console.');
+              }}
               className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-600 text-white rounded-xl hover:from-purple-600 hover:to-pink-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center font-bold shadow-lg transition-all duration-200 w-full sm:w-auto"
             >
               {isSubmitting ? (
@@ -1082,7 +1111,6 @@ export default function ClothingForm() {
                     onClick={() => {
                       console.log('Clicou em Continuar na Aba Estoque');
                       setShowSuccess(false);
-                      setActiveTab('inventory');
                       // Reset form
                       setFormData({
                         code: '',
@@ -1117,7 +1145,6 @@ export default function ClothingForm() {
                     onClick={() => {
                       console.log('Clicou em Ir para Aba Vendas');
                       setShowSuccess(false);
-                      setActiveTab('sales');
                       // Reset form
                       setFormData({
                         code: '',
@@ -1154,7 +1181,6 @@ export default function ClothingForm() {
                   <button
                     onClick={() => {
                       setShowSuccess(false);
-                      setActiveTab('inventory');
                     }}
                     className="px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 font-bold w-full sm:w-auto"
                   >

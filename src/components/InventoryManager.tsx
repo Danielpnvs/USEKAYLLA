@@ -280,7 +280,7 @@ export default function InventoryManager() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 overflow-x-hidden">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 w-[40%] sm:w-full mr-auto ml-0">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 w-full">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3 rounded-xl mr-4">
@@ -303,7 +303,7 @@ export default function InventoryManager() {
         {/* Estatísticas */}
         <div className="block sm:hidden">
            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-           <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+           <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <ShoppingBag className="h-6 w-6 text-white" />
@@ -315,7 +315,7 @@ export default function InventoryManager() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+          <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <CheckCircle className="h-6 w-6 text-white" />
@@ -327,7 +327,7 @@ export default function InventoryManager() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <ShoppingCart className="h-6 w-6 text-white" />
@@ -339,7 +339,7 @@ export default function InventoryManager() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <Package className="h-6 w-6 text-white" />
@@ -351,37 +351,40 @@ export default function InventoryManager() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <DollarSign className="h-6 w-6 text-white" />
               </div>
               <div className="ml-3">
                 <p className="text-xs font-medium text-yellow-100">Valor Total</p>
-                <p className="text-lg font-bold text-white leading-tight">
+                <p className="text-sm font-bold text-white leading-tight">
                   R$ {stats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+          <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
             <div className="flex items-center">
               <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                 <TrendingUp className="h-6 w-6 text-white" />
               </div>
               <div className="ml-3">
                 <p className="text-xs font-medium text-purple-100">Lucro Esperado</p>
-                <p className="text-lg font-bold text-white leading-tight">
+                <p className="text-sm font-bold text-white leading-tight">
                   R$ {stats.expectedProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </p>
               </div>
             </div>
           </div>
         </div>
+        </div>
+        
+        {/* Estatísticas Desktop */}
         <div className="hidden sm:block">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
+            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-3 rounded-xl shadow-lg text-white min-h-[60px] w-full">
               <div className="flex items-center">
                 <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                   <ShoppingBag className="h-6 w-6 text-white" />
@@ -393,7 +396,7 @@ export default function InventoryManager() {
               </div>
             </div>
 
-             <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+             <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-3 rounded-xl shadow-lg text-white min-h-[60px] w-full">
               <div className="flex items-center">
                 <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                   <CheckCircle className="h-6 w-6 text-white" />
@@ -405,7 +408,7 @@ export default function InventoryManager() {
               </div>
             </div>
 
-             <div className="bg-gradient-to-r from-red-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+             <div className="bg-gradient-to-r from-red-500 to-pink-600 p-3 rounded-xl shadow-lg text-white min-h-[60px] w-full">
               <div className="flex items-center">
                 <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                   <ShoppingCart className="h-6 w-6 text-white" />
@@ -417,7 +420,7 @@ export default function InventoryManager() {
               </div>
             </div>
 
-             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-3 rounded-xl shadow-lg text-white min-h-[60px] w-full">
               <div className="flex items-center">
                 <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                   <Package className="h-6 w-6 text-white" />
@@ -429,28 +432,28 @@ export default function InventoryManager() {
               </div>
             </div>
 
-             <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+             <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-3 rounded-xl shadow-lg text-white min-h-[60px] w-full">
               <div className="flex items-center">
                 <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                   <DollarSign className="h-6 w-6 text-white" />
                 </div>
                 <div className="ml-3">
                   <p className="text-xs font-medium text-yellow-100">Valor Total</p>
-                  <p className="text-lg font-bold text-white leading-tight">
+                  <p className="text-sm font-bold text-white leading-tight">
                     R$ {stats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
               </div>
             </div>
 
-             <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-[40%] sm:w-full mr-auto ml-0">
+             <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-3 rounded-xl shadow-lg text-white min-h-[60px] w-full">
               <div className="flex items-center">
                 <div className="p-2 bg-white bg-opacity-20 rounded-lg">
                   <TrendingUp className="h-6 w-6 text-white" />
                 </div>
                 <div className="ml-3">
                   <p className="text-xs font-medium text-purple-100">Lucro Esperado</p>
-                  <p className="text-lg font-bold text-white leading-tight">
+                  <p className="text-sm font-bold text-white leading-tight">
                     R$ {stats.expectedProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                   </p>
                 </div>
@@ -458,10 +461,9 @@ export default function InventoryManager() {
             </div>
           </div>
         </div>
-        </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 w-[40%] sm:w-full mr-auto ml-0">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 w-full">
           <div className="flex items-center mb-6">
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-lg mr-3">
               <Filter className="h-5 w-5 text-white" />
@@ -544,7 +546,7 @@ export default function InventoryManager() {
         </div>
 
         {/* Lista de Itens */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-x-auto w-[40%] sm:w-full mr-auto ml-0">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-x-auto w-full">
           <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
