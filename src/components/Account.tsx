@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { User as UserIcon, LogIn, LogOut, Settings, Shield, Mail, X, Eye, EyeOff } from 'lucide-react';
-// Quick action icons
-import { Edit3, KeyRound, Download } from 'lucide-react';
+import { LogIn, LogOut, Settings, Shield, Mail, X, Eye, EyeOff, Edit3, KeyRound, Download } from 'lucide-react';
 import { useUsers } from '../hooks/useFirestore';
 import { useAccessTracking } from '../hooks/useAccessTracking';
 import type { User } from '../types';
@@ -36,15 +34,15 @@ const USERS: UserCredentials[] = [
 ];
 
 interface AccountProps {
-  onLogin?: (user: UserProfile) => void;
+  onLogin?: (user: User) => void;
   onLogout?: () => void;
   isLoggedIn?: boolean;
-  currentUser?: UserProfile | null;
+  currentUser?: User | null;
 }
 
 export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn, currentUser: propCurrentUser }: AccountProps) {
   const [isLoggedIn, setIsLoggedIn] = useState(propIsLoggedIn || false);
-  const [currentUser, setCurrentUser] = useState<UserProfile | null>(propCurrentUser || null);
+  const [currentUser, setCurrentUser] = useState<User | null>(propCurrentUser || null);
   const [showPassword, setShowPassword] = useState(false);
   const [loginForm, setLoginForm] = useState({
     email: '',
@@ -206,7 +204,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
       });
       
       if (isValid && baseUser) {
-        const userProfile: UserProfile = {
+        const userProfile: User = {
           id: baseUser.email,
           name: baseUser.name,
           email: baseUser.email,
@@ -359,7 +357,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         }
         
         // Atualizar usuário atual
-        const updatedUser: UserProfile = {
+        const updatedUser: User = {
           ...currentUser!,
           name: selfEditForm.name,
           email: newEmail
@@ -773,7 +771,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
-                  <User className="h-5 w-5 text-white" />
+                  <Settings className="h-5 w-5 text-white" />
                 </div>
                 <div>
                   <h2 className="text-xl font-bold text-gray-900">Conta</h2>
@@ -865,7 +863,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
-                <User className="h-5 w-5 text-white" />
+                <Settings className="h-5 w-5 text-white" />
               </div>
               <div>
                 <h2 className="text-xl font-bold text-gray-900">Conta</h2>
@@ -919,7 +917,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-gray-600">Último Login</span>
                   <span className="text-sm font-medium text-gray-900">
-                        {currentUser?.lastLogin.toLocaleDateString('pt-BR')} às {currentUser?.lastLogin.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        {currentUser?.lastLogin?.toLocaleDateString('pt-BR')} às {currentUser?.lastLogin?.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
                   </span>
                   </div>
                 <div className="flex justify-between items-center">
