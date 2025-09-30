@@ -140,7 +140,7 @@ function AppContent() {
               setIsLoggedIn(true);
               // Redirecionar baseado no tipo de usuário
               if (user.role === 'viewer') {
-                // Visualizador vai direto para o cadastro
+                // Visualizador vai direto para o cadastro (demonstração)
                 setActiveTab('clothing');
               } else {
                 // Admin e usuário vão para estoque

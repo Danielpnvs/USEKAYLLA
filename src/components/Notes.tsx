@@ -293,7 +293,11 @@ export default function Notes() {
   });
 
   const sortedBase = [...filteredNotes].sort((a, b) => {
-    if (sortBy === 'recent') return b.updatedAt.getTime() - a.updatedAt.getTime();
+    if (sortBy === 'recent') {
+      const dateA = a.updatedAt instanceof Date ? a.updatedAt : new Date(a.updatedAt);
+      const dateB = b.updatedAt instanceof Date ? b.updatedAt : new Date(b.updatedAt);
+      return dateB.getTime() - dateA.getTime();
+    }
     if (sortBy === 'priority') {
       const order = { high: 3, medium: 2, low: 1 } as const;
       return order[b.priority] - order[a.priority];
@@ -309,11 +313,11 @@ export default function Notes() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
+      <div className="max-w-7xl mx-auto space-y-6 w-full">
         {/* Header */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex flex-col gap-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
               <div className="flex items-center">
                 <div className="bg-gradient-to-r from-purple-600 to-pink-600 p-2 rounded-lg mr-3 shadow">
                   <FileText className="h-5 w-5 text-white" />
@@ -327,7 +331,7 @@ export default function Notes() {
               </div>
               <button
                 onClick={handleCreateNote}
-                className="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg text-sm sm:text-base"
+                className="flex items-center px-3 py-2 sm:px-4 sm:py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-all shadow-md hover:shadow-lg text-sm sm:text-base w-full sm:w-auto justify-center"
               >
                 <Plus className="h-4 w-4 mr-2" />
                 Nova Anotação
@@ -335,7 +339,7 @@ export default function Notes() {
             </div>
 
             {/* Barra de busca e ordenação */}
-            <div className="flex flex-col md:flex-row gap-3 items-stretch md:items-center">
+            <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
               <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-5 w-5" />
                 <input
@@ -350,7 +354,7 @@ export default function Notes() {
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value as any)}
-                  className="border-2 border-gray-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 flex items-center"
+                  className="border-2 border-gray-200 rounded-xl px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 flex items-center w-full sm:w-auto"
                 >
                   <option value="recent">Mais recentes</option>
                   <option value="priority">Por prioridade</option>
@@ -361,7 +365,7 @@ export default function Notes() {
             </div>
 
             {/* Resumo */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="p-3 rounded-xl border bg-gradient-to-br from-purple-50 to-white">
                 <div className="text-xs text-gray-600">Total</div>
                 <div className="text-lg sm:text-xl font-bold text-gray-900">{notes.length}</div>
@@ -384,13 +388,13 @@ export default function Notes() {
 
         {/* Filtros */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
-          <div className="flex flex-wrap gap-4">
-            <div>
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
               <select
                 value={filterType}
                 onChange={(e) => setFilterType(e.target.value as any)}
-                className="border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               >
                 <option value="all">Todos</option>
                 <option value="problem">Problemas</option>
@@ -398,12 +402,12 @@ export default function Notes() {
                 <option value="general">Geral</option>
               </select>
             </div>
-            <div>
+            <div className="flex-1">
               <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value as any)}
-                className="border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                className="w-full border-2 border-gray-200 rounded-lg px-4 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
               >
                 <option value="all">Todos</option>
                 <option value="open">Aberto</option>
@@ -426,9 +430,9 @@ export default function Notes() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {sortedNotes.map(note => (
               <div key={note.id} className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 hover:shadow-2xl transition-all group">
-                <div className="flex items-start justify-between mb-4">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-2">
+                <div className="mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="flex items-center gap-2 flex-wrap">
                       <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getTypeColor(note.type)}`}>
                         {getTypeIcon(note.type)}
                         {note.type === 'problem' ? 'Problema' : note.type === 'improvement' ? 'Melhoria' : 'Geral'}
@@ -440,34 +444,42 @@ export default function Notes() {
                         {note.status === 'open' ? 'Aberto' : note.status === 'in_progress' ? 'Em Andamento' : 'Resolvido'}
                       </span>
                     </div>
-                    <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-700 break-words">{note.title}</h3>
-                    <p className="text-sm sm:text-base text-gray-700 whitespace-pre-wrap break-words">{note.content}</p>
-                    <div className="mt-2 text-xs text-gray-500">
-                      Aba relacionada: <span className="font-medium text-red-600 underline">{getTabName(note.relatedTab)}</span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleEditNote(note)}
+                        className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                        title="Editar"
+                      >
+                        <Edit className="h-4 w-4" />
+                      </button>
+                      <button
+                        onClick={() => handleDeleteNote(note.id)}
+                        className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                        title="Excluir"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 ml-4">
-                    <button
-                      onClick={() => handleEditNote(note)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
-                      title="Editar"
-                    >
-                      <Edit className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => handleDeleteNote(note.id)}
-                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                      title="Excluir"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </button>
+                  <h3 className="text-base sm:text-lg font-bold text-gray-900 mb-2 group-hover:text-purple-700 break-words">{note.title}</h3>
+                  <p className="text-sm sm:text-base text-gray-700 whitespace-pre-wrap break-words">{note.content}</p>
+                  <div className="mt-2 text-xs text-gray-500">
+                    Aba relacionada: <span className="font-medium text-red-600 underline">{getTabName(note.relatedTab)}</span>
                   </div>
                 </div>
                 <div className="text-sm text-gray-500 border-t pt-3">
-                  Criado em {note.createdAt.toLocaleDateString('pt-BR')} às {note.createdAt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
-                  {note.updatedAt.getTime() !== note.createdAt.getTime() && (
-                    <span> • Atualizado em {note.updatedAt.toLocaleDateString('pt-BR')} às {note.updatedAt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
-                  )}
+                  {(() => {
+                    const createdAt = note.createdAt instanceof Date ? note.createdAt : new Date(note.createdAt);
+                    const updatedAt = note.updatedAt instanceof Date ? note.updatedAt : new Date(note.updatedAt);
+                    return (
+                      <>
+                        Criado em {createdAt.toLocaleDateString('pt-BR')} às {createdAt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}
+                        {updatedAt.getTime() !== createdAt.getTime() && (
+                          <span> • Atualizado em {updatedAt.toLocaleDateString('pt-BR')} às {updatedAt.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}</span>
+                        )}
+                      </>
+                    );
+                  })()}
                 </div>
               </div>
             ))}
@@ -477,8 +489,8 @@ export default function Notes() {
 
         {/* Modal de Formulário */}
         {showForm && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-2 sm:p-4 z-50" style={{ zIndex: 9999 }}>
-            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-5xl max-h-[95vh] sm:max-h-[90vh] overflow-y-auto relative">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50" style={{ zIndex: 9999 }}>
+            <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto relative">
               <div className="p-6 border-b border-gray-200 bg-gradient-to-r from-purple-600 to-pink-600 text-white">
                 <div className="flex items-center justify-between">
                   <h3 className="text-lg font-bold">
@@ -493,8 +505,8 @@ export default function Notes() {
                 </div>
               </div>
               
-              <div className="grid grid-cols-1 lg:grid-cols-2 min-h-0">
-                <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4 flex flex-col">
+              <div className="p-4 sm:p-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Título *</label>
                     <input
@@ -512,19 +524,19 @@ export default function Notes() {
                     <textarea
                       value={formData.content}
                       onChange={(e) => setFormData(prev => ({ ...prev, content: e.target.value }))}
-                      className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 h-32 resize-none"
+                      className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 h-24 resize-none"
                       placeholder="Descreva o problema ou melhoria..."
                       required
                     />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">Tipo</label>
                       <select
                         value={formData.type}
                         onChange={(e) => setFormData(prev => ({ ...prev, type: e.target.value as Note['type'] }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
                       >
                         <option value="general">Geral</option>
                         <option value="problem">Problema</option>
@@ -537,7 +549,7 @@ export default function Notes() {
                       <select
                         value={formData.priority}
                         onChange={(e) => setFormData(prev => ({ ...prev, priority: e.target.value as Note['priority'] }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
                       >
                         <option value="low">Baixa</option>
                         <option value="medium">Média</option>
@@ -546,14 +558,14 @@ export default function Notes() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     {isAdmin ? (
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
                         <select
                           value={formData.status}
                           onChange={(e) => setFormData(prev => ({ ...prev, status: e.target.value as Note['status'] }))}
-                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
                         >
                           <option value="open">Aberto</option>
                           <option value="in_progress">Em Andamento</option>
@@ -566,7 +578,7 @@ export default function Notes() {
                         <input
                           value="Aberto"
                           readOnly
-                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 bg-gray-50 text-gray-600"
+                          className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 bg-gray-50 text-gray-600 text-sm"
                         />
                       </div>
                     )}
@@ -576,7 +588,7 @@ export default function Notes() {
                       <select
                         value={formData.relatedTab}
                         onChange={(e) => setFormData(prev => ({ ...prev, relatedTab: e.target.value as Note['relatedTab'] }))}
-                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
+                        className="w-full border-2 border-gray-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 text-sm"
                       >
                         <option value="clothing">Cadastrar Peças</option>
                         <option value="inventory">Gerenciar Estoque</option>
@@ -591,18 +603,17 @@ export default function Notes() {
                     </div>
                   </div>
 
-                  <div className="flex justify-end gap-3 pt-4 mt-auto">
+                  <div className="flex justify-end gap-3 pt-4">
                     <button
                       type="button"
                       onClick={handleCloseForm}
-                      className="px-3 py-2 sm:px-4 text-gray-600 hover:text-gray-800 transition-colors touch-manipulation"
+                      className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors border border-gray-300 rounded-lg"
                     >
                       Cancelar
                     </button>
                     <button
                       type="submit"
-                      className="flex items-center px-4 py-2 sm:px-6 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-xl hover:from-purple-700 hover:to-pink-700 transition-colors shadow touch-manipulation min-h-[44px] min-w-[100px]"
-                      style={{ WebkitTapHighlightColor: 'transparent' }}
+                      className="flex items-center px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-lg hover:from-purple-700 hover:to-pink-700 transition-colors shadow"
                     >
                       <Save className="h-4 w-4 mr-2" />
                       {editingNote ? 'Atualizar' : 'Salvar'}
@@ -610,31 +621,6 @@ export default function Notes() {
                   </div>
                 </form>
 
-                {/* Preview */}
-                <div className="hidden lg:block bg-gray-50 border-l p-6">
-                  <div className="text-sm text-gray-500 mb-3">Pré-visualização</div>
-                  <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium flex items-center gap-1 ${getTypeColor(formData.type)}`}>
-                        {getTypeIcon(formData.type)}
-                        {formData.type === 'problem' ? 'Problema' : formData.type === 'improvement' ? 'Melhoria' : 'Geral'}
-                      </span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getPriorityColor(formData.priority)}`}>
-                        {formData.priority === 'high' ? 'Alta' : formData.priority === 'medium' ? 'Média' : 'Baixa'}
-                      </span>
-                      <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(formData.status)}`}>
-                        {formData.status === 'open' ? 'Aberto' : formData.status === 'in_progress' ? 'Em Andamento' : 'Resolvido'}
-                      </span>
-                    </div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">{formData.title || 'Título da anotação'}</h3>
-                    <p className="text-gray-700 whitespace-pre-wrap min-h-[4rem]">
-                      {formData.content || 'Conteúdo da anotação...'}
-                    </p>
-                    <div className="mt-2 text-xs text-gray-500">
-                      Aba relacionada: <span className="font-medium">{formData.relatedTab}</span>
-                    </div>
-                  </div>
-                </div>
               </div>
             </div>
           </div>

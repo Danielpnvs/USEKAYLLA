@@ -321,81 +321,102 @@ export default function SalesHistory() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
-                <ShoppingCart className="h-5 w-5 text-white" />
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-0 sm:p-6">
+      <div className="max-w-7xl mx-auto space-y-6 px-0">
+        {/* Header Mobile */}
+        <div className="block sm:hidden">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6" style={{width: '63%'}}>
+            <div className="block sm:flex sm:items-center sm:justify-between">
+              <div className="flex items-center mb-3 sm:mb-0">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
+                  <ShoppingCart className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Histórico de Vendas</h2>
+                  <p className="text-xs sm:text-sm text-gray-600">Visualize e gerencie todas as vendas</p>
+                  <div className="text-2xl font-bold text-gray-900 mt-1">{totalSales} vendas encontradas</div>
+                </div>
               </div>
-              <div>
-                <h2 className="text-lg sm:text-xl font-bold text-gray-900">Histórico de Vendas</h2>
-                <p className="text-xs sm:text-sm text-gray-600">Visualize e gerencie todas as vendas</p>
-              </div>
-            </div>
-            <div className="text-right">
-              <div className="text-2xl font-bold text-gray-900">{totalSales}</div>
-              <div className="text-sm text-gray-600">vendas encontradas</div>
             </div>
           </div>
         </div>
 
-        {/* Estatísticas */}
-        <div className="block sm:hidden relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <DollarSign className="h-5 w-5 text-blue-600" />
+        {/* Header Desktop */}
+        <div className="hidden sm:block">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center">
+                <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
+                  <ShoppingCart className="h-5 w-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">Histórico de Vendas</h2>
+                  <p className="text-xs sm:text-sm text-gray-600">Visualize e gerencie todas as vendas</p>
+                </div>
               </div>
-              <div className="ml-3">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Total em Vendas</p>
-                <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
+              <div className="text-right">
+                <div className="text-2xl font-bold text-gray-900">{totalSales}</div>
+                <div className="text-sm text-gray-600">vendas encontradas</div>
               </div>
             </div>
           </div>
+        </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-yellow-100 rounded-lg">
-                <Clock className="h-5 w-5 text-yellow-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Vendas Pendentes</p>
-                <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(pendingRevenue)}</p>
+        {/* Estatísticas Mobile - Layout Corrigido */}
+        <div className="block sm:hidden">
+          <div className="grid grid-cols-1 gap-3">
+            {/* Card Total em Vendas - Mobile Layout */}
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-h-[60px]" style={{width: '63%'}}>
+              <div className="flex items-center">
+                <div className="p-1.5 bg-blue-100 rounded-lg">
+                  <DollarSign className="h-4 w-4 text-blue-600" />
+                </div>
+                <div className="ml-2">
+                  <p className="text-xs font-medium text-gray-600">Total em Vendas</p>
+                  <p className="text-sm font-bold text-gray-900">{formatCurrency(totalRevenue)}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-green-100 rounded-lg">
-                <TrendingUp className="h-5 w-5 text-green-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Lucro Total</p>
-                <p className="text-base sm:text-lg font-bold text-gray-900">{formatCurrency(totalProfit)}</p>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-h-[60px]" style={{width: '63%'}}>
+              <div className="flex items-center">
+                <div className="p-1.5 bg-yellow-100 rounded-lg">
+                  <Clock className="h-4 w-4 text-yellow-600" />
+                </div>
+                <div className="ml-2">
+                  <p className="text-xs font-medium text-gray-600">Vendas Pendentes</p>
+                  <p className="text-sm font-bold text-gray-900">{formatCurrency(pendingRevenue)}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-purple-100 rounded-lg">
-                <ShoppingCart className="h-5 w-5 text-purple-600" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs sm:text-sm font-medium text-gray-600">Total de Vendas</p>
-                <p className="text-base sm:text-lg font-bold text-gray-900">{totalSales}</p>
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-h-[60px]" style={{width: '63%'}}>
+              <div className="flex items-center">
+                <div className="p-1.5 bg-green-100 rounded-lg">
+                  <TrendingUp className="h-4 w-4 text-green-600" />
+                </div>
+                <div className="ml-2">
+                  <p className="text-xs font-medium text-gray-600">Lucro Total</p>
+                  <p className="text-sm font-bold text-gray-900">{formatCurrency(totalProfit)}</p>
+                </div>
               </div>
             </div>
-          </div>
+
+            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-h-[60px]" style={{width: '63%'}}>
+              <div className="flex items-center">
+                <div className="p-1.5 bg-purple-100 rounded-lg">
+                  <ShoppingCart className="h-4 w-4 text-purple-600" />
+                </div>
+                <div className="ml-2">
+                  <p className="text-xs font-medium text-gray-600">Total de Vendas</p>
+                  <p className="text-sm font-bold text-gray-900">{totalSales}</p>
+                </div>
+              </div>
+            </div>
         </div>
         </div>
         <div className="hidden sm:block">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 sm:gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-3 sm:gap-4">
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-3 sm:p-4 min-h-[72px] w-full">
               <div className="flex items-center">
                 <div className="p-2 bg-blue-100 rounded-lg">
@@ -443,61 +464,113 @@ export default function SalesHistory() {
           </div>
         </div>
 
-        {/* Filtros */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
-          <div className="flex items-center mb-4">
-            <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
-              <Filter className="h-5 w-5 text-white" />
-            </div>
-            <h3 className="text-base font-semibold text-gray-900">Filtros</h3>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
-            {/* Busca */}
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <input
-                type="text"
-                placeholder="Buscar por cliente ou ID..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
-              />
+        {/* Filtros Mobile */}
+        <div className="block sm:hidden">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6" style={{width: '63%'}}>
+            <div className="flex items-center mb-4">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
+                <Filter className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900">Filtros</h3>
             </div>
 
-            {/* Filtro de Status */}
-            <select
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-            >
-              <option value="all">Todos os Status</option>
-              <option value="pago">Pago</option>
-              <option value="pendente">Pendente</option>
-            </select>
+            <div className="grid grid-cols-1 gap-3 sm:gap-4">
+              {/* Busca */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  type="text"
+                  placeholder="Buscar por cliente ou ID..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
+                />
+              </div>
 
-            {/* Filtro de Data */}
-            <select
-              value={dateFilter}
-              onChange={(e) => setDateFilter(e.target.value as any)}
-              className="border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-            >
-              <option value="all">Todas as Datas</option>
-              <option value="today">Hoje</option>
-              <option value="week">Última Semana</option>
-              <option value="month">Último Mês</option>
-            </select>
+              {/* Filtro de Status */}
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              >
+                <option value="all">Todos os Status</option>
+                <option value="pago">Pago</option>
+                <option value="pendente">Pendente</option>
+              </select>
+
+              {/* Filtro de Data */}
+              <select
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value as any)}
+                className="border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              >
+                <option value="all">Todas as Datas</option>
+                <option value="today">Hoje</option>
+                <option value="week">Última Semana</option>
+                <option value="month">Último Mês</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        {/* Lista de Vendas */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
-          <div className="flex items-center mb-4">
-            <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-lg mr-3">
-              <Calendar className="h-5 w-5 text-white" />
+        {/* Filtros Desktop */}
+        <div className="hidden sm:block">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
+            <div className="flex items-center mb-4">
+              <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
+                <Filter className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900">Filtros</h3>
             </div>
-            <h3 className="text-base font-semibold text-gray-900">Vendas</h3>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
+              {/* Busca */}
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <input
+                  type="text"
+                  placeholder="Buscar por cliente ou ID..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 border-2 border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 text-sm sm:text-base"
+                />
+              </div>
+
+              {/* Filtro de Status */}
+              <select
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value as any)}
+                className="border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              >
+                <option value="all">Todos os Status</option>
+                <option value="pago">Pago</option>
+                <option value="pendente">Pendente</option>
+              </select>
+
+              {/* Filtro de Data */}
+              <select
+                value={dateFilter}
+                onChange={(e) => setDateFilter(e.target.value as any)}
+                className="border-2 border-gray-200 rounded-lg px-3 py-2 sm:px-4 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              >
+                <option value="all">Todas as Datas</option>
+                <option value="today">Hoje</option>
+                <option value="week">Última Semana</option>
+                <option value="month">Último Mês</option>
+              </select>
+            </div>
           </div>
+        </div>
+
+        {/* Lista de Vendas Mobile */}
+        <div className="block sm:hidden">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6" style={{width: '63%'}}>
+            <div className="flex items-center mb-4">
+              <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-lg mr-3">
+                <Calendar className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900">Vendas</h3>
+            </div>
 
           {filteredSales.length === 0 ? (
             <div className="text-center py-8 text-gray-500">
@@ -581,6 +654,180 @@ export default function SalesHistory() {
               ))}
             </div>
           )}
+          </div>
+        </div>
+
+        {/* Lista de Vendas Desktop */}
+        <div className="hidden sm:block">
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
+            <div className="flex items-center mb-4">
+              <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-lg mr-3">
+                <Calendar className="h-5 w-5 text-white" />
+              </div>
+              <h3 className="text-base font-semibold text-gray-900">Vendas</h3>
+            </div>
+
+            {filteredSales.length === 0 ? (
+              <div className="text-center py-8 text-gray-500">
+                <ShoppingCart className="h-12 w-12 mx-auto mb-3 text-gray-300" />
+                <p className="text-lg">Nenhuma venda encontrada</p>
+                <p className="text-sm">Ajuste os filtros para ver mais resultados</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                  {filteredSales.map(sale => (
+                    <div key={sale.id} className="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200">
+                      {/* Layout Mobile - 5 linhas */}
+                      <div className="block sm:hidden space-y-3">
+                        {/* Linha 1: Nome do cliente e status */}
+                        <div className="flex items-center justify-between">
+                          <h4 className="font-bold text-gray-900 text-base">
+                            {sale.customerName || 'Cliente não informado'}
+                          </h4>
+                          <span className={`px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(sale.status)}`}>
+                            {sale.status.toUpperCase()}
+                          </span>
+                        </div>
+                        
+                        {/* Linha 2: Data e horário */}
+                        <div className="flex items-center">
+                          <Calendar className="h-4 w-4 mr-2 text-gray-600" />
+                          <span className="text-sm text-gray-600 font-medium">{formatDate(sale.createdAt)}</span>
+                        </div>
+                        
+                        {/* Linha 3: Valor */}
+                        <div className="flex items-center">
+                          <DollarSign className="h-4 w-4 mr-2 text-gray-600" />
+                          <span className="text-lg font-bold text-green-600">{formatCurrency(sale.total)}</span>
+                        </div>
+                        
+                        {/* Linha 4: Quantidade de itens */}
+                        <div className="flex items-center">
+                          <ShoppingCart className="h-4 w-4 mr-2 text-gray-600" />
+                          <span className="text-sm text-gray-600 font-medium">{sale.items.length} item(s)</span>
+                        </div>
+                        
+                        {/* Linha 5: Botões de ação */}
+                        <div className="flex items-center justify-center space-x-3 pt-2">
+                          {getStatusIcon(sale.status)}
+                          <button
+                            onClick={() => handleViewSale(sale)}
+                            className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                            title="Ver detalhes"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => handleEditClick(sale)}
+                            className="p-2 text-yellow-600 hover:bg-yellow-100 rounded-lg transition-colors"
+                            title="Editar venda"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </button>
+                          {sale.status === 'pago' && (
+                            <button
+                              onClick={() => handleMarkAsPending(sale)}
+                              className="p-2 text-orange-600 hover:bg-orange-100 rounded-lg transition-colors"
+                              title="Marcar como pendente"
+                            >
+                              <Clock className="h-4 w-4" />
+                            </button>
+                          )}
+                          {sale.status === 'pendente' && (
+                            <button
+                              onClick={() => handleMarkAsPaid(sale)}
+                              className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
+                              title="Marcar como pago"
+                            >
+                              <CheckCircle className="h-4 w-4" />
+                            </button>
+                          )}
+                          <button
+                            onClick={() => handleDeleteClick(sale)}
+                            className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                            title="Excluir venda"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Layout Desktop - Original */}
+                      <div className="hidden sm:block">
+                        <div className="flex justify-between items-start gap-3">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center mb-2">
+                              <h4 className="font-bold text-gray-900 text-sm sm:text-base truncate">
+                                {sale.customerName || 'Cliente não informado'}
+                              </h4>
+                              <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(sale.status)}`}>
+                                {sale.status.toUpperCase()}
+                              </span>
+                            </div>
+                            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
+                              <div className="flex items-center">
+                                <Calendar className="h-4 w-4 mr-1" />
+                                {formatDate(sale.createdAt)}
+                              </div>
+                              <div className="flex items-center">
+                                <DollarSign className="h-4 w-4 mr-1" />
+                                {formatCurrency(sale.total)}
+                              </div>
+                              <div className="flex items-center">
+                                <ShoppingCart className="h-4 w-4 mr-1" />
+                                {sale.items.length} item(s)
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex items-center space-x-2 ml-1 sm:ml-4">
+                            {getStatusIcon(sale.status)}
+                            <button
+                              onClick={() => handleViewSale(sale)}
+                              className="p-2 text-blue-600 hover:bg-blue-100 rounded-lg transition-colors"
+                              title="Ver detalhes"
+                            >
+                              <Eye className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={() => handleEditClick(sale)}
+                              className="p-2 text-yellow-600 hover:bg-yellow-100 rounded-lg transition-colors"
+                              title="Editar venda"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </button>
+                            {sale.status === 'pago' && (
+                              <button
+                                onClick={() => handleMarkAsPending(sale)}
+                                className="p-2 text-orange-600 hover:bg-orange-100 rounded-lg transition-colors"
+                                title="Marcar como pendente"
+                              >
+                                <Clock className="h-4 w-4" />
+                              </button>
+                            )}
+                            {sale.status === 'pendente' && (
+                              <button
+                                onClick={() => handleMarkAsPaid(sale)}
+                                className="p-2 text-green-600 hover:bg-green-100 rounded-lg transition-colors"
+                                title="Marcar como pago"
+                              >
+                                <CheckCircle className="h-4 w-4" />
+                              </button>
+                            )}
+                            <button
+                              onClick={() => handleDeleteClick(sale)}
+                              className="p-2 text-red-600 hover:bg-red-100 rounded-lg transition-colors"
+                              title="Excluir venda"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Modal de Detalhes da Venda */}

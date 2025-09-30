@@ -25,19 +25,19 @@ interface UserCredentials {
 const USERS: UserCredentials[] = [
   {
     email: 'admin@usekaylla.com',
-    password: 'admin123',
+    password: 'carambola',
     name: 'Administrador',
     role: 'admin'
   },
   {
     email: 'user@usekaylla.com',
-    password: 'user123',
+    password: 'cloe',
     name: 'kayla',
     role: 'user'
   },
   {
     email: 'test@usekaylla.com',
-    password: 'test123',
+    password: '123',
     name: 'test',
     role: 'viewer'
   }
@@ -1010,53 +1010,11 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                     
                     {/* Dados Simulados para Demonstração */}
                     <div className="mt-4 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-                      <h4 className="text-sm font-semibold text-blue-900 mb-3 flex items-center">
-                        <Eye className="h-4 w-4 mr-2" />
-                        Dados de Demonstração
-                      </h4>
-                      <div className="space-y-2 text-xs">
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Faturamento Total:</span>
-                          <span className="font-medium text-blue-900">R$ 1.373,20</span>
-                    </div>
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Peças Cadastradas:</span>
-                          <span className="font-medium text-blue-900">5 itens</span>
-                      </div>
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Vendas Realizadas:</span>
-                          <span className="font-medium text-blue-900">10 vendas</span>
-                    </div>
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Lucro Real:</span>
-                          <span className="font-medium text-green-600">R$ 894,08</span>
-                  </div>
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Ticket Médio:</span>
-                          <span className="font-medium text-blue-900">R$ 137,32</span>
-                    </div>
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Estoque Total:</span>
-                          <span className="font-medium text-blue-900">119 peças</span>
-                  </div>
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Peças Vendidas:</span>
-                          <span className="font-medium text-blue-900">35 peças</span>
-                </div>
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Produto Mais Vendido:</span>
-                          <span className="font-medium text-blue-900">Camiseta Básica</span>
-            </div>
-                        <div className="flex justify-between">
-                          <span className="text-blue-700">Margem de Lucro:</span>
-                          <span className="font-medium text-green-600">65,2%</span>
-          </div>
-                </div>
-                      <div className="mt-3 pt-2 border-t border-blue-200">
+                      <div className="text-center">
                         <p className="text-xs text-blue-600">
                           💡 Estes são dados simulados para demonstração. Em uma conta real, você veria os dados reais do sistema.
                         </p>
-              </div>
+                      </div>
                     </div>
                   </>
                 ) : (
@@ -1085,7 +1043,8 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
               </div>
             </div>
 
-            {/* Quick Actions */}
+            {/* Quick Actions - Não mostrar para usuário test (viewer) */}
+            {currentUser?.role !== 'viewer' && (
             <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6">
               <div className="flex items-center mb-4">
                 <div className="bg-gradient-to-r from-blue-500 to-purple-600 p-2 rounded-lg mr-3">
@@ -1175,6 +1134,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
                 </button>
               </div>
             </div>
+            )}
           </div>
         </div>
 

@@ -52,12 +52,22 @@ export default function Investments() {
 
     // Agrupar peças por fornecedor e data
     clothingItems.forEach(item => {
-      const key = `${item.supplier}-${item.createdAt.toDateString()}`;
+      // Garantir que createdAt seja um objeto Date válido
+      let createdAt: Date;
+      if (item.createdAt instanceof Date) {
+        createdAt = item.createdAt;
+      } else {
+        const parsedDate = new Date(item.createdAt);
+        // Se a data for inválida, usar data atual
+        createdAt = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+      }
+      
+      const key = `${item.supplier}-${createdAt.toDateString()}`;
       
       if (!lotMap.has(key)) {
         lotMap.set(key, {
           supplier: item.supplier,
-          date: item.createdAt,
+          date: createdAt,
           items: [],
           totalCost: 0,
           totalSold: 0,
@@ -72,7 +82,16 @@ export default function Investments() {
 
     // Calcular vendas para cada lote baseado no soldQuantity das variações
     clothingItems.forEach(item => {
-      const key = `${item.supplier}-${item.createdAt.toDateString()}`;
+      // Garantir que createdAt seja um objeto Date válido
+      let createdAt: Date;
+      if (item.createdAt instanceof Date) {
+        createdAt = item.createdAt;
+      } else {
+        const parsedDate = new Date(item.createdAt);
+        // Se a data for inválida, usar data atual
+        createdAt = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+      }
+      const key = `${item.supplier}-${createdAt.toDateString()}`;
       const lot = lotMap.get(key);
       if (lot) {
         // Calcular vendas baseado no soldQuantity das variações
@@ -89,7 +108,16 @@ export default function Investments() {
 
     // Calcular vendas reais baseadas nos dados de vendas para cada lote
     clothingItems.forEach(item => {
-      const key = `${item.supplier}-${item.createdAt.toDateString()}`;
+      // Garantir que createdAt seja um objeto Date válido
+      let createdAt: Date;
+      if (item.createdAt instanceof Date) {
+        createdAt = item.createdAt;
+      } else {
+        const parsedDate = new Date(item.createdAt);
+        // Se a data for inválida, usar data atual
+        createdAt = isNaN(parsedDate.getTime()) ? new Date() : parsedDate;
+      }
+      const key = `${item.supplier}-${createdAt.toDateString()}`;
       const lot = lotMap.get(key);
       if (lot) {
         // Buscar vendas para este item específico
@@ -308,12 +336,21 @@ export default function Investments() {
     }).format(value);
   };
 
-  const formatDate = (date: Date) => {
-    return new Intl.DateTimeFormat('pt-BR', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    }).format(new Date(date));
+  const formatDate = (date: Date | string) => {
+    try {
+      const dateObj = date instanceof Date ? date : new Date(date);
+      // Verificar se a data é válida
+      if (isNaN(dateObj.getTime())) {
+        return 'Data inválida';
+      }
+      return new Intl.DateTimeFormat('pt-BR', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      }).format(dateObj);
+    } catch (error) {
+      return 'Data inválida';
+    }
   };
 
   const getProgressColor = (status: Investment['status']) => {

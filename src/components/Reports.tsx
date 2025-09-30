@@ -63,8 +63,16 @@ export default function Reports() {
       sale.items.forEach(item => {
         const clothingItem = clothingItems.find(ci => ci.id === item.clothingItemId);
         if (clothingItem) {
-          // Calcular custo real da peça (custo + frete + extras)
-          const realCost = clothingItem.costPrice + (clothingItem.freightCost || 0) + (clothingItem.extraCosts || 0);
+          // Calcular quantidade total de peças para obter frete unitário
+          const totalPieces = clothingItem.variations.reduce((sum, variation) => {
+            return sum + (variation.quantity || 0) + (variation.soldQuantity || 0);
+          }, 0);
+          
+          // Calcular frete unitário (frete total dividido pela quantidade total de peças)
+          const freightPerUnit = totalPieces > 0 ? (clothingItem.freightCost || 0) / totalPieces : 0;
+          
+          // Calcular custo real da peça (custo + frete unitário + extras + embalagem + taxa cartão)
+          const realCost = clothingItem.costPrice + freightPerUnit + (clothingItem.extraCosts || 0) + (clothingItem.packagingCost || 0) + (clothingItem.creditFee || 0);
           totalCost += realCost * item.quantity;
           totalRevenue += item.totalPrice;
         }
@@ -115,26 +123,17 @@ export default function Reports() {
   const topProducts = getTopProducts();
 
 
-  // Estatísticas de estoque — contagem de variações (não somatório de peças)
+  // Estatísticas de estoque — contagem de peças (não variações)
   const getStockStats = () => {
-    // Variações disponíveis: quantity - soldQuantity > 0
-    const availableVariations = clothingItems.reduce((sum, item) => {
-      // Para visualizador (dados demo), calcular disponível
-      if (isViewer()) {
-        return sum + item.variations.reduce((itemSum, variation) => {
-          return itemSum + (variation.quantity - ((variation as any).soldQuantity || 0));
-        }, 0);
-      } else {
-        // Para admin/usuário (dados reais), calcular disponível baseado nas vendas
-        const soldQuantity = getSoldQuantityForItem(item.id);
-        const totalVariations = item.variations.length;
-        const availableVariations = Math.max(0, totalVariations - soldQuantity);
-        return sum + availableVariations;
-      }
+    // Peças disponíveis: quantity atual (já descontadas as vendas)
+    const availableItems = clothingItems.reduce((sum, item) => {
+      return sum + item.variations.reduce((itemSum, variation) => {
+        return itemSum + variation.quantity;
+      }, 0);
     }, 0);
 
-    // Variações vendidas: baseado no soldQuantity
-    const soldVariations = clothingItems.reduce((sum, item) => {
+    // Peças vendidas: baseado no soldQuantity
+    const soldItems = clothingItems.reduce((sum, item) => {
       // Para visualizador (dados demo), usar soldQuantity das variações
       if (isViewer()) {
         return sum + item.variations.reduce((itemSum, variation) => {
@@ -146,17 +145,17 @@ export default function Reports() {
       }
     }, 0);
 
-    // Total de variações = disponíveis + vendidas
-    const totalVariations = availableVariations + soldVariations;
+    // Total de peças = disponíveis + vendidas
+    const totalItems = availableItems + soldItems;
 
     return {
-      totalVariations,
-      availableVariations,
-      soldVariations,
+      totalItems,
+      availableItems,
+      soldItems,
     };
   };
 
-  // Estatísticas por categoria — contagem de variações (disponíveis vs vendidas) baseada no estoque
+  // Estatísticas por categoria — contagem de peças (disponíveis vs vendidas) baseada no estoque
   const getCategoryStats = () => {
     const categoryStats: { [key: string]: { name: string; available: number; sold: number } } = {};
 
@@ -164,19 +163,21 @@ export default function Reports() {
       if (!categoryStats[item.category]) {
         categoryStats[item.category] = { name: item.category, available: 0, sold: 0 };
       }
-      // Para visualizador (dados demo), usar soldQuantity das variações
+      
+      // Calcular peças disponíveis (quantity atual)
+      item.variations.forEach(variation => {
+        categoryStats[item.category].available += variation.quantity;
+      });
+      
+      // Calcular peças vendidas
       if (isViewer()) {
+        // Para visualizador (dados demo), usar soldQuantity das variações
         item.variations.forEach(variation => {
-          categoryStats[item.category].available += (variation.quantity - ((variation as any).soldQuantity || 0));
           categoryStats[item.category].sold += ((variation as any).soldQuantity || 0);
         });
       } else {
         // Para admin/usuário (dados reais), calcular vendas baseado na coleção sales
         const soldQuantity = getSoldQuantityForItem(item.id);
-        const totalVariations = item.variations.length;
-        const availableVariations = Math.max(0, totalVariations - soldQuantity);
-        
-        categoryStats[item.category].available += availableVariations;
         categoryStats[item.category].sold += soldQuantity;
       }
     });
@@ -381,7 +382,7 @@ export default function Reports() {
           </div>
         </div>
 
-        {/* Estatísticas de Estoque (contagem de variações) */}
+        {/* Estatísticas de Estoque (contagem de peças) */}
         <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6">
           <div className="flex items-center mb-4">
             <div className="bg-gradient-to-r from-purple-500 to-pink-500 p-2 rounded-lg mr-3">
@@ -392,20 +393,20 @@ export default function Reports() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-4">
             <div className="p-3 sm:p-4 bg-blue-50 rounded-xl border border-blue-200">
               <div className="text-center">
-                <div className="text-xl sm:text-2xl font-bold text-blue-600">{stockStats.totalVariations}</div>
-                <div className="text-xs sm:text-sm text-gray-600">Total de Variações</div>
+                <div className="text-xl sm:text-2xl font-bold text-blue-600">{stockStats.totalItems}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Total de Peças</div>
               </div>
             </div>
             <div className="p-3 sm:p-4 bg-green-50 rounded-xl border border-green-200">
               <div className="text-center">
-                <div className="text-xl sm:text-2xl font-bold text-green-600">{stockStats.availableVariations}</div>
-                <div className="text-xs sm:text-sm text-gray-600">Variações Disponíveis</div>
+                <div className="text-xl sm:text-2xl font-bold text-green-600">{stockStats.availableItems}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Disponíveis</div>
               </div>
             </div>
             <div className="p-3 sm:p-4 bg-orange-50 rounded-xl border border-orange-200">
               <div className="text-center">
-                <div className="text-xl sm:text-2xl font-bold text-orange-600">{stockStats.soldVariations}</div>
-                <div className="text-xs sm:text-sm text-gray-600">Variações Vendidas</div>
+                <div className="text-xl sm:text-2xl font-bold text-orange-600">{stockStats.soldItems}</div>
+                <div className="text-xs sm:text-sm text-gray-600">Vendidas</div>
               </div>
             </div>
           </div>

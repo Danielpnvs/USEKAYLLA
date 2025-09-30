@@ -62,8 +62,8 @@ export default function ClothingForm() {
     freightQuantity: 1,
     packagingCost: 0,
     extraCosts: 0,
-    profitMargin: 100,
-    creditFee: 5,
+    profitMargin: 30,
+    creditFee: 7.1,
     images: [] as string[],
     tags: [] as string[],
   });

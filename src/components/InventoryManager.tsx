@@ -6,25 +6,6 @@ import { useApp } from '../contexts/AppContext';
 import ViewerAlert from './ViewerAlert';
 
 export default function InventoryManager() {
-  // Bloquear zoom em mobile nesta aba para evitar "miniaturização" ao dar zoom out
-  useEffect(() => {
-    const meta = document.querySelector('meta[name="viewport"]') as HTMLMetaElement | null;
-    if (!meta) return;
-    const previous = meta.getAttribute('content') || '';
-    meta.setAttribute('content', 'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no');
-    // Bloquear rolagem horizontal da página inteira enquanto esta aba estiver ativa
-    const htmlEl = document.documentElement;
-    const bodyEl = document.body;
-    const prevHtmlOverflowX = htmlEl.style.overflowX;
-    const prevBodyOverflowX = bodyEl.style.overflowX;
-    htmlEl.style.overflowX = 'hidden';
-    bodyEl.style.overflowX = 'hidden';
-    return () => {
-      meta.setAttribute('content', previous);
-      htmlEl.style.overflowX = prevHtmlOverflowX;
-      bodyEl.style.overflowX = prevBodyOverflowX;
-    };
-  }, []);
   const { data: clothingItems, loading, error, remove, update } = useFirestore<ClothingItem>('clothing');
   const { data: sales } = useFirestore<Sale>('sales');
   const { setActiveTab } = useApp();
@@ -65,6 +46,31 @@ export default function InventoryManager() {
       return false;
     }
   };
+
+  // Bloquear apenas rolagem horizontal em mobile
+  useEffect(() => {
+    const originalOverflowX = document.body.style.overflowX;
+    const originalTouchAction = document.body.style.touchAction;
+    
+    document.body.style.overflowX = 'hidden';
+    document.body.style.touchAction = 'pan-y';
+    
+    // Adicionar meta tag para controlar zoom
+    const viewport = document.querySelector('meta[name="viewport"]');
+    if (viewport) {
+      viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+    }
+    
+    return () => {
+      document.body.style.overflowX = originalOverflowX;
+      document.body.style.touchAction = originalTouchAction;
+      
+      // Restaurar viewport original
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0');
+      }
+    };
+  }, []);
 
   // Função para mostrar alerta do visualizador
   const showViewerAlertForAction = (action: string) => {
@@ -181,12 +187,50 @@ export default function InventoryManager() {
       return sum + item.variations.length;
     }, 0),
     totalValue: clothingItems.reduce((sum, item) => {
-      return sum + (item.sellingPrice * item.variations.length);
+      // Calcular quantidade total de peças (disponíveis + vendidas)
+      const available = item.variations.reduce((itemSum, variation) => {
+        return itemSum + variation.quantity;
+      }, 0);
+      
+      const sold = (() => {
+        if (isViewer()) {
+          return item.variations.reduce((itemSum, variation) => {
+            return itemSum + ((variation as any).soldQuantity || 0);
+          }, 0);
+        } else {
+          return getSoldQuantityForItem(item.id);
+        }
+      })();
+      
+      const totalPieces = available + sold;
+      return sum + (item.sellingPrice * totalPieces);
     }, 0),
     expectedProfit: clothingItems.reduce((sum, item) => {
-      const totalCost = item.costPrice + (item.freightCost || 0) + (item.extraCosts || 0);
-      const profitPerVariation = item.sellingPrice - totalCost;
-      return sum + (profitPerVariation * item.variations.length);
+      // Calcular quantidade total de peças (disponíveis + vendidas)
+      const available = item.variations.reduce((itemSum, variation) => {
+        return itemSum + variation.quantity;
+      }, 0);
+      
+      const sold = (() => {
+        if (isViewer()) {
+          return item.variations.reduce((itemSum, variation) => {
+            return itemSum + ((variation as any).soldQuantity || 0);
+          }, 0);
+        } else {
+          return getSoldQuantityForItem(item.id);
+        }
+      })();
+      
+      const totalPieces = available + sold;
+      
+      // Calcular frete unitário (frete total dividido pela quantidade total de peças)
+      const freightPerUnit = totalPieces > 0 ? (item.freightCost || 0) / totalPieces : 0;
+      
+      // Calcular custo total por peça
+      const totalCost = item.costPrice + freightPerUnit + (item.extraCosts || 0) + (item.packagingCost || 0) + (item.creditFee || 0);
+      const profitPerPiece = item.sellingPrice - totalCost;
+      
+      return sum + (profitPerPiece * totalPieces);
     }, 0),
   };
 
@@ -280,8 +324,8 @@ export default function InventoryManager() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-4 sm:p-6 overflow-x-hidden">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 w-full">
-          <div className="flex items-center justify-between">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 w-[45%] -ml-4 sm:w-full sm:ml-0 sm:p-4">
+          <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
             <div className="flex items-center">
               <div className="bg-gradient-to-r from-blue-600 to-cyan-600 p-3 rounded-xl mr-4">
                 <Package className="h-8 w-8 text-white" />
@@ -291,7 +335,7 @@ export default function InventoryManager() {
                 <p className="text-sm text-gray-600">Controle completo do seu inventário</p>
               </div>
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <div className="text-2xl font-bold text-blue-600">
                 {stats.totalItems}
               </div>
@@ -300,84 +344,73 @@ export default function InventoryManager() {
           </div>
         </div>
 
-        {/* Estatísticas */}
+        {/* Estatísticas Mobile */}
         <div className="block sm:hidden">
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
-           <div className="bg-gradient-to-r from-blue-500 to-cyan-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-white bg-opacity-20 rounded-lg">
-                <ShoppingBag className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-blue-100">Total de Peças</p>
-                <p className="text-xl font-bold text-white">{stats.totalItems}</p>
+          <div className="grid grid-cols-1 gap-3">
+            <div className="bg-gradient-to-r from-blue-500 to-cyan-600 rounded-2xl shadow-xl p-6 w-[45%] -ml-4 min-h-[60px] text-white">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <ShoppingBag className="h-4 w-4 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-blue-100">Total de Peças</p>
+                  <p className="text-base font-bold text-white">{stats.totalItems}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-white bg-opacity-20 rounded-lg">
-                <CheckCircle className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-green-100">Disponíveis</p>
-                <p className="text-xl font-bold text-white">{stats.availableItems}</p>
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 rounded-2xl shadow-xl p-6 w-[45%] -ml-4 min-h-[60px] text-white">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <CheckCircle className="h-4 w-4 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-green-100">Disponíveis</p>
+                  <p className="text-base font-bold text-white">{stats.availableItems}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-red-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-white bg-opacity-20 rounded-lg">
-                <ShoppingCart className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-red-100">Vendidas</p>
-                <p className="text-xl font-bold text-white">{stats.soldItems}</p>
+            <div className="bg-gradient-to-r from-red-500 to-pink-600 rounded-2xl shadow-xl p-6 w-[45%] -ml-4 min-h-[60px] text-white">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <ShoppingCart className="h-4 w-4 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-red-100">Vendidas</p>
+                  <p className="text-base font-bold text-white">{stats.soldItems}</p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-white bg-opacity-20 rounded-lg">
-                <Package className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-indigo-100">Variações</p>
-                <p className="text-xl font-bold text-white">{stats.totalVariations}</p>
-              </div>
-            </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-white bg-opacity-20 rounded-lg">
-                <DollarSign className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-yellow-100">Valor Total</p>
-                <p className="text-sm font-bold text-white leading-tight">
-                  R$ {stats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
+            <div className="bg-gradient-to-r from-yellow-500 to-orange-600 rounded-2xl shadow-xl p-6 w-[45%] -ml-4 min-h-[60px] text-white">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <DollarSign className="h-4 w-4 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-yellow-100">Valor Total</p>
+                  <p className="text-sm font-bold text-white leading-tight">
+                    R$ {stats.totalValue.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-gradient-to-r from-purple-500 to-pink-600 p-4 rounded-xl shadow-lg text-white min-h-[72px] w-full">
-            <div className="flex items-center">
-              <div className="p-2 bg-white bg-opacity-20 rounded-lg">
-                <TrendingUp className="h-6 w-6 text-white" />
-              </div>
-              <div className="ml-3">
-                <p className="text-xs font-medium text-purple-100">Lucro Esperado</p>
-                <p className="text-sm font-bold text-white leading-tight">
-                  R$ {stats.expectedProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                </p>
+            <div className="bg-gradient-to-r from-purple-500 to-pink-600 rounded-2xl shadow-xl p-6 w-[45%] -ml-4 min-h-[60px] text-white">
+              <div className="flex items-center">
+                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
+                  <TrendingUp className="h-4 w-4 text-white" />
+                </div>
+                <div className="ml-3">
+                  <p className="text-xs font-medium text-purple-100">Lucro Esperado</p>
+                  <p className="text-sm font-bold text-white leading-tight">
+                    R$ {stats.expectedProfit.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
         </div>
         </div>
         
@@ -420,17 +453,6 @@ export default function InventoryManager() {
               </div>
             </div>
 
-             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-3 rounded-xl shadow-lg text-white min-h-[60px] w-full">
-              <div className="flex items-center">
-                <div className="p-2 bg-white bg-opacity-20 rounded-lg">
-                  <Package className="h-6 w-6 text-white" />
-                </div>
-                <div className="ml-3">
-                  <p className="text-xs font-medium text-indigo-100">Variações</p>
-                  <p className="text-xl font-bold text-white">{stats.totalVariations}</p>
-                </div>
-              </div>
-            </div>
 
              <div className="bg-gradient-to-r from-yellow-500 to-orange-600 p-3 rounded-xl shadow-lg text-white min-h-[60px] w-full">
               <div className="flex items-center">
@@ -463,7 +485,7 @@ export default function InventoryManager() {
         </div>
 
         {/* Filtros */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 w-full">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-6 w-[45%] -ml-4 sm:w-full sm:ml-0 sm:p-4">
           <div className="flex items-center mb-6">
             <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-2 rounded-lg mr-3">
               <Filter className="h-5 w-5 text-white" />
@@ -546,7 +568,7 @@ export default function InventoryManager() {
         </div>
 
         {/* Lista de Itens */}
-        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-x-auto w-full">
+        <div className="bg-white rounded-2xl shadow-xl border border-gray-200 overflow-x-auto w-[45%] -ml-4 sm:w-full sm:ml-0">
           <div className="px-4 py-3 sm:px-6 sm:py-4 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center">
@@ -589,25 +611,25 @@ export default function InventoryManager() {
             </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm">
+            <table className="min-w-full divide-y divide-gray-200 text-xs sm:text-sm sm:table-auto table-fixed">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4 sm:w-auto">
                     Peça
                   </th>
-                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6 sm:w-auto">
                     Categoria
                   </th>
-                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider w-1/4 sm:w-auto">
                     Disponíveis / Vendidas
                   </th>
-                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12 sm:w-auto">
                     Preço
                   </th>
-                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider w-1/12 sm:w-auto">
                     Status
                   </th>
-                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-3 py-2 sm:px-6 sm:py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider w-1/6 sm:w-auto">
                     Ações
                   </th>
                 </tr>
@@ -615,51 +637,51 @@ export default function InventoryManager() {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredItems.map((item) => (
                   <tr key={item.id} className="hover:bg-gray-50">
-                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap">
-                      <div className="min-w-0">
-                        <div className="text-sm font-medium text-gray-900 break-words">{item.name}</div>
-                        <div className="text-sm text-gray-500 break-all">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 w-1/4 sm:w-auto">
+                      <div className="min-w-0 sm:min-w-0 truncate sm:truncate">
+                        <div className="text-sm font-medium text-gray-900 truncate sm:truncate" title={item.name}>{item.name}</div>
+                        <div className="text-sm text-gray-500 truncate sm:truncate">
                           <span className="font-mono text-xs bg-gray-100 px-2 py-1 rounded">{item.code}</span>
                         </div>
-                        <div className="text-sm text-gray-500 break-words">
+                        <div className="text-sm text-gray-500 truncate sm:truncate" title={`${item.brand && `${item.brand} • `}${item.supplier}`}>
                           {item.brand && `${item.brand} • `}
                           {item.supplier}
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap">
-                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-primary-100 text-primary-800">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 w-1/6 sm:w-auto">
+                      <span className="inline-flex px-2 py-1 text-xs font-semibold rounded-full bg-primary-100 text-primary-800 truncate sm:truncate">
                         {item.category}
                       </span>
                     </td>
-                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap text-sm text-gray-500">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 w-1/4 sm:w-auto text-sm text-gray-500">
                       <div className="space-y-1">
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xs text-green-600 font-medium">
-                            Disponíveis: {item.variations.reduce((sum, v) => sum + v.quantity, 0)}
-                          </span>
+                        <div className="text-xs text-green-600 font-medium truncate sm:truncate">
+                          <span className="sm:hidden">Disp: </span>
+                          <span className="hidden sm:inline">Disponíveis: </span>
+                          {item.variations.reduce((sum, v) => sum + v.quantity, 0)}
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xs text-red-600 font-medium">
-                            Vendidas: {(() => {
-                              // Para visualizador (dados demo), usar soldQuantity das variações
-                              if (isViewer()) {
-                                return item.variations.reduce((sum, v) => {
-                                  return sum + ((v as any).soldQuantity || 0);
-                                }, 0);
-                              } else {
-                                // Para admin/usuário (dados reais), calcular vendas baseado na coleção sales
-                                return getSoldQuantityForItem(item.id);
-                              }
-                            })()}
-                          </span>
+                        <div className="text-xs text-red-600 font-medium truncate sm:truncate">
+                          <span className="sm:hidden">Vend: </span>
+                          <span className="hidden sm:inline">Vendidas: </span>
+                          {(() => {
+                            // Para visualizador (dados demo), usar soldQuantity das variações
+                            if (isViewer()) {
+                              return item.variations.reduce((sum, v) => {
+                                return sum + ((v as any).soldQuantity || 0);
+                              }, 0);
+                            } else {
+                              // Para admin/usuário (dados reais), calcular vendas baseado na coleção sales
+                              return getSoldQuantityForItem(item.id);
+                            }
+                          })()}
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <span className="text-xs text-indigo-600 font-medium">
-                            Variações: {item.variations.length}
-                          </span>
+                        <div className="text-xs text-indigo-600 font-medium truncate sm:truncate">
+                          <span className="sm:hidden">Var: </span>
+                          <span className="hidden sm:inline">Variações: </span>
+                          {item.variations.length}
                         </div>
-                        <div className="text-xs text-gray-400">
+                        <div className="text-xs text-gray-400 truncate sm:truncate">
                           Total: {(() => {
                             // Calcular disponíveis (quantidade atual das variações)
                             const available = item.variations.reduce((sum, v) => sum + v.quantity, 0);
@@ -678,24 +700,25 @@ export default function InventoryManager() {
                             })();
                             
                             return available + sold;
-                          })()} peças
+                          })()}
                         </div>
                       </div>
                     </td>
-                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium text-gray-900 break-words">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 w-1/12 sm:w-auto text-sm font-medium text-gray-900 truncate sm:truncate">
                       R$ {item.sellingPrice.toFixed(2)}
                     </td>
-                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 w-1/12 sm:w-auto">
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         item.status === 'available' 
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       }`}>
-                        {item.status === 'available' ? 'Disponível' : 'Vendido'}
+                        <span className="sm:hidden">{item.status === 'available' ? 'Disp' : 'Vend'}</span>
+                        <span className="hidden sm:inline">{item.status === 'available' ? 'Disponível' : 'Vendido'}</span>
                       </span>
                     </td>
-                    <td className="px-3 py-2 sm:px-6 sm:py-4 whitespace-nowrap text-sm font-medium">
-                      <div className="flex space-x-2 flex-wrap">
+                    <td className="px-3 py-2 sm:px-6 sm:py-4 w-1/6 sm:w-auto text-sm font-medium">
+                      <div className="flex space-x-1 sm:space-x-2">
                         <button
                           onClick={() => handleViewItem(item)}
                           className="text-blue-600 hover:text-blue-900"
