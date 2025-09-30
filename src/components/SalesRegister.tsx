@@ -321,7 +321,7 @@ export default function SalesRegister() {
 
         const result = await updateSale(editingSale.id, updatedSale);
         
-        if (result) {
+        if (result !== null) {
           setSuccessMessage('✅ VENDA ATUALIZADA COM SUCESSO!');
           
           // Usar setTimeout para garantir que o estado seja atualizado
@@ -423,9 +423,9 @@ export default function SalesRegister() {
         console.log('Tipo do resultado:', typeof result);
         console.log('Result é truthy?', !!result);
         console.log('Result é string?', typeof result === 'string');
-        console.log('Result tem length?', result && typeof result === 'string' ? result.length : 'N/A');
+        console.log('Result tem length?', 'N/A');
         
-        if (result && typeof result === 'string' && result.length > 0) {
+        if (result) {
           console.log('Venda criada com sucesso, debitando estoque...');
           // Debitar itens do estoque
           await debitFromInventory(cart);

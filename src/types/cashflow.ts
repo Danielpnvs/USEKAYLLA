@@ -6,6 +6,7 @@ export interface Movimento {
   origem: 'caixa' | 'embalagem';
   suborigem?: 'reinvestimento' | 'caixa_loja' | 'salario';
   valor: number;
+  status?: 'pendente' | 'pago';
   createdAt: Date;
   updatedAt: Date;
 }

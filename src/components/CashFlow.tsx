@@ -6,8 +6,8 @@ import ViewerAlert from './ViewerAlert';
 
 interface Venda {
   id: string;
-  total: number;
   items: Array<{
+    id: string;
     clothingItemId: string;
     clothingItemCode: string;
     clothingItemName: string;
@@ -17,10 +17,19 @@ interface Venda {
     quantity: number;
     unitPrice: number;
     totalPrice: number;
+    discount?: number;
   }>;
-  status: 'pago' | 'pendente';
+  subtotal: number;
+  discount: number;
+  discountType: 'percentual' | 'valor_fixo';
+  total: number;
+  paymentMethod: 'dinheiro' | 'pix' | 'cartao_debito' | 'cartao_credito' | 'transferencia' | 'cheque';
+  status: 'pendente' | 'pago' | 'cancelado';
+  notes?: string;
   createdAt: Date;
   updatedAt: Date;
+  sellerId?: string;
+  sellerName?: string;
 }
 
 type DivisaoCaixa = {
@@ -32,7 +41,7 @@ import { formatarMoeda, toTitleCase } from '../utils/calculations';
 
 export default function CashFlow() {
   const { data: vendas, loading: vendasLoading, initialized: vendasInitialized } = useFirestore<Venda>('sales');
-  const { data: movimentosReg, add: addMov, update: updateMov, remove: removeMov, loading: movimentosLoading, initialized: movimentosInitialized } = useFirestore<Movimento>('fluxo');
+  const { data: movimentosReg, add: addMov, update: updateMov, remove: removeMov, loading: movimentosLoading, initialized: movimentosInitialized } = useFirestore<any>('fluxo');
   const { data: clothingItems } = useFirestore<any>('clothing');
   
   // Estado da divisão do caixa (persistente)
@@ -1042,7 +1051,7 @@ export default function CashFlow() {
                   );
                   
                   return movimentacoesOrdenadas.map((movimento) => {
-                    const isEntrada = movimento.tipo === 'entrada';
+                    const isEntrada = false; // Movimento só tem tipo 'saida'
                     const isPendente = movimento.status === 'pendente';
                     
                     return (

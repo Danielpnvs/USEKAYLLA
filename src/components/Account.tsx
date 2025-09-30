@@ -1,18 +1,10 @@
 import { useState, useEffect } from 'react';
-import { User, LogIn, LogOut, Settings, Shield, Mail, X, Eye, EyeOff } from 'lucide-react';
+import { User as UserIcon, LogIn, LogOut, Settings, Shield, Mail, X, Eye, EyeOff } from 'lucide-react';
 // Quick action icons
 import { Edit3, KeyRound, Download } from 'lucide-react';
 import { useUsers } from '../hooks/useFirestore';
 import { useAccessTracking } from '../hooks/useAccessTracking';
-
-interface UserProfile {
-  id: string;
-  name: string;
-  email: string;
-  role: 'admin' | 'user' | 'viewer';
-  createdAt: Date;
-  lastLogin: Date;
-}
+import type { User } from '../types';
 
 interface UserCredentials {
   email: string;
@@ -191,7 +183,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
           role: firebaseUser.role,
           password: firebaseUser.password
         };
-        effectivePassword = firebaseUser.password;
+        effectivePassword = firebaseUser.password || '';
         console.log('🔥 FIREBASE: Usuário encontrado no Firebase');
       } else {
         // 3. FALLBACK: Se não encontrou no Firebase, usar array USERS
@@ -349,8 +341,9 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
           await createUser({
             name: selfEditForm.name,
             email: newEmail,
-            role: currentUser?.role,
-            password: selfEditForm.newPassword || (currentUser?.role === 'user' ? 'user123' : 'admin123')
+            role: currentUser?.role || 'user',
+            password: selfEditForm.newPassword || (currentUser?.role === 'user' ? 'user123' : 'admin123'),
+            createdAt: new Date()
           });
         }
         
@@ -415,7 +408,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         setUserEditForm({
           name: firebaseUser.name,
           email: firebaseUser.email,
-          password: firebaseUser.password,
+          password: firebaseUser.password || '',
           newPassword: ''
         });
         console.log('✅ Admin vendo dados atualizados do user no Firebase:', {
@@ -464,7 +457,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         setUserEditForm({
           name: firebaseUser.name,
           email: firebaseUser.email,
-          password: firebaseUser.password,
+          password: firebaseUser.password || '',
           newPassword: ''
         });
         console.log('✅ Admin vendo dados atualizados do test no Firebase:', {
@@ -529,7 +522,8 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
             name: userEditForm.name,
             email: userEmail,
             password: finalPassword,
-            role: userRole
+            role: userRole,
+            createdAt: new Date()
           });
           console.log('✅ FIREBASE CRIADO AUTOMATICAMENTE');
         }
@@ -614,7 +608,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
       
       if (firebaseUser) {
         // Se existe no Firebase, usar SEMPRE a senha do Firebase (prioridade máxima)
-        effectivePassword = firebaseUser.password;
+        effectivePassword = firebaseUser.password || '';
         console.log('🔐 Verificação: Usando senha do Firebase:', effectivePassword);
       } else {
         // Se não existe no Firebase, usar senha do array local
@@ -650,7 +644,7 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
         const updateSuccess = await updateUser(firebaseUser.id, {
           password: newPassword
         });
-        if (updateSuccess) {
+        if (updateSuccess !== null) {
           console.log('✅ Senha atualizada no Firebase com sucesso');
         } else {
           console.error('❌ Falha ao atualizar senha no Firebase');
@@ -665,7 +659,8 @@ export default function Account({ onLogin, onLogout, isLoggedIn: propIsLoggedIn,
             name: currentUser.name,
             email: currentUser.email,
             role: currentUser.role,
-            password: newPassword
+            password: newPassword,
+            createdAt: new Date()
           });
           if (userId) {
             console.log('✅ Usuário criado/encontrado no Firebase com ID:', userId);

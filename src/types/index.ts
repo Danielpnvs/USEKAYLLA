@@ -157,7 +157,8 @@ export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'manager' | 'employee';
+  password?: string;
+  role: 'admin' | 'user' | 'viewer';
   createdAt: Date;
   lastLogin?: Date;
 }
@@ -176,6 +177,18 @@ export interface DashboardStats {
     value: number;
   }>;
   recentSales: Sale[];
+}
+
+export interface Note {
+  id: string;
+  title: string;
+  content: string;
+  type: 'problem' | 'improvement' | 'general';
+  priority: 'low' | 'medium' | 'high';
+  status: 'open' | 'in_progress' | 'resolved';
+  relatedTab: 'clothing' | 'inventory' | 'sales' | 'history' | 'reports' | 'investments' | 'cashflow' | 'notes' | 'account';
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface ReportFilters {

@@ -423,8 +423,8 @@ export default function ClothingForm() {
           return;
         }
         
-        if (result && typeof result === 'string' && result.length > 0) {
-        console.log('Peça salva com sucesso, ID:', result);
+        if (result) {
+        console.log('Peça salva com sucesso');
         
         // Mostrar sucesso IMEDIATAMENTE
         console.log('🔔 Mostrando modal de sucesso...');

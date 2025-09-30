@@ -1,18 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { ClothingItem, Sale, CashFlow, Investment, User } from '../types';
+import type { User } from '../types';
 
-function getCurrentUserRole(): 'admin' | 'user' | 'viewer' | null {
-  try {
-    const user = localStorage.getItem('usekaylla_user');
-    if (user) {
-      const parsed = JSON.parse(user);
-      return parsed?.role ?? null;
-    }
-    return null;
-  } catch {
-    return null;
-  }
-}
 
 // Demo datasets for viewer mode (lightweight and generic)
 function getDemoData(collectionName: string): any[] {
@@ -946,8 +934,7 @@ export const useUsers = () => {
       const newUser: User = {
         ...user,
         id: `user-${Date.now()}`,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        createdAt: new Date()
       };
       setUsers(prev => [...prev, newUser]);
       return newUser;
@@ -979,7 +966,7 @@ export const useUsers = () => {
 };
 
 // Hook principal para gerenciar dados
-export const useFirestore = <T extends ClothingItem | Sale | CashFlow | Investment>(collectionName: string) => {
+export const useFirestore = <T extends any>(collectionName: string) => {
   const [data, setData] = useState<T[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -1054,9 +1041,17 @@ export const useFirestore = <T extends ClothingItem | Sale | CashFlow | Investme
 
   const update = async (id: string, updates: Partial<T>) => {
     try {
-      setData(prev => prev.map(item => 
-        item.id === id ? { ...item, ...updates, updatedAt: new Date() } : item
-      ));
+      setData(prev => prev.map(item => {
+        if ((item as any).id === id) {
+          const updatedItem = { ...(item as any), ...updates };
+          // Só adicionar updatedAt se o item não for User
+          if (collectionName !== 'users' && 'updatedAt' in updatedItem) {
+            updatedItem.updatedAt = new Date();
+          }
+          return updatedItem;
+        }
+        return item;
+      }));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao atualizar item');
     }
@@ -1064,7 +1059,7 @@ export const useFirestore = <T extends ClothingItem | Sale | CashFlow | Investme
 
   const remove = async (id: string) => {
     try {
-      setData(prev => prev.filter(item => item.id !== id));
+      setData(prev => prev.filter(item => (item as any).id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao remover item');
     }

@@ -2,18 +2,7 @@ import { useState, useEffect } from 'react';
 import { FileText, Plus, Edit, Trash2, Save, X, Lightbulb, Bug, Search, Filter, ArrowUpDown, Sparkles } from 'lucide-react';
 import ViewerAlert from './ViewerAlert';
 import { useFirestore } from '../hooks/useFirestore';
-
-interface Note {
-  id: string;
-  title: string;
-  content: string;
-  type: 'problem' | 'improvement' | 'general';
-  priority: 'low' | 'medium' | 'high';
-  status: 'open' | 'in_progress' | 'resolved';
-  relatedTab: 'clothing' | 'inventory' | 'sales' | 'history' | 'reports' | 'investments' | 'cashflow' | 'notes' | 'account';
-  createdAt: Date;
-  updatedAt: Date;
-}
+import type { Note } from '../types';
 
 export default function Notes() {
   const [showForm, setShowForm] = useState(false);
