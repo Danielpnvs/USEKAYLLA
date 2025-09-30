@@ -821,6 +821,28 @@ export default function InventoryManager() {
                       <span className="text-gray-600">Preço de Venda:</span>
                       <span className="font-bold text-lg text-green-600">R$ {selectedItem.sellingPrice.toFixed(2)}</span>
                     </div>
+                    {/* Lucro por peça e total do estoque disponível */}
+                    {(() => {
+                      const totalPieces = selectedItem.variations.reduce((sum, v) => sum + (v.quantity || 0) + ((v as any).soldQuantity || 0), 0);
+                      const freightPerUnit = totalPieces > 0 ? (selectedItem.freightCost || 0) / totalPieces : 0;
+                      const baseCost = (selectedItem.costPrice || 0) + freightPerUnit + (selectedItem.extraCosts || 0);
+                      const creditFeeAmount = baseCost * ((selectedItem.creditFee || 0) / 100);
+                      const unitProfit = (selectedItem.sellingPrice || 0) - (baseCost + creditFeeAmount + (selectedItem.packagingCost || 0));
+                      const available = selectedItem.variations.reduce((sum, v) => sum + (v.quantity || 0), 0);
+                      const totalProfit = unitProfit * available;
+                      return (
+                        <div className="mt-2 p-2 rounded-lg bg-green-50 border border-green-200">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Lucro (por peça):</span>
+                            <span className="font-semibold text-green-700">R$ {Number.isFinite(unitProfit) ? unitProfit.toFixed(2) : '0,00'}</span>
+                          </div>
+                          <div className="flex justify-between text-xs mt-1">
+                            <span className="text-gray-600">Lucro total (estoque disponível):</span>
+                            <span className="font-medium text-green-700">R$ {Number.isFinite(totalProfit) ? totalProfit.toFixed(2) : '0,00'}</span>
+                          </div>
+                        </div>
+                      );
+                    })()}
                     <div className="flex justify-between">
                       <span className="text-gray-600">Frete por Lote:</span>
                       <span className="font-medium">R$ {selectedItem.freightCost?.toFixed(2) || '0.00'}</span>

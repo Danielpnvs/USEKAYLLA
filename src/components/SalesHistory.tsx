@@ -324,8 +324,8 @@ export default function SalesHistory() {
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 p-0 sm:p-6">
       <div className="max-w-7xl mx-auto space-y-6 px-0">
         {/* Header Mobile */}
-        <div className="block sm:hidden">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6" style={{width: '63%'}}>
+        <div className="block sm:hidden px-4" style={{ overflowX: 'hidden' }}>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 mx-auto" style={{ width: 'clamp(320px, 92vw, 560px)', margin: '0 auto', marginLeft: '-20px' }}>
             <div className="block sm:flex sm:items-center sm:justify-between">
               <div className="flex items-center mb-3 sm:mb-0">
                 <div className="bg-gradient-to-r from-blue-600 to-purple-600 p-2 rounded-lg mr-3">
@@ -363,10 +363,10 @@ export default function SalesHistory() {
         </div>
 
         {/* Estatísticas Mobile - Layout Corrigido */}
-        <div className="block sm:hidden">
+        <div className="block sm:hidden px-4" style={{ overflowX: 'hidden' }}>
           <div className="grid grid-cols-1 gap-3">
             {/* Card Total em Vendas - Mobile Layout */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-h-[60px]" style={{width: '63%'}}>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2 min-h-[60px] mx-auto" style={{ width: 'clamp(320px, 92vw, 560px)', margin: '0 auto', marginLeft: '-20px' }}>
               <div className="flex items-center">
                 <div className="p-1.5 bg-blue-100 rounded-lg">
                   <DollarSign className="h-4 w-4 text-blue-600" />
@@ -378,7 +378,7 @@ export default function SalesHistory() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-h-[60px]" style={{width: '63%'}}>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2 min-h-[60px] mx-auto" style={{ width: 'clamp(320px, 92vw, 560px)', margin: '0 auto', marginLeft: '-20px' }}>
               <div className="flex items-center">
                 <div className="p-1.5 bg-yellow-100 rounded-lg">
                   <Clock className="h-4 w-4 text-yellow-600" />
@@ -390,7 +390,7 @@ export default function SalesHistory() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-h-[60px]" style={{width: '63%'}}>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2 min-h-[60px] mx-auto" style={{ width: 'clamp(320px, 92vw, 560px)', margin: '0 auto', marginLeft: '-20px' }}>
               <div className="flex items-center">
                 <div className="p-1.5 bg-green-100 rounded-lg">
                   <TrendingUp className="h-4 w-4 text-green-600" />
@@ -402,7 +402,7 @@ export default function SalesHistory() {
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-2 min-h-[60px]" style={{width: '63%'}}>
+            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2 min-h-[60px] mx-auto" style={{ width: 'clamp(320px, 92vw, 560px)', margin: '0 auto', marginLeft: '-20px' }}>
               <div className="flex items-center">
                 <div className="p-1.5 bg-purple-100 rounded-lg">
                   <ShoppingCart className="h-4 w-4 text-purple-600" />
@@ -465,8 +465,8 @@ export default function SalesHistory() {
         </div>
 
         {/* Filtros Mobile */}
-        <div className="block sm:hidden">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6" style={{width: '63%'}}>
+        <div className="block sm:hidden px-4" style={{ overflowX: 'hidden' }}>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 mx-auto" style={{ width: 'clamp(320px, 92vw, 560px)', margin: '0 auto', marginLeft: '-20px' }}>
             <div className="flex items-center mb-4">
               <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-2 rounded-lg mr-3">
                 <Filter className="h-5 w-5 text-white" />
@@ -563,8 +563,8 @@ export default function SalesHistory() {
         </div>
 
         {/* Lista de Vendas Mobile */}
-        <div className="block sm:hidden">
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6" style={{width: '63%'}}>
+        <div className="block sm:hidden px-4" style={{ overflowX: 'hidden' }}>
+          <div className="bg-white rounded-2xl shadow-xl border border-gray-200 p-4 sm:p-6 mx-auto" style={{ width: 'clamp(320px, 92vw, 560px)', margin: '0 auto', marginLeft: '-20px' }}>
             <div className="flex items-center mb-4">
               <div className="bg-gradient-to-r from-orange-500 to-red-500 p-2 rounded-lg mr-3">
                 <Calendar className="h-5 w-5 text-white" />
@@ -583,23 +583,23 @@ export default function SalesHistory() {
               {filteredSales.map(sale => (
                 <div key={sale.id} className="p-3 sm:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-xl border border-gray-200 hover:shadow-md transition-all duration-200">
                   <div className="flex justify-between items-start gap-3">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center mb-2">
-                        <h4 className="font-bold text-gray-900 text-sm sm:text-base truncate">
+                    <div className="flex-1">
+                      <div className="mb-2">
+                        <h4 className="font-bold text-gray-900 text-base break-words whitespace-normal">
                           {sale.customerName || 'Cliente não informado'}
                         </h4>
-                        <span className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(sale.status)}`}>
+                        <span className={`mt-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(sale.status)}`}>
                           {sale.status.toUpperCase()}
                         </span>
                       </div>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs sm:text-sm text-gray-600 break-words">
                         <div className="flex items-center">
                           <Calendar className="h-4 w-4 mr-1" />
                           {formatDate(sale.createdAt)}
                         </div>
                         <div className="flex items-center">
                           <DollarSign className="h-4 w-4 mr-1" />
-                          {formatCurrency(sale.total)}
+                          <span className="text-base sm:text-sm font-semibold text-green-600 break-words">{formatCurrency(sale.total)}</span>
                         </div>
                         <div className="flex items-center">
                           <ShoppingCart className="h-4 w-4 mr-1" />

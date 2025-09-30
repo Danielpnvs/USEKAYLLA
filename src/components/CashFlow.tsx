@@ -956,7 +956,7 @@ export default function CashFlow() {
                     <div key={movimento.id} className="p-3 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200">
                       <div className="space-y-2">
                         {/* Linha 1: Descrição e Valor */}
-                        <div className="flex justify-between items-start">
+                      <div className="flex justify-between items-start">
                           <h4 className="font-medium text-gray-900 text-sm flex-1 pr-2">{movimento.descricao}</h4>
                           <p className="text-sm font-bold text-red-600 whitespace-nowrap">
                             -{(() => {
@@ -977,14 +977,14 @@ export default function CashFlow() {
                         {/* Linha 2: Tags */}
                         <div className="flex flex-wrap gap-1">
                           <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                            {movimento.origem}
-                          </span>
-                          {movimento.suborigem && (
-                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                              {formatarSuborigem(movimento.suborigem)}
+                              {movimento.origem}
                             </span>
-                          )}
-                        </div>
+                            {movimento.suborigem && (
+                            <span className="px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                {formatarSuborigem(movimento.suborigem)}
+                              </span>
+                            )}
+                          </div>
                         
                         {/* Linha 3: Data e Ações */}
                         <div className="flex justify-between items-center">
@@ -1004,20 +1004,20 @@ export default function CashFlow() {
                             })()}
                           </div>
                           <div className="flex space-x-1">
-                            <button
-                              onClick={() => abrirEdicao(movimento)}
-                              className="p-1 text-yellow-600 hover:bg-yellow-100 rounded transition-colors"
-                              title="Editar"
-                            >
-                              <Edit3 className="h-4 w-4" />
-                            </button>
-                            <button
-                              onClick={() => confirmarExclusao(movimento)}
-                              className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
-                              title="Excluir"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </button>
+                          <button
+                            onClick={() => abrirEdicao(movimento)}
+                            className="p-1 text-yellow-600 hover:bg-yellow-100 rounded transition-colors"
+                            title="Editar"
+                          >
+                            <Edit3 className="h-4 w-4" />
+                          </button>
+                          <button
+                            onClick={() => confirmarExclusao(movimento)}
+                            className="p-1 text-red-600 hover:bg-red-100 rounded transition-colors"
+                            title="Excluir"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </button>
                           </div>
                         </div>
                       </div>
@@ -1036,7 +1036,7 @@ export default function CashFlow() {
                 <Calendar className="h-5 w-5 text-white" />
               </div>
               <h3 className="text-base font-semibold text-gray-900">Movimentações</h3>
-            </div>
+        </div>
 
             <div className="space-y-3 max-h-96 overflow-y-auto">
               {movimentosReg.length === 0 ? (

@@ -894,8 +894,8 @@ function getDemoData(collectionName: string): any[] {
   }
 
   if (collectionName === 'investments') {
-    return [];
-  }
+  return [];
+}
 
   return [];
 }
@@ -908,15 +908,15 @@ export const useUsers = () => {
 
   const loadUsers = async () => {
     setLoading(true);
-    setError(null);
+        setError(null);
     try {
       const usersData = getDemoData('users');
       setUsers(usersData);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar usuários');
     } finally {
-      setLoading(false);
-    }
+        setLoading(false);
+      }
   };
 
   const updateUser = async (id: string, updates: Partial<User>) => {
@@ -971,25 +971,26 @@ export const useFirestore = <T extends any>(collectionName: string) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Helper: detect viewer role (login test) from localStorage
+  const isViewerRole = () => {
+    try {
+      const user = localStorage.getItem('usekaylla_user');
+      if (user) {
+        const parsed = JSON.parse(user);
+        return parsed.role === 'viewer';
+      }
+      return false;
+    } catch {
+      return false;
+    }
+  };
+
   const loadData = async () => {
       setLoading(true);
       setError(null);
     try {
       // Verificar se é visualizador (login test)
-      const isViewer = () => {
-        try {
-          const user = localStorage.getItem('usekaylla_user');
-          if (user) {
-            const parsed = JSON.parse(user);
-            return parsed.role === 'viewer';
-          }
-          return false;
-        } catch {
-          return false;
-        }
-      };
-
-      if (isViewer()) {
+      if (isViewerRole()) {
         // Para login test: usar dados demo
         const demoData = getDemoData(collectionName);
         setData(demoData as T[]);
@@ -1004,7 +1005,7 @@ export const useFirestore = <T extends any>(collectionName: string) => {
           
           querySnapshot.forEach((doc) => {
             firebaseData.push({
-              id: doc.id,
+        id: doc.id,
               ...doc.data()
             } as T);
           });
@@ -1024,15 +1025,29 @@ export const useFirestore = <T extends any>(collectionName: string) => {
 
   const add = async (item: Omit<T, 'id'>) => {
     try {
-      const newItem = {
-        ...item,
-        id: `${collectionName}-${Date.now()}`,
+      // Viewer: apenas local
+      if (isViewerRole()) {
+        const newItem = {
+          ...item,
+          id: `${collectionName}-${Date.now()}`,
+          createdAt: new Date(),
+          updatedAt: new Date()
+        } as T;
+        setData(prev => [...prev, newItem]);
+        return newItem;
+      }
+
+      // Admin/Usuário: persistir no Firebase
+      const { db } = await import('../config/firebase');
+      const { collection, addDoc } = await import('firebase/firestore');
+      const docRef = await addDoc(collection(db, collectionName), {
+        ...(item as any),
         createdAt: new Date(),
         updatedAt: new Date()
-      } as T;
-      
-      setData(prev => [...prev, newItem]);
-      return newItem;
+      });
+      const created = { ...(item as any), id: docRef.id } as T;
+      setData(prev => [...prev, created]);
+      return created;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao adicionar item');
       return null;
@@ -1041,17 +1056,30 @@ export const useFirestore = <T extends any>(collectionName: string) => {
 
   const update = async (id: string, updates: Partial<T>) => {
     try {
-      setData(prev => prev.map(item => {
-        if ((item as any).id === id) {
-          const updatedItem = { ...(item as any), ...updates };
-          // Só adicionar updatedAt se o item não for User
-          if (collectionName !== 'users' && 'updatedAt' in updatedItem) {
-            updatedItem.updatedAt = new Date();
+      // Viewer: apenas local
+      if (isViewerRole()) {
+        setData(prev => prev.map(item => {
+          if ((item as any).id === id) {
+            const updatedItem = { ...(item as any), ...updates };
+            if (collectionName !== 'users') {
+              (updatedItem as any).updatedAt = new Date();
+            }
+            return updatedItem;
           }
-          return updatedItem;
-        }
-        return item;
-      }));
+          return item;
+        }));
+        return;
+      }
+
+      // Admin/Usuário: persistir no Firebase e refletir localmente
+      const { db } = await import('../config/firebase');
+      const { doc, updateDoc } = await import('firebase/firestore');
+      await updateDoc(doc(db, collectionName, id), {
+        ...(updates as any),
+        updatedAt: new Date()
+      });
+
+      setData(prev => prev.map(item => ((item as any).id === id ? { ...(item as any), ...updates, updatedAt: new Date() } : item)));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao atualizar item');
     }
@@ -1059,6 +1087,16 @@ export const useFirestore = <T extends any>(collectionName: string) => {
 
   const remove = async (id: string) => {
     try {
+      // Viewer: apenas local
+      if (isViewerRole()) {
+        setData(prev => prev.filter(item => (item as any).id !== id));
+        return;
+      }
+
+      // Admin/Usuário: remover do Firebase e do estado
+      const { db } = await import('../config/firebase');
+      const { doc, deleteDoc } = await import('firebase/firestore');
+      await deleteDoc(doc(db, collectionName, id));
       setData(prev => prev.filter(item => (item as any).id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao remover item');

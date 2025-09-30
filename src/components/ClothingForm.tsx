@@ -896,6 +896,15 @@ export default function ClothingForm() {
                   <div className="text-sm sm:text-lg text-gray-600 value-text">
                     Margem: {currentValues.profitMargin}%
                   </div>
+                  {/* Lucro por peça (preço de venda - custo bruto - embalagem) */}
+                  {(() => {
+                    const unitProfit = currentValues.sellingPrice - (currentValues.baseCost + currentValues.creditFeeAmount + currentValues.packagingCost);
+                    return (
+                      <div className="mt-3 text-sm sm:text-base font-semibold text-green-700">
+                        Lucro (por peça): R$ {Number.isFinite(unitProfit) ? unitProfit.toFixed(2) : '0,00'}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
             </div>
