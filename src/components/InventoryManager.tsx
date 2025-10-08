@@ -823,11 +823,19 @@ export default function InventoryManager() {
                     </div>
                     {/* Lucro por peça e total do estoque disponível */}
                     {(() => {
-                      const totalPieces = selectedItem.variations.reduce((sum, v) => sum + (v.quantity || 0) + ((v as any).soldQuantity || 0), 0);
-                      const freightPerUnit = totalPieces > 0 ? (selectedItem.freightCost || 0) / totalPieces : 0;
+                      // Usar a mesma fórmula do ClothingForm para consistência
+                      // Frete unitário = frete do lote / quantidade de peças no lote (não total de variações)
+                      const freightPerUnit = (selectedItem.freightCost || 0) && (selectedItem.freightQuantity || 1) 
+                        ? (selectedItem.freightCost || 0) / (selectedItem.freightQuantity || 1) 
+                        : 0;
+                      
+                      // Cálculo idêntico ao ClothingForm
                       const baseCost = (selectedItem.costPrice || 0) + freightPerUnit + (selectedItem.extraCosts || 0);
                       const creditFeeAmount = baseCost * ((selectedItem.creditFee || 0) / 100);
+                      
+                      // Lucro = preço de venda - (custo base + taxa crédito + embalagem)
                       const unitProfit = (selectedItem.sellingPrice || 0) - (baseCost + creditFeeAmount + (selectedItem.packagingCost || 0));
+                      
                       const available = selectedItem.variations.reduce((sum, v) => sum + (v.quantity || 0), 0);
                       const totalProfit = unitProfit * available;
                       return (
