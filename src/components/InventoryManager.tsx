@@ -983,7 +983,30 @@ export default function InventoryManager() {
                 </div>
                 <div className="text-sm text-gray-500">
                   <Calendar className="h-4 w-4 inline mr-1" />
-                  Cadastrado em {new Date(selectedItem.createdAt).toLocaleDateString('pt-BR')}
+                  Cadastrado em {(() => {
+                    try {
+                      let date = selectedItem.createdAt;
+                      
+                      // Se for um timestamp do Firebase, converter para Date
+                      if (date && typeof date === 'object' && (date as any).toDate) {
+                        date = (date as any).toDate();
+                      }
+                      
+                      // Se for uma string, tentar converter para Date
+                      if (typeof date === 'string') {
+                        date = new Date(date);
+                      }
+                      
+                      // Se não for um objeto Date válido, criar um novo Date
+                      if (!(date instanceof Date) || isNaN(date.getTime())) {
+                        return 'Data inválida';
+                      }
+                      
+                      return date.toLocaleDateString('pt-BR');
+                    } catch (error) {
+                      return 'Data inválida';
+                    }
+                  })()}
                 </div>
               </div>
             </div>

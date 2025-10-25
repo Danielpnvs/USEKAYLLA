@@ -992,10 +992,24 @@ export default function CashFlow() {
                             <Calendar className="h-3 w-3 mr-1" />
                             {(() => {
                               try {
-                                const date = movimento.data instanceof Date ? movimento.data : new Date(movimento.data);
-                                if (isNaN(date.getTime())) {
+                                let date = movimento.data;
+                                
+                                // Se for um timestamp do Firebase, converter para Date
+                                if (date && typeof date === 'object' && date.toDate) {
+                                  date = date.toDate();
+                                }
+                                
+                                // Se for uma string, tentar converter para Date
+                                if (typeof date === 'string') {
+                                  date = new Date(date);
+                                }
+                                
+                                // Se não for um objeto Date válido, criar um novo Date
+                                if (!(date instanceof Date) || isNaN(date.getTime())) {
+                                  console.warn('Data inválida recebida:', movimento.data);
                                   return 'Data inválida';
                                 }
+                                
                                 return date.toLocaleDateString('pt-BR');
                               } catch (error) {
                                 console.error('Erro ao formatar data:', error, movimento.data);
@@ -1077,7 +1091,30 @@ export default function CashFlow() {
                             <p className="text-sm text-gray-700 font-medium">{movimento.descricao}</p>
                             <div className="flex items-center space-x-4 mt-1">
                               <span className="text-xs text-gray-500">
-                                {new Date(movimento.data).toLocaleDateString('pt-BR')}
+                                {(() => {
+                                  try {
+                                    let date = movimento.data;
+                                    
+                                    // Se for um timestamp do Firebase, converter para Date
+                                    if (date && typeof date === 'object' && date.toDate) {
+                                      date = date.toDate();
+                                    }
+                                    
+                                    // Se for uma string, tentar converter para Date
+                                    if (typeof date === 'string') {
+                                      date = new Date(date);
+                                    }
+                                    
+                                    // Se não for um objeto Date válido, criar um novo Date
+                                    if (!(date instanceof Date) || isNaN(date.getTime())) {
+                                      return 'Data inválida';
+                                    }
+                                    
+                                    return date.toLocaleDateString('pt-BR');
+                                  } catch (error) {
+                                    return 'Data inválida';
+                                  }
+                                })()}
                               </span>
                               <span className={`text-sm font-bold ${
                                 isEntrada ? 'text-green-600' : 'text-red-600'

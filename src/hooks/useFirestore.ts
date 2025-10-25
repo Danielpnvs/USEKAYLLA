@@ -985,6 +985,25 @@ export const useFirestore = <T extends any>(collectionName: string) => {
     }
   };
 
+  // Converter Timestamp do Firebase para Date
+  const convertTimestamps = (obj: any): any => {
+    if (obj === null || obj === undefined) return obj;
+    if (obj && typeof obj === 'object' && obj.toDate) {
+      return obj.toDate();
+    }
+    if (Array.isArray(obj)) {
+      return obj.map(convertTimestamps);
+    }
+    if (typeof obj === 'object') {
+      const converted: any = {};
+      for (const key in obj) {
+        converted[key] = convertTimestamps(obj[key]);
+      }
+      return converted;
+    }
+    return obj;
+  };
+
   const loadData = async () => {
       setLoading(true);
       setError(null);
@@ -1006,7 +1025,7 @@ export const useFirestore = <T extends any>(collectionName: string) => {
           querySnapshot.forEach((doc) => {
             firebaseData.push({
         id: doc.id,
-              ...doc.data()
+              ...convertTimestamps(doc.data())
             } as T);
           });
           

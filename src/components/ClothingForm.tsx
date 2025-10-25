@@ -543,7 +543,32 @@ export default function ClothingForm() {
                     Cadastrada em
                   </div>
                   <div className="text-sm font-medium text-gray-700">
-                    {lastRegisteredItem.createdAt ? new Date(lastRegisteredItem.createdAt).toLocaleDateString('pt-BR') : 'Data não disponível'}
+                    {(() => {
+                      try {
+                        if (!lastRegisteredItem.createdAt) return 'Data não disponível';
+                        
+                        let date = lastRegisteredItem.createdAt;
+                        
+                        // Se for um timestamp do Firebase, converter para Date
+                        if (date && typeof date === 'object' && (date as any).toDate) {
+                          date = (date as any).toDate();
+                        }
+                        
+                        // Se for uma string, tentar converter para Date
+                        if (typeof date === 'string') {
+                          date = new Date(date);
+                        }
+                        
+                        // Se não for um objeto Date válido, criar um novo Date
+                        if (!(date instanceof Date) || isNaN(date.getTime())) {
+                          return 'Data inválida';
+                        }
+                        
+                        return date.toLocaleDateString('pt-BR');
+                      } catch (error) {
+                        return 'Data inválida';
+                      }
+                    })()}
                   </div>
                 </div>
               </div>
