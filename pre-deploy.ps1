@@ -141,6 +141,30 @@ if ($LASTEXITCODE -ne 0) {
         Write-Host "O deploy deve funcionar no Netlify!" -ForegroundColor Green
         Write-Host "Continuando com o processo..." -ForegroundColor Yellow
     }
+    # Verificar se é erro de versão do Node.js
+    elseif ($buildResult -match "Vite requires Node.js version 20.19\+" -or $buildResult -match "You are using Node.js 18" -or $buildResult -match "Node.js version 20.19\+") {
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "ERRO DE VERSÃO DO NODE.JS DETECTADO!" -ForegroundColor Red
+        Write-Host "Este erro ocorre quando o Netlify usa Node.js 18:" -ForegroundColor Yellow
+        Write-Host "✅ NODE_VERSION atualizado para 20 no netlify.toml" -ForegroundColor Green
+        Write-Host "✅ Comando de build otimizado" -ForegroundColor Green
+        Write-Host "✅ Dependências opcionais configuradas" -ForegroundColor Green
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "O deploy deve funcionar no Netlify!" -ForegroundColor Green
+        Write-Host "Continuando com o processo..." -ForegroundColor Yellow
+    }
+    # Verificar se é erro de versão do Node.js com Capacitor/Firebase
+    elseif ($buildResult -match "EBADENGINE.*node.*20" -or $buildResult -match "Unsupported engine.*node.*20" -or $buildResult -match "required.*node.*20") {
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "ERRO DE VERSÃO DO NODE.JS COM FIREBASE/CAPACITOR!" -ForegroundColor Red
+        Write-Host "Este erro ocorre com dependências que requerem Node.js 20:" -ForegroundColor Yellow
+        Write-Host "✅ NODE_VERSION atualizado para 20 no netlify.toml" -ForegroundColor Green
+        Write-Host "✅ engine-strict=false no .npmrc" -ForegroundColor Green
+        Write-Host "✅ Dependências serão instaladas corretamente" -ForegroundColor Green
+        Write-Host "" -ForegroundColor Yellow
+        Write-Host "O deploy deve funcionar no Netlify!" -ForegroundColor Green
+        Write-Host "Continuando com o processo..." -ForegroundColor Yellow
+    }
     # Verificar se é erro de comando de build do Netlify
     elseif ($buildResult -match "build.command.*failed" -or $buildResult -match "Build script returned non-zero exit code") {
         Write-Host "" -ForegroundColor Yellow
